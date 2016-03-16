@@ -1,5 +1,6 @@
 package nl.pts4.controller;
 
+import nl.pts4.model.AccountModel;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -38,5 +39,22 @@ public class DatabaseController {
 		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)",new Object[] {UUID.randomUUID(),name,email,password});
 
 		return true;
+	}
+
+	public AccountModel getAccount(final UUID uuid) {
+		JdbcTemplate select = new JdbcTemplate(dataSource);
+
+		AccountModel am = select.
+				queryForObject("select oauthkey, oauthprovider, name, email, hash, active, type from account where id = ?", (resultSet, i) -> {
+                    String oauthkey = resultSet.getString("oauthkey");
+                    String oauthprovider = resultSet.getString("oauthprovider");
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("email");
+                    String hash = resultSet.getString("hash");
+                    boolean active = resultSet.getBoolean("active");
+                    String type = resultSet.getString("type");
+                    return new AccountModel(uuid, oauthkey, AccountModel.OAuthProviderEnum.valueOf(oauthprovider), name, email, hash, active, AccountModel.AccountTypeEnum.valueOf(type));
+                });
+		return am;
 	}
 }

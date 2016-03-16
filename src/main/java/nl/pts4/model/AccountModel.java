@@ -9,11 +9,10 @@ public class AccountModel {
 
 	private UUID uuid;
 	private String oAuthKey;
-	private OAuhtProviderEnum oAuhtProvider;
+	private OAuthProviderEnum oAuhtProvider;
 	private String name;
 	private String email;
 	private String hash;
-	private String salt;
 	private boolean active;
 	private AccountTypeEnum accountTypeEnum;
 
@@ -22,20 +21,19 @@ public class AccountModel {
 		photographer
 	}
 
-	public enum OAuhtProviderEnum {
+	public enum OAuthProviderEnum {
 		google,
 		facebook,
 		twitter
 	}
 
-	public AccountModel(UUID uuid, String oAuthKey, OAuhtProviderEnum oAuhtProvider, String name, String email, String hash, String salt, boolean active, AccountTypeEnum accountTypeEnum) {
+	public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
 		this.uuid = uuid;
 		this.oAuthKey = oAuthKey;
 		this.oAuhtProvider = oAuhtProvider;
 		this.name = name;
 		this.email = email;
 		this.hash = hash;
-		this.salt = salt;
 		this.active = active;
 		this.accountTypeEnum = accountTypeEnum;
 	}
@@ -59,5 +57,9 @@ public class AccountModel {
 
 	public AccountTypeEnum getAccountTypeEnum() {
 		return accountTypeEnum;
+	}
+
+	public String getHash() {
+		return hash;
 	}
 }
