@@ -1,14 +1,16 @@
-package nl.pts4;
+package nl.pts4.Models;
+
+import nl.pts4.PhotoConfigItem;
 
 /**
  * Created by Nekkyou on 16-3-2016.
  */
-public class OrderLine
+public class OrderLineModel
 {
     private PhotoConfigItem photo;
     private int amount;
 
-    public OrderLine(int photoID, int amount) {
+    public OrderLineModel(int photoID, int amount) {
 //        this.photo = photoController.getPhotoConfigItemById(photoID);
         this.amount = amount;
     }
