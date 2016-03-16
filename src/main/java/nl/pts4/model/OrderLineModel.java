@@ -1,4 +1,4 @@
-package nl.pts4.models;
+package nl.pts4.model;
 
 /**
  * Created by Nekkyou on 16-3-2016.
