@@ -1,6 +1,9 @@
 #parse("header.vm")
 <div class="container">
-    <form class="form-signin">
+    <div class="alert alert-danger hidden" role="alert" id="errorBox">
+        Invalid login
+    </div>
+    <form class="form-signin" id="loginForm">
         <h2 class="form-signin-heading">Please sign in</h2>
 
         <label for="inputEmail" class="sr-only">Email address</label>
@@ -14,15 +17,49 @@
                 <input type="checkbox" value="remember-me"> Remember me
             </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button id="btnLogin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script type="text/javascript">
-        function login() {
-            $.ajax("register-rest").done(function() {
-
-            });
+        var loginBtn = $("#btnLogin");
+        var errorBox = $("#errorBox");
+        function setLogin(b) {
+            if (login) {
+                loginBtn.prop("disabled", "disabled");
+                loginBtn.text("Logging in...");
+            }else{
+                loginBtn.prop("disabled", null);
+                loginBtn.text("Login");
+            }
         }
+
+        $("#loginForm").submit(function (e){
+            setLogin(true);
+
+            var username = $("#inputEmail").val();
+            var password = $("#inputPassword").val();
+
+            $.ajax({
+                "url": "login-rest",
+                "method": "post",
+                "data": {
+                    "username": username,
+                    "password": password
+                },
+                "success": function(data) {
+                    var result = jQuery.parseJSON(data);
+                    if (result.success) {
+                        e.preventDefault();
+                        errorBox.removeClass('hidden');
+                        errorBox.text("Incorrect username or password");
+                        setLogin(false);
+                    }
+                },
+                "error": function(data) {
+                    console.log(data);
+                }
+            });
+        });
     </script>
 </div>
 #parse("footer.vm")

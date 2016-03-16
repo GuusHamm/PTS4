@@ -4,7 +4,6 @@ import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderLineModel;
 import nl.pts4.model.OrderModel;
-import nl.pts4.security.HashConsole;
 import nl.pts4.security.HashConstants;
 import org.junit.Assert;
 import org.junit.Before;

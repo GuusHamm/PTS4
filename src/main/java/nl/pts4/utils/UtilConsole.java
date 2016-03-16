@@ -47,6 +47,7 @@ public class UtilConsole {
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(uuid.toString()),null);
 		} else {
 			System.out.println("oops that's not a valid option");
+			main(args);
 		}
 
 
