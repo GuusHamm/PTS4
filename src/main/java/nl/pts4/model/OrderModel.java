@@ -12,12 +12,11 @@ public class OrderModel
     //TODO replace with an account
     private AccountModel account;
 
-    public OrderModel(int id,Date orderDate, AccountModel accountID) {
+    public OrderModel(int id,Date orderDate, AccountModel account) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
         this.account = account;
-        //        this.account = accountController.getAccount(accountID)
     }
 
     public AccountModel getAccount()
