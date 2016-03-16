@@ -6,24 +6,22 @@ import java.util.Date;
 /**
  * Created by Nekkyou on 16-3-2016.
  */
-public class TransactieItem
+public class Order
 {
     private int id;
     private Date orderDate;
     //TODO replace with an account
     private Account account;
     //TODO replace with a PhotoConfiguration object (if we'll make one of those
-    private ArrayList<PhotoConfigItem> photos;
+    private ArrayList<OrderLine> orderLines;
 
-    public TransactieItem(int id, Date orderDate, int accountID, ArrayList<Integer> photoIDs) {
+    public Order(int id, Date orderDate, int accountID, ArrayList<OrderLine> orderLines) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
 //        this.account = accountController.getAccount(accountID)
-        //TODO Get photos with the ids
-        for (int i : photoIDs) {
-//            photos.add(photoController.getPhotoConfigItem(i));
-        }
+        //TODO Get the orderlines correctly
+        this.orderLines = orderLines;
     }
 
     public Account getAccount()
@@ -36,14 +34,14 @@ public class TransactieItem
         this.account = account;
     }
 
-    public ArrayList<PhotoConfigItem> getPhotos()
+    public ArrayList<OrderLine> getOrderLines()
     {
-        return photos;
+        return orderLines;
     }
 
-    public void setPhotos(ArrayList<PhotoConfigItem> photos)
+    public void setOrderLines(ArrayList<OrderLine> orderLines)
     {
-        this.photos = photos;
+        this.orderLines = orderLines;
     }
 
     public Date getOrderDate()
