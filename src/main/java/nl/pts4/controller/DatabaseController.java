@@ -28,7 +28,14 @@ public class DatabaseController {
         return instance;
     }
 
-    public void setDefaultDataSource() {
+	public static DatabaseController getTestInstance(){
+		instance = getInstance();
+		instance.setDefaultTestDataSource();
+
+		return instance;
+	}
+
+    private void setDefaultDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://guushamm.me:5432/pts4");
@@ -37,6 +44,16 @@ public class DatabaseController {
 
         this.dataSource = dataSource;
     }
+
+	private void setDefaultTestDataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("org.postgresql.Driver");
+		dataSource.setUrl("jdbc:postgresql://127.0.0.1:5432/travis_ci_test");
+		dataSource.setUsername("postgres");
+		dataSource.setPassword("");
+
+		this.dataSource = dataSource;
+	}
 
 	public AccountModel createAccount(String name, String email,String password){
 		UUID accountUUID = UUID.randomUUID();

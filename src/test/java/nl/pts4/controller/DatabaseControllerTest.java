@@ -9,7 +9,7 @@ public class DatabaseControllerTest {
 
 	@Test
 	public void testGetAllOrders() throws Exception {
-		DatabaseController.getInstance().getAllOrders();
+		DatabaseController.getTestInstance().getAllOrders();
 
 	}
 }
