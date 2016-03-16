@@ -1,7 +1,7 @@
 DROP TABLE account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
 
 CREATE TABLE school (
-  id       INTEGER PRIMARY KEY,
+  id       SERIAL PRIMARY KEY,
   name     TEXT NOT NULL,
   location TEXT,
   country  TEXT
@@ -15,7 +15,7 @@ CREATE TABLE account (
   email         TEXT UNIQUE NOT NULL,
   hash          TEXT,
   active        BOOLEAN DEFAULT TRUE ,
-  type          TEXT
+  type          TEXT DEFAULT 'customer'
 );
 
 CREATE TABLE childaccount (
@@ -37,14 +37,14 @@ CREATE TABLE photo (
 );
 
 CREATE TABLE rating (
-  id        INTEGER PRIMARY KEY,
+  id        SERIAL PRIMARY KEY,
   points    INTEGER NOT NULL,
   accountid UUID REFERENCES account (id),
   photoid   UUID REFERENCES photo (id)
 );
 
 CREATE TABLE item (
-  id            INTEGER PRIMARY KEY,
+  id            SERIAL PRIMARY KEY,
   price         INTEGER NOT NULL,
   type          TEXT    NOT NULL,
   description   TEXT,
@@ -52,7 +52,7 @@ CREATE TABLE item (
 );
 
 CREATE TABLE effect (
-  id          INTEGER PRIMARY KEY,
+  id          SERIAL PRIMARY KEY,
   type        TEXT    NOT NULL,
   description TEXT    NOT NULL,
   price       INTEGER NOT NULL
@@ -66,21 +66,20 @@ CREATE TABLE userright (
 );
 
 CREATE TABLE photoconfiguration (
-  id       INTEGER PRIMARY KEY,
+  id       SERIAL PRIMARY KEY,
   effectid INTEGER REFERENCES effect (id),
   itemid   INTEGER REFERENCES item (id),
   photoid  UUID REFERENCES photo (id)
 );
 
 CREATE TABLE order_ (
-  id                   INTEGER PRIMARY KEY,
+  id                   SERIAL PRIMARY KEY,
   orderdate            TIMESTAMP NOT NULL,
-  accountid            UUID REFERENCES account (id),
-  photoconfigurationid INTEGER REFERENCES photoconfiguration (id)
+  accountid            UUID REFERENCES account (id)
 );
 
 CREATE TABLE orderline (
-  id                   INTEGER PRIMARY KEY,
+  id                   SERIAL PRIMARY KEY,
   orderid              INTEGER REFERENCES order_ (id),
   photoconfigurationid INTEGER REFERENCES photoconfiguration (id)
 );
@@ -114,3 +113,7 @@ INSERT INTO childaccount (id,parentid, identifiernumber, uniquecode)
 VALUES ('9e7b523f-bbf1-4050-aea3-07ba87473568', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '374288', '374288485129711');
 INSERT INTO childaccount (id,parentid, identifiernumber, uniquecode)
 VALUES ('1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '30259182', '30259188914242');
+
+INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', '602a4264-cf81-4ad3-aa6e-13cf8578320f');
+INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', '11cbd1da-5358-4789-95e5-891fe72c34e6');
+INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', 'e208462f-411f-4222-b957-0bddabe0fb99');
