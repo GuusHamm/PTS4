@@ -1,4 +1,4 @@
-package nl.pts4.models;
+package nl.pts4.model;
 
 import java.io.File;
 import java.util.Date;

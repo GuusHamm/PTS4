@@ -1,8 +1,8 @@
-package nl.pts4.controller;
+package nl.pts4.controllers;
 
-import nl.pts4.models.AccountModel;
-import nl.pts4.models.OrderModel;
-import nl.pts4.models.PhotoConfigurationModel;
+import nl.pts4.model.AccountModel;
+import nl.pts4.model.OrderModel;
+import nl.pts4.model.PhotoConfigurationModel;
 
 /**
  * Created by GuusHamm on 16-3-2016.

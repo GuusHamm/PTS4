@@ -1,4 +1,4 @@
-package nl.pts4.controller;
+package nl.pts4.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
