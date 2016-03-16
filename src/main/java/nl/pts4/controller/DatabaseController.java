@@ -1,5 +1,8 @@
 package nl.pts4.controller;
 
+import com.lambdaworks.crypto.SCryptUtil;
+import nl.pts4.model.AccountModel;
+import nl.pts4.security.HashConstants;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
