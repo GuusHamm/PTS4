@@ -1,10 +1,12 @@
-package nl.pts4.Models;
+package nl.pts4.models;
+
+import java.util.UUID;
 
 /**
  * Created by GuusHamm on 16-3-2016.
  */
 public class AccountModel {
-	private int id;
+	private UUID id;
 	private String oAuthKey;
 	private OAuhtProviderEnum oAuhtProvider;
 	private String name;
@@ -25,7 +27,7 @@ public class AccountModel {
 		twitter
 	}
 
-	public AccountModel(int id, String oAuthKey, OAuhtProviderEnum oAuhtProvider, String name, String email, String hash, String salt, boolean active, AccountTypeEnum accountTypeEnum) {
+	public AccountModel(UUID id, String oAuthKey, OAuhtProviderEnum oAuhtProvider, String name, String email, String hash, String salt, boolean active, AccountTypeEnum accountTypeEnum) {
 		this.id = id;
 		this.oAuthKey = oAuthKey;
 		this.oAuhtProvider = oAuhtProvider;
@@ -37,7 +39,7 @@ public class AccountModel {
 		this.accountTypeEnum = accountTypeEnum;
 	}
 
-	public int getId() {
+	public UUID getId() {
 		return id;
 	}
 

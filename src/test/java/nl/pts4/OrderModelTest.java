@@ -1,7 +1,7 @@
 package nl.pts4;
 
-import nl.pts4.Models.OrderLineModel;
-import nl.pts4.Models.OrderModel;
+import nl.pts4.models.OrderLineModel;
+import nl.pts4.models.OrderModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

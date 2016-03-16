@@ -1,8 +1,5 @@
-package nl.pts4.Models;
+package nl.pts4.models;
 
-import nl.pts4.Account;
-
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -13,38 +10,24 @@ public class OrderModel
     private int id;
     private Date orderDate;
     //TODO replace with an account
-    private Account account;
-    //TODO replace with a PhotoConfiguration object (if we'll make one of those
-    private ArrayList<OrderLineModel> orderLines;
+    private AccountModel account;
 
-    public OrderModel(int id, Date orderDate, int accountID, ArrayList<OrderLineModel> orderLines) {
+    public OrderModel(int id,Date orderDate, AccountModel accountID) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
-        this.account = new Account();
+        this.account = account;
         //        this.account = accountController.getAccount(accountID)
-        //TODO Get the orderlines correctly
-        this.orderLines = orderLines;
     }
 
-    public Account getAccount()
+    public AccountModel getAccount()
     {
         return account;
     }
 
-    public void setAccount(Account account)
+    public void setAccount(AccountModel account)
     {
         this.account = account;
-    }
-
-    public ArrayList<OrderLineModel> getOrderLines()
-    {
-        return orderLines;
-    }
-
-    public void setOrderLines(ArrayList<OrderLineModel> orderLines)
-    {
-        this.orderLines = orderLines;
     }
 
     public Date getOrderDate()

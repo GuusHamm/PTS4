@@ -1,19 +1,15 @@
-package nl.pts4.Models;
-
-import nl.pts4.PhotoConfigItem;
+package nl.pts4.models;
 
 /**
  * Created by Nekkyou on 16-3-2016.
  */
 public class OrderLineModel
 {
-    private PhotoConfigItem photo;
     private int amount;
+    private OrderModel order;
+    private PhotoConfigurationModel photoConfiguration;
 
-    public OrderLineModel(int photoID, int amount) {
-//        this.photo = photoController.getPhotoConfigItemById(photoID);
-        this.amount = amount;
-    }
+
 
     public int getAmount()
     {
@@ -25,18 +21,7 @@ public class OrderLineModel
         this.amount = amount;
     }
 
-    public PhotoConfigItem getPhoto()
-    {
-        return photo;
-    }
-
-    public void setPhoto(PhotoConfigItem photo)
-    {
-        this.photo = photo;
-    }
-
-    public void setPhoto(int photoID)
-    {
+    public void setPhoto(int photoID) {
 //        this.photo = photoController.getPhotoConfigItemById(photoID);
     }
 
