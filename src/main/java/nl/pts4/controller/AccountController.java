@@ -1,4 +1,4 @@
-package nl.pts4.controllers;
+package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
@@ -7,17 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Teun on 16-3-2016.
  */
 @Controller
-@RestController
 public class AccountController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model m) {
+    public String login(Model m){
+        m.addAttribute("title", "Login");
         return "login";
     }
 
@@ -25,6 +24,7 @@ public class AccountController {
     public String login(@RequestParam(value = "email", required = true) String email,
                         @RequestParam(value = "password", required = true) String password,
                         Model m) {
+        m.addAttribute("title", "Login");
         return "login";
     }
 
@@ -38,11 +38,12 @@ public class AccountController {
                            @RequestParam(value = "password", required = true) String password,
                            @RequestParam(value = "name", required = true) String name,
                            Model m) {
+        m.addAttribute("title", "Register");
         return "register";
     }
 
-    public boolean checkPassword(AccountModel account, String password) {
+    public static boolean checkPassword(AccountModel account, String password) {
+        if (account == null) return false;
         return SCryptUtil.check(password, account.getHash());
     }
-
 }

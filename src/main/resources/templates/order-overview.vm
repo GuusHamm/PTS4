@@ -1,8 +1,4 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/_login.css" />
-<head>
-    <title>Login</title>
-</head>
+#parse("header.vm")
 <body>
 <div class="container">
     <ul class="list-group">
@@ -12,4 +8,4 @@
     </ul>
 </div>
 </body>
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+#parse("footer.vm")
