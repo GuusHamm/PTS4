@@ -1,9 +1,4 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/_login.css" />
-<head>
-    <title>Login</title>
-</head>
-<body>
+#parse("header.vm")
 <div class="container">
     <form class="form-signin">
         <h2 class="form-signin-heading">Please sign in</h2>
@@ -22,5 +17,4 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
 </div>
-</body>
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+#parse("footer.vm")
