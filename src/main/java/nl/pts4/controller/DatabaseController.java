@@ -1,6 +1,5 @@
 package nl.pts4.controller;
 
-import nl.pts4.model.AccountModel;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -36,7 +35,7 @@ public class DatabaseController {
 	public boolean createAccount(String name, String email,String password){
 		JdbcTemplate insert = new JdbcTemplate(dataSource);
 
-		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)",new Object[] {UUID.randomUUID(),name,email,password});
+		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)",new Object[] {UUID.randomUUID(),name,email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p)});
 
 		return true;
 	}
