@@ -1,4 +1,6 @@
-package nl.pts4;
+package nl.pts4.Models;
+
+import nl.pts4.Account;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,16 +8,16 @@ import java.util.Date;
 /**
  * Created by Nekkyou on 16-3-2016.
  */
-public class Order
+public class OrderModel
 {
     private int id;
     private Date orderDate;
     //TODO replace with an account
     private Account account;
     //TODO replace with a PhotoConfiguration object (if we'll make one of those
-    private ArrayList<OrderLine> orderLines;
+    private ArrayList<OrderLineModel> orderLines;
 
-    public Order(int id, Date orderDate, int accountID, ArrayList<OrderLine> orderLines) {
+    public OrderModel(int id, Date orderDate, int accountID, ArrayList<OrderLineModel> orderLines) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
@@ -35,12 +37,12 @@ public class Order
         this.account = account;
     }
 
-    public ArrayList<OrderLine> getOrderLines()
+    public ArrayList<OrderLineModel> getOrderLines()
     {
         return orderLines;
     }
 
-    public void setOrderLines(ArrayList<OrderLine> orderLines)
+    public void setOrderLines(ArrayList<OrderLineModel> orderLines)
     {
         this.orderLines = orderLines;
     }
