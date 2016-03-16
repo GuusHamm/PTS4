@@ -30,7 +30,18 @@ public class AccountModel {
 	public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
 		this.uuid = uuid;
 		this.oAuthKey = oAuthKey;
-		this.oAuhtProvider = oAuhtProvider;
+		this.oAuhtProvider = oAuthProvider;
+		this.name = name;
+		this.email = email;
+		this.hash = hash;
+		this.active = active;
+		this.accountTypeEnum = accountTypeEnum;
+	}
+
+	public AccountModel(UUID uuid, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
+		this.uuid = uuid;
+		this.oAuthKey = "";
+		this.oAuhtProvider = null;
 		this.name = name;
 		this.email = email;
 		this.hash = hash;
