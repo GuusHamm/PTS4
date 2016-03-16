@@ -1,7 +1,8 @@
-package nl.pts4.controllers;
+package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
+import nl.pts4.model.AccountRestModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,14 @@ public class AccountController {
         return "register";
     }
 
+    @RequestMapping(value = "/register-rest", method = RequestMethod.POST)
+    public AccountRestModel registerRest(@RequestParam(value = "email", required = true) String email,
+                                         @RequestParam(value = "password", required = true) String password) {
+
+        return null;
+    }
+
     public boolean checkPassword(AccountModel account, String password) {
         return SCryptUtil.check(password, account.getHash());
     }
-
 }

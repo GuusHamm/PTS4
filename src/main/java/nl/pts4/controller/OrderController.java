@@ -1,15 +1,13 @@
-package nl.pts4.controllers;
+package nl.pts4.controller;
 
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.model.PhotoConfigurationModel;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by GuusHamm on 16-3-2016.
