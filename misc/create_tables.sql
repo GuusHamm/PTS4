@@ -14,7 +14,6 @@ CREATE TABLE account (
   name          TEXT        NOT NULL,
   email         TEXT UNIQUE NOT NULL,
   hash          TEXT,
-  salt          TEXT,
   active        BOOLEAN,
   type          TEXT
 );
