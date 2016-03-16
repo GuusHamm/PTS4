@@ -19,7 +19,8 @@ public class Order
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
-//        this.account = accountController.getAccount(accountID)
+        this.account = new Account();
+        //        this.account = accountController.getAccount(accountID)
         //TODO Get the orderlines correctly
         this.orderLines = orderLines;
     }
