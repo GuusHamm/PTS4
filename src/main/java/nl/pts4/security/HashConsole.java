@@ -5,6 +5,8 @@ import com.lambdaworks.crypto.SCryptUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,10 +29,21 @@ public class HashConsole {
         int iteration = Integer.parseInt(iterationsString);
 
         System.out.println("Result hash(es):");
+        List<String> hashes = new ArrayList<>(iteration);
         for (int i = 0; i < iteration; i++) {
             String hash = SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p);
+            hashes.add(hash);
             System.out.println(hash);
         }
+
+        System.out.println("Verifying...");
+        for (String hash : hashes) {
+            boolean s = SCryptUtil.check(password, hash);
+            if (!s) {
+                System.out.println("Failed the check");
+            }
+        }
+        System.out.println("Done");
     }
 
 }

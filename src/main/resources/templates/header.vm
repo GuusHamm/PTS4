@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/_login.css" />
 <head>
-    <title>$title!</title>
+    #if (! $title)
+        <title>Whoops! No title, we forgot :(</title>
+    #else
+        <title>$title</title>
+    #end
 </head>
 <body>
