@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/_login.css" />
+<head>
+    <title>Login</title>
+</head>
+<body>
+<div class="container">
+    <ul class="list-group">
+        #foreach( $order in $allOrders)
+            <li class="list-group-item">$order.getId()</li>
+        #end
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
