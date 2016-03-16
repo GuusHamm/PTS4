@@ -48,9 +48,8 @@ public class DatabaseController {
 	private void setDefaultTestDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/travis_ci_test");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/test");
 		dataSource.setUsername("postgres");
-		dataSource.setPassword("");
 
 		this.dataSource = dataSource;
 	}
