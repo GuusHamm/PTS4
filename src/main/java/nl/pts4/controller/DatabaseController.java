@@ -37,10 +37,10 @@ public class DatabaseController {
 
     private void setDefaultDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://guushamm.me:5432/pts4");
-        dataSource.setUsername("pts4");
-        dataSource.setPassword("JZlRvopu7Ue0lgeh8O1d");
+        dataSource.setDriverClassName(DatabaseCredentials.Driver);
+        dataSource.setUrl(DatabaseCredentials.Url);
+        dataSource.setUsername(DatabaseCredentials.Username);
+        dataSource.setPassword(DatabaseCredentials.Authentication);
 
         this.dataSource = dataSource;
     }
