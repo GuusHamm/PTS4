@@ -124,7 +124,7 @@ public class DatabaseController {
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        template.update("insert into user_cookie (id, account) values (?, ?)", user.getUuid(), cookieuuid);
+        template.update("insert into user_cookie (id, account) values (?, ?)", cookieuuid, user.getUuid());
     }
 
     public AccountModel getAccountByCookie(final String cookie) {

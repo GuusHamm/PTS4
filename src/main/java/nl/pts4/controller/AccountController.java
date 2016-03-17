@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -46,7 +47,7 @@ public class AccountController {
                            @RequestParam(value = "password", required = true) String password,
                            @RequestParam(value = "name", required = true) String name,
                            HttpServletResponse response,
-                           Model m) {
+                           Model m) throws IOException {
         AccountModel accountModel = DatabaseController.getInstance().createAccount(name, email, password);
         UUID id = UUID.randomUUID();
         Cookie session = new Cookie(AccountController.AccountCookie, id.toString());
@@ -56,7 +57,8 @@ public class AccountController {
         DatabaseController.getInstance().createUserCookie(accountModel, id);
 
         m.addAttribute("title", "Register");
-        return "register";
+        response.sendRedirect("/login");
+        return null;
     }
 
     public static boolean checkPassword(AccountModel account, String password) {
