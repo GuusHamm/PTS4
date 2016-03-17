@@ -19,7 +19,7 @@ import java.util.UUID;
 @RestController
 public class AccountRestController {
 
-    private final int WEEK = 60 * 60 * 24 * 7;
+    public static final int WEEK = 60 * 60 * 24 * 7;
 
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
     public AccountRestModel loginRest(@RequestParam(value = "email", required = true) String email,
@@ -27,10 +27,13 @@ public class AccountRestController {
                                       HttpServletResponse response) {
         AccountRestModel arm = new AccountRestModel(email, password);
         if (arm.isSuccess()) {
-            String id = UUID.randomUUID().toString();
-            Cookie session = new Cookie(AccountController.AccountCookie, id);
+            UUID id = UUID.randomUUID();
+            Cookie session = new Cookie(AccountController.AccountCookie, id.toString());
             session.setMaxAge(WEEK);
             response.addCookie(session);
+
+            AccountModel am = DatabaseController.getInstance().getAccount(email);
+            DatabaseController.getInstance().createUserCookie(am, id);
         }
         return arm;
     }

@@ -1,19 +1,72 @@
 #parse("header.vm")
 <body>
 <div class="container">
-    <form class="form-signin">
+    <div class="alert alert-danger hidden" role="alert" id="errorBox">
+        Email is already taken
+    </div>
+    <form class="form-signin" method="post">
         <h2 class="form-signin-heading">Please register</h2>
 
         <label for="inputName" class="sr-only">Name</label>
-        <input type="email" id="inputname" class="form-control" placeholder="Name" required autofocus="1">
+        <input type="text" id="inputName" name="name" class="form-control" placeholder="Name" required autofocus="1">
 
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="">
+        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required="">
 
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="">
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnRegister">Register</button>
     </form>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+<script type="text/javascript">
+    var btnRegister = $("#btnRegister");
+    function setFormInvalid(bInvalid) {
+        if (bInvalid) {
+            btnRegister.prop("disabled", "disabled");
+        }else{
+            btnRegister.prop("disabled", null);
+        }
+    }
+
+    var errorBox = $("#errorBox");
+    function showError(error) {
+        errorBox.removeClass('hidden');
+        errorBox.text(error);
+    }
+
+    function hideError() {
+        errorBox.addClass('hidden');
+    }
+
+    var socket = io("http://localhost:8081/");
+    socket.on("emailTaken", function(data) {
+        setFormInvalid(true);
+        showError("Email already taken");
+    });
+
+    socket.on("emailOk", function(data) {
+        setFormInvalid(false);
+        hideError();
+    });
+
+    var inputEmail = $("#inputEmail");
+    inputEmail.on('input', function () {
+        socket.emit('emailCheck', inputEmail.val());
+    })
+
+    var inputPassword = $("#inputPassword");
+    inputPassword.on('input', function() {
+       var pass = inputPassword.val();
+        if (pass.length < 6) {
+            setFormInvalid(true);
+            showError("Invalid password, minimal length must be at least 6 characters");
+        }else{
+            setFormInvalid(false);
+            hideError();
+        }
+    });
+</script>
 #parse("footer.vm")

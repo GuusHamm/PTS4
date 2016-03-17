@@ -23,10 +23,11 @@ public class SocketIORegistration {
         SocketIOServer server = new SocketIOServer(getConfiguration());
         server.addEventListener("emailCheck", String.class, (socketIOClient, email, ackRequest) -> {
             AccountModel am = DatabaseController.getInstance().getAccount(email);
-            if (am != null)
+            if (am != null) {
                 socketIOClient.sendEvent("emailTaken", email);
-            else
+            } else {
                 socketIOClient.sendEvent("emailOk", email);
+            }
         });
         server.start();
     }

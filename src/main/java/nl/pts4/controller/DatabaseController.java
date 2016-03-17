@@ -4,12 +4,16 @@ import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.security.HashConstants;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Date;
+import javax.xml.transform.Result;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -66,79 +70,103 @@ public class DatabaseController {
     public AccountModel getAccount(final UUID uuid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        AccountModel am = select.
-                queryForObject("SELECT oauthkey, oauthprovider, name, email, hash, active, type FROM account WHERE id = ?",
-                        new Object[]{uuid}
-                        , (resultSet, i) -> {
-                            String oauthkey = resultSet.getString("oauthkey");
-
-                            String oauthprovider = resultSet.getString("oauthprovider");
-                            AccountModel.OAuthProviderEnum oAuthProvider = null;
-                            if (oauthprovider != null)
-                                oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
-
-                            String name = resultSet.getString("name");
-                            String email = resultSet.getString("email");
-                            String hash = resultSet.getString("hash");
-                            boolean active = resultSet.getBoolean("active");
-                            String type = resultSet.getString("type");
-                            AccountModel.AccountTypeEnum accountTypeEnum = null;
-                            if (type != null)
-                                accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
-
-                            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum);
-                        });
-        return am;
+        try {
+            AccountModel am = select.
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type FROM account WHERE id = ?",
+                            new Object[]{uuid}
+                            , (resultSet, i) -> {
+                                return getAccountFromResultSet(resultSet);
+                            });
+            return am;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public AccountModel getAccount(final String email) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
-        AccountModel am = select.
-                queryForObject("SELECT id, oauthkey, oauthprovider, name, hash, active, type FROM account WHERE email = ?",
+        AccountModel am;
+        try {
+        am = select.
+                queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type FROM account WHERE email = ?",
                         new Object[]{email},
                         (resultSet, i) -> {
-                            UUID uuid = UUID.fromString(resultSet.getString("id"));
-                            String oauthkey = resultSet.getString("oauthkey");
-                            String oauthprovider = resultSet.getString("oauthprovider");
-
-                            AccountModel.OAuthProviderEnum oAuthProvider = null;
-                            if (oauthprovider != null)
-                                oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
-
-                            String name = resultSet.getString("name");
-                            String hash = resultSet.getString("hash");
-                            boolean active = resultSet.getBoolean("active");
-
-                            String type = resultSet.getString("type");
-                            AccountModel.AccountTypeEnum accountTypeEnum = null;
-                            if (type != null)
-                                accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
-
-                            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum);
-
+                            return getAccountFromResultSet(resultSet);
                         });
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
         return am;
     }
 
-	public ArrayList<OrderModel> getAllOrders() {
+	public List<OrderModel> getAllOrders() {
 		JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        // TODO Use list here plz (select.queryForList) ln: 127
-		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
-			ArrayList<OrderModel> orderModels1 = new ArrayList<>();
-
-			while(resultSet.next()){
-				int id = resultSet.getInt("id");
-				UUID accountid  = UUID.fromString(resultSet.getString("accountid"));
-				Date orderDate = resultSet.getDate("orderdate");
-
-				OrderModel orderModel = new OrderModel(id,orderDate,getAccount(accountid));
-
-				orderModels1.add(orderModel);
-			}
-
-			return orderModels1;
-		});
+        List<OrderModel> orderModels = select.queryForList("select id, accountid, orderdate FROM order_", OrderModel.class);
+//		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
+//			ArrayList<OrderModel> orderModels1 = new ArrayList<>();
+//
+//			while(resultSet.next()){
+//				int id = resultSet.getInt("id");
+//				UUID accountid  = UUID.fromString(resultSet.getString("accountid"));
+//				Date orderDate = resultSet.getDate("orderdate");
+//
+//				OrderModel orderModel = new OrderModel(id,orderDate,getAccount(accountid));
+//
+//				orderModels1.add(orderModel);
+//			}
+//
+//			return orderModels1;
+//		});
 		return orderModels;
 	}
+
+    public void createUserCookie(AccountModel user, UUID cookieuuid) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        template.update("insert into user_cookie (id, account) values (?, ?)", user.getUuid(), cookieuuid);
+    }
+
+    public AccountModel getAccountByCookie(final String cookie) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        try {
+            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{cookie}, new RowMapper<AccountModel>() {
+                @Override
+                public AccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
+                    return getAccountFromResultSet(resultSet);
+                }
+            });
+            return am;
+        }catch (EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    private AccountModel getAccountFromResultSet(ResultSet resultSet) {
+        try {
+            UUID uuid = UUID.fromString(resultSet.getString("id"));
+            String oauthkey = resultSet.getString("oauthkey");
+            String oauthprovider = resultSet.getString("oauthprovider");
+
+            AccountModel.OAuthProviderEnum oAuthProvider = null;
+            if (oauthprovider != null)
+                oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
+
+            String name = resultSet.getString("name");
+            String hash = resultSet.getString("hash");
+            boolean active = resultSet.getBoolean("active");
+
+            String type = resultSet.getString("type");
+            String email = resultSet.getString("email");
+            AccountModel.AccountTypeEnum accountTypeEnum = null;
+            if (type != null)
+                accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
+
+            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
