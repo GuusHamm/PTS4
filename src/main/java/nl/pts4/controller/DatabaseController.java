@@ -123,6 +123,7 @@ public class DatabaseController {
 	public ArrayList<OrderModel> getAllOrders() {
 		JdbcTemplate select = new JdbcTemplate(dataSource);
 
+        // TODO Use list here plz (select.queryForList) ln: 127
 		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
 			ArrayList<OrderModel> orderModels1 = new ArrayList<>();
 

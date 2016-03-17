@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AccountController {
 
+    public static final String AccountCookie = "ACC_SESSION";
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model m){
         m.addAttribute("title", "Login");
