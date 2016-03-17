@@ -24,7 +24,7 @@
         var loginBtn = $("#btnLogin");
         var errorBox = $("#errorBox");
         function setLogin(b) {
-            if (login) {
+            if (b) {
                 loginBtn.prop("disabled", "disabled");
                 loginBtn.text("Logging in...");
             }else{
@@ -33,30 +33,39 @@
             }
         }
 
+        function showError(error) {
+            errorBox.removeClass('hidden');
+            errorBox.text(error);
+        }
+
         $("#loginForm").submit(function (e){
+
+            e.preventDefault();
             setLogin(true);
 
-            var username = $("#inputEmail").val();
+            var email = $("#inputEmail").val();
             var password = $("#inputPassword").val();
 
             $.ajax({
                 "url": "login-rest",
                 "method": "post",
                 "data": {
-                    "username": username,
+                    "email": email,
                     "password": password
                 },
                 "success": function(data) {
-                    var result = jQuery.parseJSON(data);
-                    if (result.success) {
-                        e.preventDefault();
-                        errorBox.removeClass('hidden');
-                        errorBox.text("Incorrect username or password");
+                    var result = data;
+                    if (!result.success) {
+                        showError("Invalid username or password");
                         setLogin(false);
+                    }else{
+                        window.location.replace("/");
                     }
                 },
                 "error": function(data) {
                     console.log(data);
+                    setLogin(false);
+                    showError("Something went wrong with the result, try again later")
                 }
             });
         });

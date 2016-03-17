@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountRestController {
 
+    @RequestMapping(value = "/login-rest", method = RequestMethod.GET)
+    public AccountRestModel loginRestGet(@RequestParam(value = "email", required = true) String email,
+                                      @RequestParam(value = "password", required = true) String password) {
+        return new AccountRestModel(email, password);
+    }
+
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
     public AccountRestModel loginRest(@RequestParam(value = "email", required = true) String email,
                                       @RequestParam(value = "password", required = true) String password) {
