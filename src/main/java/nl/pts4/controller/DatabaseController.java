@@ -30,7 +30,7 @@ public class DatabaseController {
 
 	public static DatabaseController getTestInstance(){
 		instance = getInstance();
-		instance.setDefaultTestDataSource();
+		instance.setupDefaultTestDataSource();
 
 		return instance;
 	}
@@ -45,7 +45,7 @@ public class DatabaseController {
         this.dataSource = dataSource;
     }
 
-	private void setDefaultTestDataSource() {
+	private void setupDefaultTestDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/test");

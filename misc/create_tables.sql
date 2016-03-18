@@ -16,6 +16,7 @@ CREATE TABLE account (
   hash          TEXT,
   active        BOOLEAN DEFAULT TRUE ,
   type          TEXT DEFAULT 'customer'
+
 );
 
 CREATE TABLE childaccount (
