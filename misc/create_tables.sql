@@ -2,7 +2,7 @@ DROP TABLE user_cookie, account, childaccount, effect, item, order_, orderline, 
 
 CREATE TABLE user_cookie (
   id UUID PRIMARY KEY,
-  account INT NOT NULL
+  account UUID NOT NULL
 );
 
 CREATE TABLE school (

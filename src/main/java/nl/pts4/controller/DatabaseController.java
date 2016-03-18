@@ -11,8 +11,10 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.transform.Result;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,7 +64,7 @@ public class DatabaseController {
 		UUID accountUUID = UUID.randomUUID();
 
 		JdbcTemplate insert = new JdbcTemplate(dataSource);
-		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)",new Object[] {accountUUID,name,email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p)});
+		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p));
 
 		return getAccount(accountUUID);
 	}
@@ -102,22 +104,21 @@ public class DatabaseController {
 	public List<OrderModel> getAllOrders() {
 		JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        List<OrderModel> orderModels = select.queryForList("select id, accountid, orderdate FROM order_", OrderModel.class);
-//		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
-//			ArrayList<OrderModel> orderModels1 = new ArrayList<>();
-//
-//			while(resultSet.next()){
-//				int id = resultSet.getInt("id");
-//				UUID accountid  = UUID.fromString(resultSet.getString("accountid"));
-//				Date orderDate = resultSet.getDate("orderdate");
-//
-//				OrderModel orderModel = new OrderModel(id,orderDate,getAccount(accountid));
-//
-//				orderModels1.add(orderModel);
-//			}
-//
-//			return orderModels1;
-//		});
+		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
+			ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
+
+			while(resultSet.next()){
+				int id = resultSet.getInt("id");
+				UUID accountid  = UUID.fromString(resultSet.getString("accountid"));
+				Date orderDate = resultSet.getDate("orderdate");
+
+				OrderModel orderModel = new OrderModel(id,orderDate,getAccount(accountid));
+
+				orderModels1.add(orderModel);
+			}
+
+			return orderModels1;
+		});
 		return orderModels;
 	}
 
