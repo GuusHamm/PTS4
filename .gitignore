@@ -37,9 +37,6 @@
 # IntelliJ
 /out/
 
-# Database
-src/main/java/nl/pts4/controller/DatabaseCredentials.java
-
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 

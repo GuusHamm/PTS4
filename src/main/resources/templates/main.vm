@@ -1,0 +1,5 @@
+#parse("header.vm")
+<div class="container">
+    Test
+</div>
+#parse("footer.vm")
