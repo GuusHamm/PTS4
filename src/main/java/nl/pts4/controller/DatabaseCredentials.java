@@ -10,4 +10,7 @@ public class DatabaseCredentials {
     public static final String Username = "pts4";
     public static final String Authentication = "JZlRvopu7Ue0lgeh8O1d";
 
+    public static final String TestUrl = "jdbc:postgresql://localhost:5432/test";
+    public static final String TestUsername = "postgres";
+
 }

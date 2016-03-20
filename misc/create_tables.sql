@@ -1,4 +1,9 @@
-DROP TABLE account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
+DROP TABLE user_cookie, account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
+
+CREATE TABLE user_cookie (
+  id UUID PRIMARY KEY,
+  account UUID NOT NULL
+);
 
 CREATE TABLE school (
   id       SERIAL PRIMARY KEY,
@@ -84,6 +89,8 @@ CREATE TABLE orderline (
   orderid              INTEGER REFERENCES order_ (id),
   photoconfigurationid INTEGER REFERENCES photoconfiguration (id)
 );
+
+
 
 -- DUMMY DATA
 INSERT INTO account (id, name, email, active, hash)

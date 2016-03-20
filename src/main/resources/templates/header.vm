@@ -1,6 +1,6 @@
-<link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/_login.css" />
+<link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/_login.css"/>
 <head>
     #if (! $title)
         <title>Whoops! No title, we forgot :(</title>
@@ -9,3 +9,33 @@
     #end
 </head>
 <body>
+<div class="container">
+
+    <nav class="navbar navbar-dark bg-inverse">
+
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">Logo</a>
+
+        <!-- Links -->
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link 1</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link 2</a>
+            </li>
+            <li class="nav-item dropdown pull-xs-right">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    $user.name
+                </a>
+                <div class="dropdown-menu" aria-labelledby="Preview">
+                    <a class="dropdown-item" href="#">Dropdown Link 1</a>
+                    <a class="dropdown-item" href="#">Dropdown Link 2</a>
+                    <a class="dropdown-item" href="#">Dropdown Link 3</a>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+</div>
