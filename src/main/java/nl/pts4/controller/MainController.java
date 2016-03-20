@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
     @RequestMapping(value = "/")
-    public String main(Model m, @CookieValue(AccountController.AccountCookie) String account) {
+    public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
         m.addAttribute("title", "Fotowinkel");
         m.addAttribute("user", DatabaseController.getInstance().getAccountByCookie(account));
         return "main";

@@ -1,6 +1,7 @@
 <link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css"/>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/_login.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
     #if (! $title)
         <title>Whoops! No title, we forgot :(</title>
@@ -27,12 +28,20 @@
             <li class="nav-item dropdown pull-xs-right">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                    aria-expanded="false">
-                    $user.name
+                    #if (!$user)
+                        Account
+                    #else
+                        $user.name
+                    #end
                 </a>
                 <div class="dropdown-menu" aria-labelledby="Preview">
-                    <a class="dropdown-item" href="#">Dropdown Link 1</a>
-                    <a class="dropdown-item" href="#">Dropdown Link 2</a>
-                    <a class="dropdown-item" href="#">Dropdown Link 3</a>
+                    #if (!$user)
+                        <a class="dropdown-item" href="/login">Login</a>
+                        <a class="dropdown-item" href="/register">Register</a>
+                    #else
+                        <a class="dropdown-item" href="/settings">Settings</a>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    #end
                 </div>
             </li>
         </ul>

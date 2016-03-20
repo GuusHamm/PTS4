@@ -131,6 +131,7 @@ public class DatabaseController {
     }
 
     public AccountModel getAccountByCookie(final String cookie) {
+        if (cookie == null) return null;
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
