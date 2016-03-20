@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -58,7 +59,6 @@ public class AccountController {
     }
 
     public static boolean checkPassword(AccountModel account, String password) {
-        if (account == null) return false;
-        return SCryptUtil.check(password, account.getHash());
+        return account != null && SCryptUtil.check(password, account.getHash());
     }
 }

@@ -1,10 +1,7 @@
 package nl.pts4.socket;
 
-import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.Configuration;
-import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.listener.DataListener;
 import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.FotowinkelSpringApplication;
 import nl.pts4.controller.DatabaseController;
@@ -40,15 +37,6 @@ public class SocketIORegistration {
                 socketIOClient.sendEvent("emailOk", email);
             }
         });
-        // Login attempts by users
-        server.addEventListener("loginAttempt", SocketLoginAttempt.class, (socketIOClient, socketLoginAttempt, ackRequest) -> {
-            AccountModel am = DatabaseController.getInstance().getAccount(socketLoginAttempt.getEmail());
-            boolean loginSuccesful = SCryptUtil.check(socketLoginAttempt.getPassword(), am.getHash());
-            socketIOClient.sendEvent("loginAttempt", loginSuccesful);
-            if (!loginSuccesful)
-                Logger.getLogger(FotowinkelSpringApplication.class).info("Insuccesful login attempt at account " + socketLoginAttempt.getEmail());
-
-        });
     }
 
     private Configuration getConfiguration() {
@@ -57,5 +45,4 @@ public class SocketIORegistration {
         config.setPort(8081);
         return config;
     }
-
 }

@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import javax.xml.transform.Result;
 import java.sql.Date;
@@ -53,9 +55,9 @@ public class DatabaseController {
 
 	private void setDefaultTestDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/test");
-		dataSource.setUsername("postgres");
+		dataSource.setDriverClassName(DatabaseCredentials.Driver);
+		dataSource.setUrl(DatabaseCredentials.TestUrl);
+		dataSource.setUsername(DatabaseCredentials.TestUsername);
 
 		this.dataSource = dataSource;
 	}
@@ -132,7 +134,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{cookie}, new RowMapper<AccountModel>() {
+            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
                 @Override
                 public AccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
                     return getAccountFromResultSet(resultSet);
@@ -142,6 +144,10 @@ public class DatabaseController {
         }catch (EmptyResultDataAccessException e){
             return null;
         }
+    }
+
+    public AccountModel getAccountByCookie(Cookie cookie) {
+        return getAccountByCookie(cookie.getValue());
     }
 
     private AccountModel getAccountFromResultSet(ResultSet resultSet) {

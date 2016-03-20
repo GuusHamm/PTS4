@@ -19,7 +19,6 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnRegister">Register</button>
     </form>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
 <script type="text/javascript">
     var btnRegister = $("#btnRegister");
