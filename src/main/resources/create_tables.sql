@@ -21,7 +21,7 @@ CREATE TABLE account (
   hash          TEXT,
   active        BOOLEAN DEFAULT TRUE ,
   type          TEXT DEFAULT 'customer'
-
+    CHECK (hash IS NOT NULL OR account.oauthkey IS NOT NULL )
 );
 
 CREATE TABLE childaccount (
