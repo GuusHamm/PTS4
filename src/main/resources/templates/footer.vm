@@ -1,3 +1,8 @@
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Fotowinkel footer, die zo mooi is.</span>
+    </div>
+</footer>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"></script>

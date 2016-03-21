@@ -6,7 +6,6 @@ package nl.pts4.model;
 public class OrderLineModel
 {
     private int amount;
-    private OrderModel order;
     private PhotoConfigurationModel photoConfiguration;
 
 
@@ -25,4 +24,8 @@ public class OrderLineModel
 //        this.photo = photoController.getPhotoConfigItemById(photoID);
     }
 
+    public PhotoConfigurationModel getPhotoConfiguration()
+    {
+        return photoConfiguration;
+    }
 }

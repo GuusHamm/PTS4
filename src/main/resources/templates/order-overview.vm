@@ -2,7 +2,7 @@
 <div class="container">
     <ul class="list-group">
         #foreach( $order in $allOrders)
-            <li class="list-group-item">$order.getId()</li>
+            <li class="list-group-item">$order</li>
         #end
     </ul>
 </div>
