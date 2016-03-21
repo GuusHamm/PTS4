@@ -19,54 +19,57 @@
         </div>
         <button id="btnLogin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
     <script type="text/javascript">
-        var loginBtn = $("#btnLogin");
-        var errorBox = $("#errorBox");
-        function setLogin(b) {
-            if (b) {
-                loginBtn.prop("disabled", "disabled");
-                loginBtn.text("Logging in...");
-            }else{
-                loginBtn.prop("disabled", null);
-                loginBtn.text("Login");
-            }
-        }
-
-        function showError(error) {
-            errorBox.removeClass('hidden');
-            errorBox.text(error);
-        }
-
-        $("#loginForm").submit(function (e){
-
-            e.preventDefault();
-            setLogin(true);
-
-            var email = $("#inputEmail").val();
-            var password = $("#inputPassword").val();
-
-            $.ajax({
-                "url": "login-rest",
-                "method": "post",
-                "data": {
-                    "email": email,
-                    "password": password
-                },
-                "success": function(data) {
-                    var result = data;
-                    if (!result.success) {
-                        showError("Invalid username or password");
-                        setLogin(false);
-                    }else{
-                        window.location.replace("/");
-                    }
-                },
-                "error": function(data) {
-                    console.log(data);
-                    setLogin(false);
-                    showError("Something went wrong with the result, try again later")
+        $(document).ready(function() {
+            var loginBtn = $("#btnLogin");
+            var errorBox = $("#errorBox");
+            function setLogin(b) {
+                if (b) {
+                    loginBtn.prop("disabled", "disabled");
+                    loginBtn.text("Logging in...");
+                }else{
+                    loginBtn.prop("disabled", null);
+                    loginBtn.text("Login");
                 }
+            }
+
+            function showError(error) {
+                errorBox.removeClass('hidden');
+                errorBox.text(error);
+            }
+
+            var socket = io("http://localhost:8081/");
+            $("#loginForm").submit(function (e) {
+
+                e.preventDefault();
+                setLogin(true);
+
+                var email = $("#inputEmail").val();
+                var password = $("#inputPassword").val();
+
+                $.ajax({
+                    "url": "login-rest",
+                    "method": "post",
+                    "data": {
+                        "email": email,
+                        "password": password
+                    },
+                    "success": function (data) {
+                        var result = data;
+                        if (!result.success) {
+                            showError("Invalid username or password");
+                            setLogin(false);
+                        } else {
+                            window.location.replace("/");
+                        }
+                    },
+                    "error": function (data) {
+                        console.log(data);
+                        setLogin(false);
+                        showError("Something went wrong with the result, try again later")
+                    }
+                });
             });
         });
     </script>

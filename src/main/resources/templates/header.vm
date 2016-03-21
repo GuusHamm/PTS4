@@ -1,6 +1,7 @@
-<link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/_login.css" />
+<link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/_login.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
     #if (! $title)
         <title>Whoops! No title, we forgot :(</title>
@@ -9,3 +10,41 @@
     #end
 </head>
 <body>
+<div class="container">
+
+    <nav class="navbar navbar-dark bg-inverse">
+
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">Logo</a>
+
+        <!-- Links -->
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link 1</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link 2</a>
+            </li>
+            <li class="nav-item dropdown pull-xs-right">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    #if (!$user)
+                        Account
+                    #else
+                        $user.name
+                    #end
+                </a>
+                <div class="dropdown-menu" aria-labelledby="Preview">
+                    #if (!$user)
+                        <a class="dropdown-item" href="/login">Login</a>
+                        <a class="dropdown-item" href="/register">Register</a>
+                    #else
+                        <a class="dropdown-item" href="/settings">Settings</a>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    #end
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+</div>
