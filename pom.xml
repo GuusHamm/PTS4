@@ -11,6 +11,7 @@
 	<name>fotowinkel-spring</name>
 	<description>PTS4 project</description>
 
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

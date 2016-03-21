@@ -1,4 +1,4 @@
-DROP TABLE account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
+-- DROP TABLE account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
 
 CREATE TABLE school (
   id       SERIAL PRIMARY KEY,

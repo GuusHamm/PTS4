@@ -9,5 +9,7 @@ public class DatabaseCredentials {
     public static final String Url = "jdbc:postgresql://guushamm.me:5432/pts4";
     public static final String Username = "pts4";
     public static final String Authentication = "JZlRvopu7Ue0lgeh8O1d";
+    public static final String TestUrl = "jdbc:postgresql://guushamm.me:5432/pts4test";
+    public static final String TestUsername = "pts4test";
 
 }

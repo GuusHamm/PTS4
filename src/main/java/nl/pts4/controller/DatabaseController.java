@@ -1,16 +1,19 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
-import nl.pts4.model.AccountModel;
-import nl.pts4.model.OrderModel;
-import nl.pts4.security.HashConstants;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import javax.sql.DataSource;
+import nl.pts4.model.AccountModel;
+import nl.pts4.model.OrderModel;
+import nl.pts4.security.HashConstants;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
  * Created by GuusHamm on 16-3-2016.
@@ -46,13 +49,27 @@ public class DatabaseController {
     }
 
 	private void setupDefaultTestDataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/test");
-		dataSource.setUsername("postgres");
+    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+    dataSource.setDriverClassName(DatabaseCredentials.Driver);
+    dataSource.setUrl(DatabaseCredentials.TestUrl);
+    dataSource.setUsername(DatabaseCredentials.TestUsername);
+    dataSource.setPassword(DatabaseCredentials.Authentication);
 
 		this.dataSource = dataSource;
 	}
+
+  public boolean createTables(){
+    Resource resource = new ClassPathResource("create_tables.sql");
+    ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+    databasePopulator.addScript(resource);
+    try {
+      databasePopulator.populate(dataSource.getConnection());
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+  }
 
 	public AccountModel createAccount(String name, String email,String password){
 		UUID accountUUID = UUID.randomUUID();
