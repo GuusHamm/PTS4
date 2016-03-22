@@ -1,7 +1,7 @@
 DROP TABLE user_cookie, account, childaccount, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
 
 CREATE TABLE user_cookie (
-  id UUID PRIMARY KEY,
+  id      UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
   account UUID NOT NULL
 );
 
@@ -13,29 +13,29 @@ CREATE TABLE school (
 );
 
 CREATE TABLE account (
-  id            UUID PRIMARY KEY,
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
   oauthkey      TEXT UNIQUE,
   oauthprovider TEXT,
   name          TEXT        NOT NULL,
   email         TEXT UNIQUE NOT NULL,
   hash          TEXT,
-  active        BOOLEAN DEFAULT TRUE ,
-  type          TEXT DEFAULT 'customer'
-
+  active        BOOLEAN          DEFAULT TRUE ,
+  type          TEXT             DEFAULT 'customer'
+    CHECK (hash IS NOT NULL OR account.oauthkey IS NOT NULL )
 );
 
 CREATE TABLE childaccount (
-  id                UUID PRIMARY KEY,
+  id               UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
   identifiernumber INTEGER NOT NULL,
-  uniquecode        TEXT    NOT NULL UNIQUE,
-  parentid          UUID REFERENCES account (id)
+  uniquecode       TEXT    NOT NULL UNIQUE,
+  parentid         UUID REFERENCES account (id)
 );
 
 
 CREATE TABLE photo (
-  id             UUID PRIMARY KEY,
+  id             UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
   price          INTEGER NOT NULL,
-  capturedate    INTEGER NOT NULL,
+  capturedate    DATE    NOT NULL,
   pathtophoto    TEXT    NOT NULL,
   photographerid UUID REFERENCES account (id),
   childid        UUID REFERENCES childaccount (id),
@@ -90,9 +90,7 @@ CREATE TABLE orderline (
   photoconfigurationid INTEGER REFERENCES photoconfiguration (id)
 );
 
-
-
--- DUMMY DATA
+-- ACCOUNT MOCK DATA
 INSERT INTO account (id, name, email, active, hash)
 VALUES ('602a4264-cf81-4ad3-aa6e-13cf8578320f', 'Norma Jones', 'njones0@amazonaws.com', TRUE, '$s0$e0801$UXWHFDS7gqHNjtlnbXG0fg==$MC6JpBSIMH5phCn6ypeWsFw3/e4jZuy5lqOUmjvx2Yc=');
 INSERT INTO account (id, name, email, active, hash)
@@ -115,6 +113,7 @@ INSERT INTO account (id, name, email, active, type, hash)
 VALUES
   ('c525a7c3-717f-4e6e-8e4d-9c31e09f03ad', 'Kathryn Marshall', 'kmarshall9@barnesandnoble.com', TRUE, 'photographer', '$s0$e0801$GiLRxbgkcOf64oe0J60eww==$kg5gx7gGyoIU9BvO6HD3zzYhhDdugn6p8O/X5TLLrTs=');
 
+-- CHILD ACCOUNT MOCK DATA
 INSERT INTO childaccount (id,parentid, identifiernumber, uniquecode)
 VALUES ('48e7b3ae-c2bc-46b2-a845-1a0d9ad156b4', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '3541437', '3541437563728116');
 INSERT INTO childaccount (id,parentid, identifiernumber, uniquecode)
@@ -122,6 +121,25 @@ VALUES ('9e7b523f-bbf1-4050-aea3-07ba87473568', '602a4264-cf81-4ad3-aa6e-13cf857
 INSERT INTO childaccount (id,parentid, identifiernumber, uniquecode)
 VALUES ('1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '30259182', '30259188914242');
 
+-- ORDER MOCK DATA
 INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', '602a4264-cf81-4ad3-aa6e-13cf8578320f');
 INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', '11cbd1da-5358-4789-95e5-891fe72c34e6');
 INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', 'e208462f-411f-4222-b957-0bddabe0fb99');
+
+-- ITEM MOCK DATA
+INSERT INTO item (price, type, description, thumbnailpath)
+VALUES (5, 'mug', 'A mug that can hold liquids', '/mug');
+INSERT INTO item (price, type, description, thumbnailpath)
+VALUES (10, 'mousemat', 'A mousemat', '/mousemat');
+
+INSERT INTO public.school (id, name, location, country)
+VALUES (1, 'Basisschool Bert', 'Eindhoven', 'Netherlands');
+
+INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, schoolid)
+VALUES ('b34e0301-cf1a-4145-8b78-9e13a8633657', 5, '2016-03-2 14:50:34.372000', '/photo1',
+        'c525a7c3-717f-4e6e-8e4d-9c31e09f03ad', '1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', 1);
+
+INSERT INTO public.photoconfiguration (effectid, itemid, photoid)
+VALUES (NULL, 1, 'b34e0301-cf1a-4145-8b78-9e13a8633657');
+
+INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);

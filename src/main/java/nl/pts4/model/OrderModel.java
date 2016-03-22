@@ -1,6 +1,9 @@
 package nl.pts4.model;
 
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Nekkyou on 16-3-2016.
@@ -11,12 +14,22 @@ public class OrderModel
     private Date orderDate;
     //TODO replace with an account
     private AccountModel account;
+    private List<OrderLineModel> orderLineModels;
 
     public OrderModel(int id,Date orderDate, AccountModel account) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
         this.account = account;
+        this.orderLineModels = new ArrayList<>();
+    }
+
+    public OrderModel(int id,Date orderDate, AccountModel account, List<OrderLineModel> orderLineModels) {
+        this.id = id;
+        this.orderDate = orderDate;
+        //TODO account pakken met Account id
+        this.account = account;
+        this.orderLineModels = orderLineModels;
     }
 
     public AccountModel getAccount()
@@ -47,5 +60,32 @@ public class OrderModel
     public void setId(int id)
     {
         this.id = id;
+    }
+
+    public List<OrderLineModel> getOrderLineModels()
+    {
+        return orderLineModels;
+    }
+
+    public void setOrderLineModels(List<OrderLineModel> orderLineModels)
+    {
+        this.orderLineModels = orderLineModels;
+    }
+
+    @Override
+    public String toString() {
+        String outputString = "";
+
+        outputString += account.getName() + "; " + orderDate + "; " + id;
+
+        if (orderLineModels != null) {
+            int totalPrice = 0;
+            for (OrderLineModel olm : orderLineModels) {
+               totalPrice += olm.getPhotoConfiguration().getTotalPrice();
+            }
+            outputString += "; Total Price: " + totalPrice;
+        }
+
+        return outputString;
     }
 }

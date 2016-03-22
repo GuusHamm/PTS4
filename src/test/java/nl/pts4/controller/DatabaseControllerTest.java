@@ -15,7 +15,6 @@ public class DatabaseControllerTest {
 
 	@Test
 	public void testGetAllOrders() throws Exception {
-		databaseController.getAllOrders();
-
+		DatabaseController.getInstance().getAllOrders();
 	}
 }

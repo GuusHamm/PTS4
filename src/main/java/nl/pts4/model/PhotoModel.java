@@ -25,4 +25,9 @@ public class PhotoModel {
 		this.captureDate = captureDate;
 		this.filePath = filePath;
 	}
+
+	public int getPrice()
+	{
+		return price;
+	}
 }

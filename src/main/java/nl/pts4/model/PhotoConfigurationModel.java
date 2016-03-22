@@ -15,4 +15,13 @@ public class PhotoConfigurationModel {
 		this.item = item;
 		this.photo = photo;
 	}
+
+	public int getTotalPrice() {
+		int returnValue = 0;
+		//TODO add the price of the itemModel and the EffectModel, not yet implemented as of yet.
+		returnValue += photo.getPrice();
+
+
+		return returnValue;
+	}
 }

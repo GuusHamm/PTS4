@@ -22,8 +22,9 @@ public class OrderController {
 	@RequestMapping(value = "/order-overview")
 	public String orderView(Model m) {
 		ArrayList<OrderModel> orders = new ArrayList<>();
+		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 //		Add some items to the orders list to show them
-
+		m.addAttribute("title", "Order overview");
 		m.addAttribute("allOrders", orders);
 
 		return "order-overview";
