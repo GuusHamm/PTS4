@@ -1,6 +1,5 @@
 package nl.pts4.controller;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.AccountRestModel;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.text.CollationKey;
 import java.util.UUID;
 
 /**
@@ -22,8 +20,8 @@ public class AccountRestController {
     public static final int WEEK = 60 * 60 * 24 * 7;
 
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
-    public AccountRestModel loginRest(@RequestParam(value = "email", required = true) String email,
-                                      @RequestParam(value = "password", required = true) String password,
+    public AccountRestModel loginRest(@RequestParam(value = "email") String email,
+                                      @RequestParam(value = "password") String password,
                                       HttpServletResponse response) {
         AccountRestModel arm = new AccountRestModel(email, password);
         if (arm.isSuccess()) {

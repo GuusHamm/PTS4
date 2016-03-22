@@ -1,31 +1,25 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
-import javax.sql.DataSource;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.security.HashConstants;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
  * Created by GuusHamm on 16-3-2016.
@@ -43,12 +37,12 @@ public class DatabaseController {
         return instance;
     }
 
-	public static DatabaseController getTestInstance(){
-		instance = getInstance();
-		instance.setupDefaultTestDataSource();
+    public static DatabaseController getTestInstance() {
+        instance = getInstance();
+        instance.setupDefaultTestDataSource();
 
-		return instance;
-	}
+        return instance;
+    }
 
     private void setDefaultDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -60,37 +54,37 @@ public class DatabaseController {
         this.dataSource = dataSource;
     }
 
-	private void setupDefaultTestDataSource() {
-    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName(DatabaseCredentials.Driver);
-    dataSource.setUrl(DatabaseCredentials.TestUrl);
-    dataSource.setUsername(DatabaseCredentials.TestUsername);
-    dataSource.setPassword(DatabaseCredentials.Authentication);
+    private void setupDefaultTestDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(DatabaseCredentials.Driver);
+        dataSource.setUrl(DatabaseCredentials.TestUrl);
+        dataSource.setUsername(DatabaseCredentials.TestUsername);
+        dataSource.setPassword(DatabaseCredentials.Authentication);
 
-		this.dataSource = dataSource;
-	}
-
-  public boolean createTables(){
-    Resource resource = new ClassPathResource("create_tables.sql");
-    ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-    databasePopulator.addScript(resource);
-    try {
-      databasePopulator.populate(dataSource.getConnection());
-    } catch (SQLException e) {
-      e.printStackTrace();
-      return false;
+        this.dataSource = dataSource;
     }
-    return true;
-  }
 
-	public AccountModel createAccount(String name, String email,String password){
-		UUID accountUUID = UUID.randomUUID();
+    public boolean createTables() {
+        Resource resource = new ClassPathResource("create_tables.sql");
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.addScript(resource);
+        try {
+            databasePopulator.populate(dataSource.getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
-		JdbcTemplate insert = new JdbcTemplate(dataSource);
-		insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p));
+    public AccountModel createAccount(String name, String email, String password) {
+        UUID accountUUID = UUID.randomUUID();
 
-		return getAccount(accountUUID);
-	}
+        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p));
+
+        return getAccount(accountUUID);
+    }
 
     public AccountModel getAccount(final UUID uuid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
@@ -103,7 +97,7 @@ public class DatabaseController {
                                 return getAccountFromResultSet(resultSet);
                             });
             return am;
-        }catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
@@ -112,43 +106,43 @@ public class DatabaseController {
         JdbcTemplate select = new JdbcTemplate(dataSource);
         AccountModel am;
         try {
-        am = select.
-                queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type FROM account WHERE email = ?",
-                        new Object[]{email},
-                        (resultSet, i) -> {
-                            return getAccountFromResultSet(resultSet);
-                        });
-        }catch(EmptyResultDataAccessException e) {
+            am = select.
+                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type FROM account WHERE email = ?",
+                            new Object[]{email},
+                            (resultSet, i) -> {
+                                return getAccountFromResultSet(resultSet);
+                            });
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
         return am;
     }
 
-	public List<OrderModel> getAllOrders() {
-		JdbcTemplate select = new JdbcTemplate(dataSource);
+    public List<OrderModel> getAllOrders() {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
 
-		ArrayList<OrderModel> orderModels = select.queryForObject("select id, accountid,orderdate FROM order_;", (resultSet, i) -> {
-			ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
+        ArrayList<OrderModel> orderModels = select.queryForObject("SELECT id, accountid,orderdate FROM order_;", (resultSet, i) -> {
+            ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
 
-			while(resultSet.next()){
-				int id = resultSet.getInt("id");
-				UUID accountid  = UUID.fromString(resultSet.getString("accountid"));
-				Date orderDate = resultSet.getDate("orderdate");
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                UUID accountid = UUID.fromString(resultSet.getString("accountid"));
+                Date orderDate = resultSet.getDate("orderdate");
 
-				OrderModel orderModel = new OrderModel(id,orderDate,getAccount(accountid));
+                OrderModel orderModel = new OrderModel(id, orderDate, getAccount(accountid));
 
-				orderModels1.add(orderModel);
-			}
+                orderModels1.add(orderModel);
+            }
 
-			return orderModels1;
-		});
-		return orderModels;
-	}
+            return orderModels1;
+        });
+        return orderModels;
+    }
 
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        template.update("insert into user_cookie (id, account) values (?, ?)", cookieuuid, user.getUuid());
+        template.update("INSERT INTO user_cookie (id, account) VALUES (?, ?)", cookieuuid, user.getUuid());
     }
 
     public AccountModel getAccountByCookie(final String cookie) {
@@ -163,7 +157,7 @@ public class DatabaseController {
                 }
             });
             return am;
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
@@ -193,7 +187,7 @@ public class DatabaseController {
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
             return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

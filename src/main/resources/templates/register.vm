@@ -42,32 +42,51 @@
         }
 
         var socket = io("http://localhost:8081/");
-        socket.on("emailTaken", function(data) {
-            setFormInvalid(true);
-            showError("Email already taken");
-        });
-
-        socket.on("emailOk", function(data) {
-            setFormInvalid(false);
-            hideError();
+        socket.on("email", function(data) {
+            setFormInvalid(data);
+            if (data) {
+                showError("Email already taken");
+                return;
+            }
+            validatePassword();
         });
 
         var inputEmail = $("#inputEmail");
         inputEmail.on('input', function () {
-            socket.emit('emailCheck', inputEmail.val());
+            validateEmail();
         })
 
         var inputPassword = $("#inputPassword");
         inputPassword.on('input', function() {
+            validatePassword();
+        });
+
+        function validate() {
+            validatePassword();
+            validateEmail();
+        }
+
+        function validateEmail() {
+            socket.emit('emailCheck', inputEmail.val());
+        }
+
+        function validatePassword() {
             var pass = inputPassword.val();
+            if (pass.indexOf(' ') != -1) {
+                setFormInvalid(true);
+                showError("Password can't contain any of the following characters: ' '");
+                return;
+            }
             if (pass.length < 6) {
                 setFormInvalid(true);
                 showError("Invalid password, minimal length must be at least 6 characters");
-            }else{
-                setFormInvalid(false);
-                hideError();
+                return;
             }
-        });
+            setFormInvalid(false);
+            hideError();
+            validateEmail();
+        }
+        validate();
     });
 </script>
 #parse("footer.vm")
