@@ -1,6 +1,7 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.security.HashConstants;
@@ -159,6 +160,19 @@ public class DatabaseController {
             return am;
         } catch (EmptyResultDataAccessException e) {
             return null;
+        }
+    }
+
+    public boolean deleteAccount(UUID uuid) throws InvalidArgumentException {
+        if (uuid == null) throw new InvalidArgumentException(new String[] {"Invalid UUID"});
+
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        try {
+            int i = template.queryForInt("DELETE FROM account a WHERE a.id = ?", uuid);
+            return i == 1;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
         }
     }
 

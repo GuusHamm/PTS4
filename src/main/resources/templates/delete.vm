@@ -1,0 +1,17 @@
+#parse("header.vm")
+<div class="container">
+    <form class="form-signin" id="loginForm" method="post">
+        #if ($error)
+            $error
+        #end
+        <h2 class="form-signin-heading">Delete Account</h2>
+
+        <label for="inputPassword" class="sr-only">Account password</label>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="" autocomplete="off">
+
+        <input type="hidden" id="CSRF" name="CSRF" value="${CSRF}">
+
+        <button id="btnLogin" class="btn btn-lg btn-warning btn-block" type="submit">Delete</button>
+    </form>
+</div>
+#parse("footer.vm")
