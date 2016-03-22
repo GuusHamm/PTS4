@@ -139,7 +139,7 @@ INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, c
 VALUES ('b34e0301-cf1a-4145-8b78-9e13a8633657', 5, '2016-03-2 14:50:34.372000', '/photo1',
         'c525a7c3-717f-4e6e-8e4d-9c31e09f03ad', '1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', 1);
 
-INSERT INTO public.photoconfiguration (id, effectid, itemid, photoid)
-VALUES (1, NULL, 1, 'b34e0301-cf1a-4145-8b78-9e13a8633657');
+INSERT INTO public.photoconfiguration (effectid, itemid, photoid)
+VALUES (NULL, 1, 'b34e0301-cf1a-4145-8b78-9e13a8633657');
 
-INSERT INTO public.orderline (id, orderid, photoconfigurationid) VALUES (1, 1, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);
