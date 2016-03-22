@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class MainController {
 
+    public static final String TITLE_ATTRIBUTE = "title";
+
     @RequestMapping(value = "/")
     public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
-        m.addAttribute("title", "Fotowinkel");
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
         m.addAttribute("user", DatabaseController.getInstance().getAccountByCookie(account));
         return "main";
     }

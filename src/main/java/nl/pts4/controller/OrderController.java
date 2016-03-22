@@ -24,7 +24,7 @@ public class OrderController {
 		ArrayList<OrderModel> orders = new ArrayList<>();
 		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 //		Add some items to the orders list to show them
-		m.addAttribute("title", "Order overview");
+		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
 		m.addAttribute("allOrders", orders);
 
 		return "order-overview";
