@@ -14,7 +14,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.servlet.http.Cookie;
 import javax.sql.DataSource;
 import java.io.File;
-import java.security.InvalidParameterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -97,6 +96,12 @@ public class DatabaseController {
         ac.setName(name);
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE account SET name = ? WHERE id = ?", name, ac.getUuid()) == 1;
+    }
+
+    public boolean setAccountHash(AccountModel ac, String hash) {
+        ac.setHash(hash);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUuid()) == 1;
     }
 
     public AccountModel getAccount(final UUID uuid) {

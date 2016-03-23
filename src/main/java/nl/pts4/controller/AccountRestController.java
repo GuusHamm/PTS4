@@ -1,8 +1,10 @@
 package nl.pts4.controller;
 
+import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.AccountRestModel;
 import nl.pts4.model.SettingsRestModel;
+import nl.pts4.security.HashConstants;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -40,7 +42,7 @@ public class AccountRestController {
                                           @RequestParam(value = "email") String email,
                                           @RequestParam(value = "oldPassword") String oldPassword,
                                           @RequestParam(value = "newPassword") String newPassword,
-                                          @RequestParam(value = "newPasswordRepeat") String newPasswordRequest,
+                                          @RequestParam(value = "newPasswordRepeat") String newPasswordRepeat,
                                           @CookieValue(value = AccountController.AccountCookie) String accountCookie) {
         AccountModel ac = DatabaseController.getInstance().getAccountByCookie(accountCookie);
         boolean hitChange = false, passwordInvalid = false;
@@ -54,9 +56,16 @@ public class AccountRestController {
 
         if (!passwordInvalid) {
 
-            if (!Objects.equals(oldPassword, "") && !Objects.equals(newPassword, "") && !Objects.equals(newPasswordRequest, "")) {
-                hitChange = true;
-                message = "Password changed successfully";
+            if (!Objects.equals(oldPassword, "") && !Objects.equals(newPassword, "") && !Objects.equals(newPasswordRepeat, "")) {
+                if (!Objects.equals(newPassword, newPasswordRepeat)) {
+                    hitChange = false;
+                    message = "Passwords not equal";
+                }else{
+                    String hash = SCryptUtil.scrypt(newPassword, HashConstants.N, HashConstants.r, HashConstants.p);
+                    DatabaseController.getInstance().setAccountHash(ac, hash);
+                    hitChange = true;
+                    message = "Password has been changed";
+                }
             }
 
             if (!Objects.equals(name, "") && !Objects.equals(ac.getName(), name)) {
@@ -72,8 +81,7 @@ public class AccountRestController {
             }
         }
 
-        SettingsRestModel srm = new SettingsRestModel(hitChange, message);
-        return srm;
+        return new SettingsRestModel(hitChange, message);
     }
 
 }

@@ -26,15 +26,46 @@
             <label for="inputNewPassword_repeat">Repeat new password</label>
             <input type="password" class="form-control" id="inputNewPassword_repeat" placeholder="Repeat new password" autocomplete="off">
         </fieldset>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
     </form>
-    <script>
+    <script type="text/javascript">
         $(document).ready(function () {
+
+            $("#inputNewPassword").on('input', function() {
+               checkPasswordMatch();
+            });
+            $("#inputNewPassword_repeat").on('input', function() {
+               checkPasswordMatch();
+            });
+
+            function checkPasswordMatch() {
+                var newPassword = $("#inputNewPassword").val();
+                var newPasswordRepeat = $("#inputNewPassword_repeat").val();
+                var same = newPassword === newPasswordRepeat;
+                if (!same) {
+                    showError("Passwords are not equal");
+                }else{
+                    removeError();
+                }
+            }
 
             var alertBox = $("#alertBox");
             var successBox = $("#successBox");
+            var submitBtn = $("#submitButton");
+
+            function removeError() {
+                alertBox.addClass("hidden");
+                submitBtn.prop("disabled", null);
+            }
 
             function showError(error) {
+                successBox.addClass("hidden");
+                alertBox.removeClass("hidden");
+                alertBox.text(error);
+                submitBtn.prop("disabled", "disabled");
+            }
+
+            function showErrorNoDisable(error) {
                 successBox.addClass("hidden");
                 alertBox.removeClass("hidden");
                 alertBox.text(error);
@@ -44,6 +75,7 @@
                 alertBox.addClass("hidden");
                 successBox.removeClass("hidden");
                 successBox.text(success);
+                submitBtn.prop("disabled", null);
             }
 
             $("#settingsForm").submit(function (e) {
@@ -74,12 +106,12 @@
                         if (data.result) {
                             showSuccess(message);
                         } else {
-                            showError(message);
+                            showErrorNoDisable(message);
                         }
 
                     },
                     "error": function (data) {
-                        showError(data)
+                        showErrorNoDisable(data)
                     }
                 });
             });
