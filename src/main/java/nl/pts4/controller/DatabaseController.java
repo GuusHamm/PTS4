@@ -172,7 +172,7 @@ public class DatabaseController {
             Date orderDate = (Date) row.get("orderdate");
 
             AccountModel am;
-            Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findAny();
+            Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findFirst();
             if (op.isPresent()) {
                 am = op.get();
             }else{
@@ -189,7 +189,7 @@ public class DatabaseController {
             int photoConfigurationId = (int) row.get("photoconfigurationid");
             OrderLineModel olm = new OrderLineModel(id, orderid, photoConfigurationId);
 
-            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findAny();
+            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findFirst();
             if (o.isPresent()) {
                 o.get().getOrderLineModels().add(olm);
             }

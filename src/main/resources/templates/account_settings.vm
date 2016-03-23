@@ -1,21 +1,38 @@
 #parse("header.vm")
 <div class="container">
-    <form class="form-signin" id="loginForm" method="post">
-        <fieldset class="form-group">
-            <label for="inputName">#springMessageText("name", "Name")</label>
-            <input type="text" class="form-control" id="inputName" placeholder=#springMessageText("name", "Name")>
+    <div id="successBox" class="alert alert-success hidden" role="alert">
 
-            <label for="inputEmail">#springMessageText("Email", "Email")</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" placeholder=#springMessageText("email", "Email")>
+    </div>
+    <div id="alertBox" class="alert alert-danger hidden" role="alert">
+
+    </div>
+
+    <form class="form-signin" id="settingsForm" method="post">
+        <fieldset class="form-group">
+            <label for="inputName">#springMessageText("newName", "New name")</label>
+            <input type="text" class="form-control" id="inputName" value="${user.name}" placeholder="#springMessageText("name", "Name")">
+
+            <label for="inputEmail">#springMessageText("newEmail", "New email")</label>
+            <input type="email" class="form-control" id="inputEmail" value="${user.email}" placeholder="#springMessageText("email", "Email")">
         </fieldset>
         <fieldset class="form-group">
-            <label for="inputEmail">#springMessageText("email", "Email")</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" placeholder=#springMessageText("email", "Email")>
+            <h2 class="form-signin-heading">#springMessageText("changePassword", "Change password")</h2>
+            <label for="inputoldpassword">#springMessageText("oldPassword", "Old password")</label>
+            <input type="password" class="form-control" id="inputOldPassword" placeholder="#springMessageText("oldPassword", "Old password")" autocomplete="off">
+
+            <label for="inputNewPassword">#springMessageText("newPassword", "New password")</label>
+            <input type="password" class="form-control" id="inputNewPassword" placeholder="#springMessageText("newPassword", "New password")" autocomplete="off">
+
+            <label for="inputNewPassword_repeat">#springMessageText("newPasswordRepeat", "Repeat new password")</label>
+            <input type="password" class="form-control" id="inputNewPassword_repeat" placeholder="#springMessageText("newPasswordRepeat", "Repeat new password")" autocomplete="off">
         </fieldset>
-        <button type="submit" class="btn btn-primary">#springMessageText("submit","Submit")</button>
+        <button type="submit" class="btn btn-warning" id="submitButton">#springMessageText("submit", "Submit")</button>
     </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var inputEmail = $("#inputEmail");
+            var originalEmail = inputEmail.val();
 
             $("#inputNewPassword").on('input', function() {
                checkPasswordMatch();
@@ -29,7 +46,7 @@
                 var newPasswordRepeat = $("#inputNewPassword_repeat").val();
                 var same = newPassword === newPasswordRepeat;
                 if (!same) {
-                    showError(#springMessageText("error.password.match", "The passwords do not match"));
+                    showError("#springMessageText("error.password.match", "The passwords do not match")");
                 }else{
                     removeError();
                 }
@@ -63,6 +80,22 @@
                 successBox.text(success);
                 submitBtn.prop("disabled", null);
             }
+
+            var socket = io("http://localhost:8081/");
+            socket.on("email", function(data) {
+                if (data) {
+                    showError("#springMessageText("error.email.taken", "Email is already taken")");
+                    return;
+                }
+                removeError();
+            });
+
+
+            inputEmail.on('input', function () {
+                if (originalEmail !== inputEmail.val()) {
+                    socket.emit('emailCheck', inputEmail.val());
+                }
+            });
 
             $("#settingsForm").submit(function (e) {
 

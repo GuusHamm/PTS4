@@ -45,7 +45,7 @@
         socket.on("email", function(data) {
             setFormInvalid(data);
             if (data) {
-                showError(#springMessageText("error.email.taken", "Email is already taken"));
+                showError("#springMessageText("error.email.taken", "Email is already taken")");
                 return;
             }
             validatePassword();
@@ -74,12 +74,12 @@
             var pass = inputPassword.val();
             if (pass.indexOf(' ') != -1) {
                 setFormInvalid(true);
-                showError(#springMessageText("error.password.characters", "Password can't contain any of the following characters: ' '");
+                showError("#springMessageText("error.password.characters", "Password can't contain any of the following characters: ' '")");
                 return;
             }
             if (pass.length < 6) {
                 setFormInvalid(true);
-                showError(#springMessageText("error.password.length", "Invalid password, minimal length must be at least 6 characters");
+                showError("#springMessageText("error.password.length", "Invalid password, minimal length must be at least 6 characters")");
                 return;
             }
             setFormInvalid(false);
