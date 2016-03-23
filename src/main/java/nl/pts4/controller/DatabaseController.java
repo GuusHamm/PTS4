@@ -1,7 +1,6 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.security.HashConstants;
@@ -15,6 +14,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.servlet.http.Cookie;
 import javax.sql.DataSource;
+import java.security.InvalidParameterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -163,14 +163,14 @@ public class DatabaseController {
         }
     }
 
-    public boolean deleteAccount(UUID uuid) throws InvalidArgumentException {
-        if (uuid == null) throw new InvalidArgumentException(new String[] {"Invalid UUID"});
+    public boolean deleteAccount(UUID uuid) throws InvalidParameterException {
+        if (uuid == null) throw new InvalidParameterException("Invalid UUID");
 
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            int i = template.queryForInt("DELETE FROM account a WHERE a.id = ?", uuid);
-            return i == 1;
+            template.update("DELETE FROM account a WHERE a.id = ?", uuid);
+            return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
         }
