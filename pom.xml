@@ -78,6 +78,12 @@
 			<version>1.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>1.8</version>
+		</dependency>
+
 
 	</dependencies>
 	

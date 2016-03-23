@@ -78,6 +78,11 @@ public class AccountController {
         return "delete";
     }
 
+    /**
+     * Checks if date is later than date + CSRFExpiry
+     * @param date Date to check
+     * @return True if date is earlier than date + CSRFExpiry, false otherwise
+     */
     private boolean isExpired(Date date) {
         Date now = new Date();
         Date expiry = new Date(date.getTime());
@@ -143,6 +148,12 @@ public class AccountController {
         return "login";
     }
 
+    /**
+     * Checks the password for a account
+     * @param account Account to check the password for
+     * @param password Password to check against
+     * @return True if password is correct, false otherwise
+     */
     public static boolean checkPassword(AccountModel account, String password) {
         return !(password == null || Objects.equals(password, "") || account == null) && SCryptUtil.check(password, account.getHash());
     }
