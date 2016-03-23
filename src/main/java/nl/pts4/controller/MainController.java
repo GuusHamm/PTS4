@@ -1,5 +1,6 @@
 package nl.pts4.controller;
 
+import nl.pts4.model.AccountModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -16,7 +17,8 @@ public class MainController {
     @RequestMapping(value = "/")
     public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
-        m.addAttribute("user", DatabaseController.getInstance().getAccountByCookie(account));
+        AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
+        m.addAttribute("user", am);
         return "main";
     }
 

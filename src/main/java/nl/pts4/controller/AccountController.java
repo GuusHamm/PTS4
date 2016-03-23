@@ -28,6 +28,8 @@ import java.util.Map;
 public class AccountController {
 
     public static final String AccountCookie = "ACC_SESSION";
+    public static final String AccountModelKey = "user";
+
     public static final String CSRFToken = "CSRF";
     public static final int CSRFExpiry = 60 * 10; // 10 Minutes
 
@@ -114,6 +116,15 @@ public class AccountController {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
         response.sendRedirect("/login");
         return null;
+    }
+
+    @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
+    public String accountSettingsGet(@CookieValue(value = AccountCookie) String account,
+                                     Model m) {
+        AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
+        m.addAttribute(AccountController.AccountModelKey, accountModel);
+        return "account_settings";
     }
 
     public static boolean checkPassword(AccountModel account, String password) {

@@ -1,18 +1,73 @@
 #parse("header.vm")
-<form class="form-signin" id="loginForm">
-    <h2 class="form-signin-heading">Please sign in</h2>
-
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
-
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
-
-    <div class="checkbox">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
+<div class="container">
+    <div class="alert alert-danger hidden" role="alert" id="errorBox">
+        Invalid login
     </div>
-    <button id="btnLogin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-</form>
+    <form class="form-signin" id="loginForm" method="post">
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required=""
+               autofocus="">
+
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password"
+               required="">
+
+        <button id="btnLogin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var loginBtn = $("#btnLogin");
+        var errorBox = $("#errorBox");
+
+        function setLogin(b) {
+            if (b) {
+                loginBtn.prop("disabled", "disabled");
+                loginBtn.text("Logging in...");
+            } else {
+                loginBtn.prop("disabled", null);
+                loginBtn.text("Login");
+            }
+        }
+
+        function showError(error) {
+            errorBox.removeClass('hidden');
+            errorBox.text(error);
+        }
+
+        $("#loginForm").submit(function (e) {
+
+            e.preventDefault();
+            setLogin(true);
+
+            var email = $("#inputEmail").val();
+            var password = $("#inputPassword").val();
+
+            $.ajax({
+                "url": "login-rest",
+                "method": "post",
+                "data": {
+                    "email": email,
+                    "password": password
+                },
+                "success": function (data) {
+                    var result = data;
+                    if (!result.success) {
+                        showError("Invalid username or password");
+                        setLogin(false);
+                    } else {
+                        window.location.replace("/");
+                    }
+                },
+                "error": function (data) {
+                    console.log(data);
+                    setLogin(false);
+                    showError("Something went wrong with the result, try again later")
+                }
+            });
+        });
+    });
+</script>
 #parse("footer.vm")
