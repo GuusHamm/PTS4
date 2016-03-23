@@ -1,89 +1,18 @@
 #parse("header.vm")
 <div class="container">
-    <div id="successBox" class="alert alert-success hidden" role="alert">
-        <strong>Well done!</strong> You successfully read this important alert message.
-    </div>
-    <div id="alertBox" class="alert alert-danger hidden" role="alert">
-        <strong>Oh snap!</strong> Change a few things up and try submitting again.
-    </div>
-
-    <form class="form-signin" id="settingsForm" method="post">
+    <form class="form-signin" id="loginForm" method="post">
         <fieldset class="form-group">
-            <label for="inputName">Name</label>
-            <input type="text" class="form-control" id="inputName" value="${user.name}" placeholder="Name">
+            <label for="inputName">#springMessageText("name", "Name")</label>
+            <input type="text" class="form-control" id="inputName" placeholder=#springMessageText("name", "Name")>
 
-            <label for="inputEmail">Email address</label>
-            <input type="email" class="form-control" id="inputEmail" value="${user.email}" placeholder="Email Address">
+            <label for="inputEmail">#springMessageText("Email", "Email")</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder=#springMessageText("email", "Email")>
         </fieldset>
         <fieldset class="form-group">
-            <h2 class="form-signin-heading">Change password</h2>
-            <label for="inputoldpassword">Old password</label>
-            <input type="password" class="form-control" id="inputOldPassword" placeholder="Old password" autocomplete="off">
-
-            <label for="inputNewPassword">New password</label>
-            <input type="password" class="form-control" id="inputNewPassword" placeholder="New password" autocomplete="off">
-
-            <label for="inputNewPassword_repeat">Repeat new password</label>
-            <input type="password" class="form-control" id="inputNewPassword_repeat" placeholder="Repeat new password" autocomplete="off">
+            <label for="inputEmail">#springMessageText("email", "Email")</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder=#springMessageText("email", "Email")>
         </fieldset>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">#springMessageText("submit","Submit")</button>
     </form>
-    <script>
-        $(document).ready(function () {
-
-            var alertBox = $("#alertBox");
-            var successBox = $("#successBox");
-
-            function showError(error) {
-                successBox.addClass("hidden");
-                alertBox.removeClass("hidden");
-                alertBox.text(error);
-            }
-
-            function showSuccess(success) {
-                alertBox.addClass("hidden");
-                successBox.removeClass("hidden");
-                successBox.text(success);
-            }
-
-            $("#settingsForm").submit(function (e) {
-
-                e.preventDefault();
-
-                var name = $("#inputName").val();
-                var email = $("#inputEmail").val();
-                var oldPassword = $("#inputOldPassword").val();
-                var newPassword = $("#inputNewPassword").val();
-                var newPasswordRepeat = $("#inputNewPassword_repeat").val();
-
-                var data = {
-                    "name": name,
-                    "email": email,
-                    "oldPassword": oldPassword,
-                    "newPassword": newPassword,
-                    "newPasswordRepeat": newPasswordRepeat
-                };
-
-                $.ajax({
-                    "url": "/settings-rest",
-                    "method": "post",
-                    "data": data,
-                    "success": function (data) {
-                        var result = data.result;
-                        var message = data.message;
-                        if (data.result) {
-                            showSuccess(message);
-                        } else {
-                            showError(message);
-                        }
-
-                    },
-                    "error": function (data) {
-                        showError(data)
-                    }
-                });
-            });
-        });
-    </script>
 </div>
 #parse("footer.vm")
