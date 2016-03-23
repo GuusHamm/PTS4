@@ -16,10 +16,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by GuusHamm on 16-3-2016.
@@ -196,6 +193,24 @@ public class DatabaseController {
         return orderlineModels;
     }
 
+    public List<PhotoModel> getPhotos() {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p");
+        List<PhotoModel> photoModels = new ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            UUID uuid = (UUID) row.get("id");
+            UUID photographerid = (UUID) row.get("photographerid");
+            UUID childid = (UUID) row.get("childid");
+            int schoolid = (int) row.get("schoolid");
+            int price = Integer.parseInt(String.valueOf(row.get("price")));
+            Date captureDate = (Date) row.get("capturedate");
+            String path = String.valueOf(row.get("pathtophoto"));
+            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path));
+        }
+        return photoModels;
+    }
+
     public PhotoConfigurationModel getPhotoConfigurationModelById(int photoConfigid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
@@ -225,7 +240,7 @@ public class DatabaseController {
                 ItemModel itemModel = new ItemModel();
 
                 File photoFile = new File(pathtophoto);
-                PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, photoFile);
+                PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
                 photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
 
             } while (resultSet.next());

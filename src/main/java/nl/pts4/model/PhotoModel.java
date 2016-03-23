@@ -1,6 +1,5 @@
 package nl.pts4.model;
 
-import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,9 +13,9 @@ public class PhotoModel {
 	private SchoolModel school;
 	private int price;
 	private Date captureDate;
-	private File filePath;
+	private String filePath;
 
-	public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, int price, Date captureDate, File filePath) {
+	public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, int price, Date captureDate, String filePath) {
 		this.uuid = uuid;
 		this.photographer = photographer;
 		this.child = child;
@@ -31,5 +30,27 @@ public class PhotoModel {
 		return price;
 	}
 
+	public UUID getUuid() {
+		return uuid;
+	}
 
+	public AccountModel getPhotographer() {
+		return photographer;
+	}
+
+	public AccountModel getChild() {
+		return child;
+	}
+
+	public SchoolModel getSchool() {
+		return school;
+	}
+
+	public Date getCaptureDate() {
+		return captureDate;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
 }
