@@ -1,5 +1,7 @@
 package nl.pts4.model;
 
+import nl.pts4.controller.DatabaseController;
+
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +23,7 @@ public class OrderModel
         this.orderDate = orderDate;
         //TODO account pakken met Account id
         this.account = account;
-        this.orderLineModels = new ArrayList<>();
+        this.orderLineModels = DatabaseController.getInstance().getAllOrderLinesByOrderId(id);
     }
 
     public OrderModel(int id,Date orderDate, AccountModel account, List<OrderLineModel> orderLineModels) {

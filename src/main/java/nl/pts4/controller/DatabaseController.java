@@ -1,8 +1,7 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
-import nl.pts4.model.AccountModel;
-import nl.pts4.model.OrderModel;
+import nl.pts4.model.*;
 import nl.pts4.security.HashConstants;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -14,6 +13,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.servlet.http.Cookie;
 import javax.sql.DataSource;
+import java.io.File;
+import java.security.InvalidParameterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -124,7 +125,12 @@ public class DatabaseController {
         ArrayList<OrderModel> orderModels = select.queryForObject("SELECT id, accountid,orderdate FROM order_;", (resultSet, i) -> {
             ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
 
-            while (resultSet.next()) {
+            //This code is to make sure we don't crash when not getting any rows.
+            if (resultSet == null) {
+                return null;
+            }
+
+            do {
                 int id = resultSet.getInt("id");
                 UUID accountid = UUID.fromString(resultSet.getString("accountid"));
                 Date orderDate = resultSet.getDate("orderdate");
@@ -132,12 +138,87 @@ public class DatabaseController {
                 OrderModel orderModel = new OrderModel(id, orderDate, getAccount(accountid));
 
                 orderModels1.add(orderModel);
-            }
+            } while (resultSet.next());
 
             return orderModels1;
         });
         return orderModels;
     }
+
+    public List<OrderLineModel> getAllOrderLinesByOrderId(int orderID) {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+        ArrayList<OrderLineModel> orderlineModels;
+        try {
+            orderlineModels = select.queryForObject("SELECT id, orderid,photoconfigurationid FROM orderline WHERE orderid =" + orderID + ";", (resultSet, i) -> {
+                ArrayList<OrderLineModel> orderLineModels1 = new ArrayList<OrderLineModel>(i);
+
+                //This code is to make sure we don't crash when not getting any rows.
+                if (resultSet == null) {
+                    return null;
+                }
+
+                do {
+                    int id = resultSet.getInt("id");
+                    int orderid = resultSet.getInt("orderid");
+                    int photoconfigItemId = resultSet.getInt("photoconfigurationid");
+
+                    OrderLineModel orderLineModel = new OrderLineModel(id, orderid, photoconfigItemId);
+
+                    orderLineModels1.add(orderLineModel);
+                } while (resultSet.next());
+
+                return orderLineModels1;
+            });
+        } catch (EmptyResultDataAccessException erdae) {
+            System.out.println("DatabaseController - Empty Result data; Order id: " + orderID);
+            return null;
+        }
+
+
+
+        return orderlineModels;
+    }
+
+    public PhotoConfigurationModel getPhotoConfigurationModelById(int photoConfigid) {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid FROM photoconfiguration pc, photo p WHERE p.id = pc.photoid AND pc.id = " + photoConfigid + ";", (resultSet, i) -> {
+            ArrayList<PhotoConfigurationModel> photoConfigurationModels1 = new ArrayList<>(i);
+
+            //This code is to make sure we don't crash when not getting any rows.
+            if (resultSet == null) {
+                return null;
+            }
+
+            do {
+                int id = resultSet.getInt("id");
+                int effectid = resultSet.getInt("effectid");
+                int itemid = resultSet.getInt("itemid");
+                UUID photoid = UUID.fromString(resultSet.getString("photoid"));
+                int price = resultSet.getInt("price");
+                Date capturedate = resultSet.getDate("capturedate");
+                String pathtophoto = resultSet.getString("pathtophoto");
+                UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
+                UUID childid = UUID.fromString(resultSet.getString("childid"));
+                int schoolid = resultSet.getInt("schoolid");
+
+                //TODO get this with a database query
+                SchoolModel schoolModel = new SchoolModel();
+                EffectModel effectModel = new EffectModel();
+                ItemModel itemModel = new ItemModel();
+
+                File photoFile = new File(pathtophoto);
+                PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, photoFile);
+                photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
+
+            } while (resultSet.next());
+
+            return photoConfigurationModels1;
+        });
+        return photoConfigurationModels.get(0);
+    }
+
+
 
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
