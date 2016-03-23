@@ -1,29 +1,9 @@
 #parse("header.vm")
-<script src="http://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <div class="container">
-    <div class="table-responsive">
-        <table class="table table-striped sortable">
-            <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Order Date</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Price</th>
-            </tr>
-            </thead>
-            <tbody>
-                #foreach( $order in $allOrders)
-                    <tr>
-                        <td>$order.id</td>
-                        <td>$order.orderDate</td>
-                        <td>$order.account.name</td>
-                        <td>$order.account.email</td>
-                        <td>$order.getTotalPrice()</td>
-                    </tr>
-                #end
-            </tbody>
-        </table>
-    </div>
+    <ul class="list-group">
+        #foreach( $order in $allOrders)
+            <li class="list-group-item">$order</li>
+        #end
+    </ul>
 </div>
 #parse("footer.vm")

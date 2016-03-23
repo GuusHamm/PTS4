@@ -251,6 +251,17 @@ public class DatabaseController {
     }
 
 
+    public void insertRating(UUID accountId, UUID photoId, int points) {
+        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        //Make sure points is in range.
+        if (points < 1 || points > 5) {
+            return;
+        }
+
+        insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
+    }
+
+
 
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
