@@ -1,8 +1,5 @@
 package nl.pts4.model;
 
-import nl.pts4.controller.DatabaseController;
-
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +19,7 @@ public class OrderModel
         this.id = id;
         this.orderDate = orderDate;
         this.account = account;
-        this.orderLineModels = DatabaseController.getInstance().getAllOrderLinesByOrderId(id);
+        this.orderLineModels = new ArrayList<>();
     }
 
     public OrderModel(int id,Date orderDate, AccountModel account, List<OrderLineModel> orderLineModels) {
@@ -76,7 +73,9 @@ public class OrderModel
 
     public int getTotalPrice() {
         int totalPrice = 0;
+        if (orderLineModels == null) return 0;
         for (OrderLineModel olm : orderLineModels) {
+            if (olm.getPhotoConfiguration() == null) continue;
             totalPrice += olm.getPhotoConfiguration().getTotalPrice();
         }
         return totalPrice;

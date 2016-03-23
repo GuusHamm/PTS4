@@ -17,6 +17,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by GuusHamm on 16-3-2016.
@@ -133,29 +134,67 @@ public class DatabaseController {
         return am;
     }
 
+//    public List<OrderModel> getAllOrders() {
+//        JdbcTemplate select = new JdbcTemplate(dataSource);
+//
+//        ArrayList<OrderModel> orderModels = select.queryForObject("SELECT id, accountid,orderdate FROM order_;", (resultSet, i) -> {
+//            ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
+//
+//            //This code is to make sure we don't crash when not getting any rows.
+//            if (resultSet == null) {
+//                return null;
+//            }
+//
+//            do {
+//                int id = resultSet.getInt("id");
+//                UUID accountid = UUID.fromString(resultSet.getString("accountid"));
+//                Date orderDate = resultSet.getDate("orderdate");
+//
+//                OrderModel orderModel = new OrderModel(id, orderDate, getAccount(accountid));
+//
+//                orderModels1.add(orderModel);
+//            } while (resultSet.next());
+//
+//            return orderModels1;
+//        });
+//        return orderModels;
+//    }
+
     public List<OrderModel> getAllOrders() {
-        JdbcTemplate select = new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        ArrayList<OrderModel> orderModels = select.queryForObject("SELECT id, accountid,orderdate FROM order_;", (resultSet, i) -> {
-            ArrayList<OrderModel> orderModels1 = new ArrayList<>(i);
+        List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o");
+        List<AccountModel> accountModels = new ArrayList<>(rows.size());
+        List<OrderModel> orderModels = new ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            UUID account = (UUID) row.get("accountid");
+            Date orderDate = (Date) row.get("orderdate");
 
-            //This code is to make sure we don't crash when not getting any rows.
-            if (resultSet == null) {
-                return null;
+            AccountModel am;
+            Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findAny();
+            if (op.isPresent()) {
+                am = op.get();
+            }else{
+                am = getAccount(account);
+                accountModels.add(am);
             }
+            orderModels.add(new OrderModel(id, orderDate, am));
+        }
 
-            do {
-                int id = resultSet.getInt("id");
-                UUID accountid = UUID.fromString(resultSet.getString("accountid"));
-                Date orderDate = resultSet.getDate("orderdate");
+        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            int orderid = (int) row.get("orderid");
+            int photoConfigurationId = (int) row.get("photoconfigurationid");
+            OrderLineModel olm = new OrderLineModel(id, orderid, photoConfigurationId);
 
-                OrderModel orderModel = new OrderModel(id, orderDate, getAccount(accountid));
+            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findAny();
+            if (o.isPresent()) {
+                o.get().getOrderLineModels().add(olm);
+            }
+        }
 
-                orderModels1.add(orderModel);
-            } while (resultSet.next());
-
-            return orderModels1;
-        });
         return orderModels;
     }
 
@@ -184,7 +223,7 @@ public class DatabaseController {
                 return orderLineModels1;
             });
         } catch (EmptyResultDataAccessException erdae) {
-            System.out.println("DatabaseController - Empty Result data; Order id: " + orderID);
+            Logger.getLogger(getClass().getName()).info("Empty result data; order id: " + orderID);
             return null;
         }
 
