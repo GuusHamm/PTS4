@@ -21,7 +21,6 @@ public class OrderModel
     public OrderModel(int id,Date orderDate, AccountModel account) {
         this.id = id;
         this.orderDate = orderDate;
-        //TODO account pakken met Account id
         this.account = account;
         this.orderLineModels = DatabaseController.getInstance().getAllOrderLinesByOrderId(id);
     }
@@ -76,29 +75,10 @@ public class OrderModel
 
 
     public int getTotalPrice() {
-        if (orderLineModels != null) {
-            int totalPrice = 0;
-            for (OrderLineModel olm : orderLineModels) {
-                totalPrice += olm.getPhotoConfiguration().getTotalPrice();
-            }
-            return totalPrice;
+        int totalPrice = 0;
+        for (OrderLineModel olm : orderLineModels) {
+            totalPrice += olm.getPhotoConfiguration().getTotalPrice();
         }
-        return 0;
-    }
-    @Override
-    public String toString() {
-        String outputString = "";
-
-        outputString += "Account id: " + id + "; " + account.getName() + "; " + orderDate;
-
-        if (orderLineModels != null) {
-            int totalPrice = 0;
-            for (OrderLineModel olm : orderLineModels) {
-               totalPrice += olm.getPhotoConfiguration().getTotalPrice();
-            }
-            outputString += "; Total Price: " + totalPrice;
-        }
-
-        return outputString;
+        return totalPrice;
     }
 }

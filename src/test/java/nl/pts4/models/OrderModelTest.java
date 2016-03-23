@@ -19,10 +19,13 @@ import java.util.UUID;
 public class OrderModelTest
 {
     private OrderModel orderModel;
+    private OrderModel orderModel1;
+    private OrderModel orderModel2;
     private int orderID;
     private Date orderDate;
     private AccountModel account;
     private ArrayList<OrderLineModel> orderLines;
+    private ArrayList<OrderLineModel> orderLines1;
 
     @Before
     public void setUp() throws Exception
@@ -31,8 +34,12 @@ public class OrderModelTest
         orderDate = new Date(1,1, 1970);
         account = new AccountModel(UUID.randomUUID(), "Tim", "t.daniels@student.fontys.nl", SCryptUtil.scrypt("hallo", HashConstants.N, HashConstants.r, HashConstants.p), true, AccountModel.AccountTypeEnum.customer);
         orderLines = new ArrayList<>();
-        //I'm using 1 here because we use the ID of the account to get the actual account
+        orderLines1 = new ArrayList<>();
         orderModel = new OrderModel(orderID, orderDate, account);
+        orderModel1 = new OrderModel(orderID, orderDate, account, orderLines);
+        orderLines1.add(new OrderLineModel(1, 1, 1));
+        orderModel2 = new OrderModel(orderID, orderDate, account, orderLines1);
+
     }
 
     @Test
@@ -81,6 +88,27 @@ public class OrderModelTest
         orderModel.setId(orderID2);
 
         Assert.assertTrue("OrderModel - OrderModel id does not match", orderModel.getId() == orderID2);
-
     }
+
+    @Test
+    public void testGetOrderLineModels() throws Exception
+    {
+        Assert.assertTrue("OrderModel - OrderModel order lines does not match", orderModel1.getOrderLineModels().equals(orderLines));
+    }
+
+    @Test
+    public void testSetOrderLineModels() throws Exception {
+        ArrayList<OrderLineModel> newOrderLines = new ArrayList<>();
+
+        Assert.assertFalse("OrderModel - OrderModel set order lines fails", orderModel.getOrderLineModels().equals(newOrderLines));
+        orderModel.setOrderLineModels(newOrderLines);
+        Assert.assertTrue("OrderModel - OrderModel set order lines fails", orderModel.getOrderLineModels().equals(newOrderLines));
+    }
+
+    @Test
+    public void testGetTotalPrice() throws Exception {
+        Assert.assertTrue("OrderModel - OrderModel total price does not match expected price", orderModel1.getTotalPrice() == 0);
+        Assert.assertTrue("OrderModel - OrderModel total price does not match expected price", orderModel2.getTotalPrice() == 5);
+    }
+
 }

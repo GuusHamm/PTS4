@@ -54,7 +54,7 @@
         var inputEmail = $("#inputEmail");
         inputEmail.on('input', function () {
             validateEmail();
-        })
+        });
 
         var inputPassword = $("#inputPassword");
         inputPassword.on('input', function() {

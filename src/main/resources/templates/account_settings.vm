@@ -14,5 +14,94 @@
         </fieldset>
         <button type="submit" class="btn btn-primary">#springMessageText("submit","Submit")</button>
     </form>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#inputNewPassword").on('input', function() {
+               checkPasswordMatch();
+            });
+            $("#inputNewPassword_repeat").on('input', function() {
+               checkPasswordMatch();
+            });
+
+            function checkPasswordMatch() {
+                var newPassword = $("#inputNewPassword").val();
+                var newPasswordRepeat = $("#inputNewPassword_repeat").val();
+                var same = newPassword === newPasswordRepeat;
+                if (!same) {
+                    showError(#springMessageText("error.password.match", "The passwords do not match"));
+                }else{
+                    removeError();
+                }
+            }
+
+            var alertBox = $("#alertBox");
+            var successBox = $("#successBox");
+            var submitBtn = $("#submitButton");
+
+            function removeError() {
+                alertBox.addClass("hidden");
+                submitBtn.prop("disabled", null);
+            }
+
+            function showError(error) {
+                successBox.addClass("hidden");
+                alertBox.removeClass("hidden");
+                alertBox.text(error);
+                submitBtn.prop("disabled", "disabled");
+            }
+
+            function showErrorNoDisable(error) {
+                successBox.addClass("hidden");
+                alertBox.removeClass("hidden");
+                alertBox.text(error);
+            }
+
+            function showSuccess(success) {
+                alertBox.addClass("hidden");
+                successBox.removeClass("hidden");
+                successBox.text(success);
+                submitBtn.prop("disabled", null);
+            }
+
+            $("#settingsForm").submit(function (e) {
+
+                e.preventDefault();
+
+                var name = $("#inputName").val();
+                var email = $("#inputEmail").val();
+                var oldPassword = $("#inputOldPassword").val();
+                var newPassword = $("#inputNewPassword").val();
+                var newPasswordRepeat = $("#inputNewPassword_repeat").val();
+
+                var data = {
+                    "name": name,
+                    "email": email,
+                    "oldPassword": oldPassword,
+                    "newPassword": newPassword,
+                    "newPasswordRepeat": newPasswordRepeat
+                };
+
+                $.ajax({
+                    "url": "/settings-rest",
+                    "method": "post",
+                    "data": data,
+                    "success": function (data) {
+                        var result = data.result;
+                        var message = data.message;
+                        if (data.result) {
+                            showSuccess(message);
+                        } else {
+                            showErrorNoDisable(message);
+                        }
+
+                    },
+                    "error": function (data) {
+                        showErrorNoDisable(data)
+                    }
+                });
+            });
+        });
+    </script>
 </div>
 #parse("footer.vm")
