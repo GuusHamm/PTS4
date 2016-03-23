@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Teun on 16-3-2016.
@@ -90,14 +91,6 @@ public class AccountController {
         return "login";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(@RequestParam(value = "email", required = true) String email,
-                        @RequestParam(value = "password", required = true) String password,
-                        Model m) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
-        return "login";
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register(Model m) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
@@ -114,6 +107,10 @@ public class AccountController {
         String sanitizedEmail = Jsoup.clean(email, Whitelist.simpleText());
         String sanitizedPassword = Jsoup.clean(password, Whitelist.simpleText());
 
+        boolean accountExists = DatabaseController.getInstance().getAccount(sanitizedEmail) != null;
+        if (accountExists)
+            response.sendRedirect("/register");
+
         AccountModel accountModel = DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
         response.sendRedirect("/login");
@@ -122,14 +119,31 @@ public class AccountController {
 
     @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
     public String accountSettingsGet(@CookieValue(value = AccountCookie) String account,
-                                     Model m) {
+                                     Model m,
+                                     HttpServletResponse response) throws IOException {
         AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
+        if (accountModel == null)
+            response.sendRedirect("/");
         m.addAttribute(AccountController.AccountModelKey, accountModel);
         return "account_settings";
     }
 
+    @RequestMapping(value = "/logout")
+    public String accountLogout(@CookieValue(value = AccountCookie, required = false) String accountCookie,
+                                Model m,
+                                HttpServletResponse response) {
+        if (accountCookie != null) {
+            Cookie cookie = new Cookie(AccountCookie, null);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Logout");
+        return "login";
+    }
+
     public static boolean checkPassword(AccountModel account, String password) {
-        return account != null && SCryptUtil.check(password, account.getHash());
+        return !(password == null || Objects.equals(password, "") || account == null) && SCryptUtil.check(password, account.getHash());
     }
 }

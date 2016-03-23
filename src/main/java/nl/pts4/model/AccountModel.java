@@ -73,4 +73,36 @@ public class AccountModel {
 	public String getHash() {
 		return hash;
 	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	public void setoAuthKey(String oAuthKey) {
+		this.oAuthKey = oAuthKey;
+	}
+
+	public void setoAuhtProvider(OAuthProviderEnum oAuhtProvider) {
+		this.oAuhtProvider = oAuhtProvider;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setHash(String hash) {
+		this.hash = hash;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public void setAccountTypeEnum(AccountTypeEnum accountTypeEnum) {
+		this.accountTypeEnum = accountTypeEnum;
+	}
 }

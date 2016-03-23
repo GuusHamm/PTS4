@@ -86,6 +86,18 @@ public class DatabaseController {
         return getAccount(accountUUID);
     }
 
+    public boolean setAccountEmail(AccountModel ac, String email) {
+        ac.setEmail(email);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE account SET email = ? WHERE id = ?", email, ac.getUuid()) == 1;
+    }
+
+    public boolean setAccountName(AccountModel ac, String name) {
+        ac.setName(name);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE account SET name = ? WHERE id = ?", name, ac.getUuid()) == 1;
+    }
+
     public AccountModel getAccount(final UUID uuid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
