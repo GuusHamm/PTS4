@@ -1,0 +1,18 @@
+#parse("header.vm")
+<div class="container">
+    <form class="form-signin" id="loginForm" method="post">
+        <fieldset class="form-group">
+            <label for="inputName">Name</label>
+            <input type="text" class="form-control" id="inputName" placeholder="Name">
+
+            <label for="inputEmail">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email Address">
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="inputEmail">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email Address">
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+#parse("footer.vm")
