@@ -163,8 +163,8 @@ public class DatabaseController {
         }
     }
 
-    public boolean deleteAccount(UUID uuid) throws InvalidParameterException {
-        if (uuid == null) throw new InvalidParameterException("Invalid UUID");
+    public boolean deleteAccount(UUID uuid) throws IllegalArgumentException {
+        if (uuid == null) throw new IllegalArgumentException ("Invalid UUID");
 
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
