@@ -1,6 +1,7 @@
 <link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css"/>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/_login.css"/>
+<link rel="stylesheet" href="/_footer.css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
     #if (! $title)

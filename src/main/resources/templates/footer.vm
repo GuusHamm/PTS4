@@ -1,6 +1,6 @@
-<footer class="footer">
+<footer class="bottomOfPage">
     <div class="container">
-        <span class="text-muted">Fotowinkel footer, die zo mooi is.</span>
+        <span class="text-muted bottomOfPage">Fotowinkel footer, hier moet nog echte data</span>
     </div>
 </footer>
 </body>
