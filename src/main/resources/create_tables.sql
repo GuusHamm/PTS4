@@ -143,3 +143,5 @@ INSERT INTO public.photoconfiguration (effectid, itemid, photoid)
 VALUES (NULL, 1, 'b34e0301-cf1a-4145-8b78-9e13a8633657');
 
 INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (3, 1);

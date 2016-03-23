@@ -74,11 +74,22 @@ public class OrderModel
         this.orderLineModels = orderLineModels;
     }
 
+
+    public int getTotalPrice() {
+        if (orderLineModels != null) {
+            int totalPrice = 0;
+            for (OrderLineModel olm : orderLineModels) {
+                totalPrice += olm.getPhotoConfiguration().getTotalPrice();
+            }
+            return totalPrice;
+        }
+        return 0;
+    }
     @Override
     public String toString() {
         String outputString = "";
 
-        outputString += account.getName() + "; " + orderDate + "; " + id;
+        outputString += "Account id: " + id + "; " + account.getName() + "; " + orderDate;
 
         if (orderLineModels != null) {
             int totalPrice = 0;
