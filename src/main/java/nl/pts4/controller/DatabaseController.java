@@ -14,7 +14,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.servlet.http.Cookie;
 import javax.sql.DataSource;
-import java.security.InvalidParameterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

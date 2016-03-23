@@ -1,7 +1,6 @@
 package nl.pts4.controller;
 
 import com.lambdaworks.crypto.SCryptUtil;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import nl.pts4.model.AccountModel;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -53,7 +52,7 @@ public class AccountController {
                          HttpServletResponse response,
                          @CookieValue(AccountCookie) String accountCookie,
                          @RequestParam("password") String password,
-                         @RequestParam(CSRFToken) String csrfToken) throws InvalidArgumentException, IOException {
+                         @RequestParam(CSRFToken) String csrfToken) throws IllegalArgumentException, IOException {
         final String ERROR_ATTRIBUTE = "error";
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account deleted");
         if (!tokens.containsKey(csrfToken))
