@@ -1,13 +1,31 @@
 package nl.pts4.model;
 
+import nl.pts4.controller.DatabaseController;
+
 /**
  * Created by Nekkyou on 16-3-2016.
  */
 public class OrderLineModel
 {
+    private int id;
     private int amount;
     private PhotoConfigurationModel photoConfiguration;
 
+    public OrderLineModel(int id, int amount, int photoConfigItemId) {
+        this.id = id;
+        this.amount = amount;
+        this.photoConfiguration = DatabaseController.getInstance().getPhotoConfigurationModelById(photoConfigItemId);
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
 
 
     public int getAmount()
