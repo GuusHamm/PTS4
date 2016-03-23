@@ -8,7 +8,8 @@
                 <img class="card-img-top" src="$photo.filePath" alt="Card image cap">
                 <div class="card-block">
                     <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
-                    <a href="/buy?pt=$photo.uuid" class="btn btn-primary">Buy this photo!</a>
+                    #set($priceRound = $photo.price - .01)
+                    <a href="/buy?pt=$photo.uuid" class="btn btn-primary">Buy this photo for only $priceRound</a>
                 </div>
             </div>
         </div>
