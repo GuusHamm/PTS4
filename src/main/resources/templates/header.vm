@@ -1,51 +1,59 @@
-<link rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/css/tether.min.css"/>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="/_login.css"/>
-<link rel="stylesheet" href="/_footer.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <link rel="stylesheet" href="/_login.css"/>
+    <link rel="stylesheet" href="/_footer.css"/>
+
     #if (! $title)
         <title>Whoops! No title, we forgot :(</title>
     #else
         <title>$title</title>
     #end
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
 
-    <nav class="navbar navbar-dark bg-inverse">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand" href="#">#springMessageText("header.logo", "Photoshop")</a>
 
-        <!-- Brand -->
-        <a class="navbar-brand" href="#">#springMessageText("header.logo", "Photoshop")</a>
-
-        <!-- Links -->
-        <ul class="nav navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/">#springMessageText("home", "Home")</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="order-overview">#springMessageText("orders", "Orders")</a>
-            </li>
-            <li class="nav-item dropdown pull-xs-right">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                   aria-expanded="false">
-                    #if (!$user)
-                        Account
-                    #else
-                        $user.name
-                    #end
-                </a>
-                <div class="dropdown-menu" aria-labelledby="Preview">
-                    #if (!$user)
-                        <a class="dropdown-item" href="/login">#springMessageText("login", "Login")</a>
-                        <a class="dropdown-item" href="/register">#springMessageText("register", "Register")</a>
-                    #else
-                        <a class="dropdown-item" href="/account/settings">#springMessageText("settings", "Settings")</a>
-                        <a class="dropdown-item" href="/logout">#springMessageText("logout", "Logout")</a>
-                    #end
-                </div>
-            </li>
-        </ul>
-
+            <!-- Links -->
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">#springMessageText("home", "Home")</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="order-overview">#springMessageText("orders", "Orders")</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">
+                        #if (!$user)
+                            Account
+                        #else
+                            $user.name
+                        #end
+                        <span class="caret></span>"</a>
+                    <ul class="dropdown-menu" role="menu">
+                        #if (!$user)
+                            <li><a href="/login">#springMessageText("login", "Login")</a></li>
+                            <li><a href="/register">#springMessageText("register", "Register")</a></li>
+                        #else
+                            <li><a href="/account/settings">#springMessageText("settings", "Settings")</a></li>
+                            <li><a href="/logout">#springMessageText("logout", "Logout")</a></li>
+                        #end
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </nav>
 </div>
