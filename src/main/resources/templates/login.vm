@@ -6,8 +6,7 @@
                 <h2 class="form-signin-heading">Please sign in</h2>
 
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" name="email" class="form-control" placeholder=#springMessageText("email", "Email") required=""
-               autofocus="">
+        <input type="email" id="inputEmail" name="email" class="form-control" required autofocus="" placeholder=#springMessageText("email", "Email")>
 
                 <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
                 <input type="password" id="inputPassword" name="password" class="form-control"
