@@ -32,9 +32,6 @@
                 </div>
             </div>
         </div>
-        Test
-        <br>
-        #springMessageText("main.welcome", "kk")
     </div>
 </div>
 #parse("footer.vm")

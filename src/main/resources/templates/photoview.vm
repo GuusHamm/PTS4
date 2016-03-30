@@ -1,24 +1,24 @@
 #parse("header.vm")
 <div class="container">
-    #set($row = -1)
-<div class="row" style="margin-top: 20px;">
-    #foreach ($photo in $photos)
-        <div class="col-sm-6">
-            <div class="card card-inverse" style="background-color: #333; border-color: #333;">
-                <img class="card-img-top" src="$photo.filePath" alt="Card image cap">
-                <div class="card-block">
-                    <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
-                    #set($priceRound = $photo.price - .01)
-                    <a href="/buy?pt=$photo.uuid" class="btn btn-primary">Buy this photo for only $priceRound</a>
+    <div class="list-group">
+        #foreach ($photo in $photos)
+            <div class="col-lg-6">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <a href="/buy?pt=$photo.uuid"><img class="thumbnail" src="$photo.filePath"
+                                                               alt="Card image cap"></a>
+                        </div>
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
+                            #set($priceRound = $photo.price - .01)
+                            <button class="btn btn-primary" href="/buy?pt=$photo.uuid">Buy this photo for
+                                only $priceRound</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        #if ($row % 2 == 0)
-        </div>
-        <div class="row">
         #end
-        #set($row = $row + 1)
-    #end
+    </div>
 </div>
 #parse("footer.vm")
