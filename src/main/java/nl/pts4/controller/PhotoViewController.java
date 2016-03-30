@@ -2,11 +2,17 @@ package nl.pts4.controller;
 
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.PhotoModel;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,6 +36,32 @@ public class PhotoViewController {
         m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 
         return "photoview";
+    }
+
+    public BufferedImage reduceImageQuility(File imageSource) throws ImageReadException, IOException
+    {
+        BufferedImage image = Imaging.getBufferedImage(imageSource);
+
+        BufferedImage resizedImage = resizeImage(image, image.getWidth() / 10, image.getHeight() / 10);
+
+        return resizedImage;
+    }
+
+    public BufferedImage reduceImageQuility(BufferedImage imageSource) throws ImageReadException, IOException
+    {
+        BufferedImage resizedImage = resizeImage(imageSource, imageSource.getWidth() / 10, imageSource.getHeight() / 10);
+
+        return resizedImage;
+    }
+
+    public  BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        int type=0;
+        type = image.getType() == 0? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resizedImage = new BufferedImage(width, height,type);
+        Graphics2D    g            = resizedImage.createGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        g.dispose();
+        return resizedImage;
     }
 
 }
