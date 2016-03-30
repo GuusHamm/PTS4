@@ -25,22 +25,6 @@ public class FileUploadController {
         this.allowedFileTypes.add("image/jpg");
         this.allowedFileTypes.add("image/jpeg");
     }
-    //  @RequestMapping(method = RequestMethod.GET, value = "/upload")
-//  public String provideUploadInfo(Model model) {
-//    File rootFolder = new File(Application.ROOT);
-//    List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//        .map(f -> f.getName())
-//        .collect(Collectors.toList());
-//
-//    model.addAttribute("files",
-//        Arrays.stream(rootFolder.listFiles())
-//            .sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//            .map(f -> f.getName())
-//            .collect(Collectors.toList())
-//    );
-//
-//    return "uploadForm";
-//  }
 
     @RequestMapping(value = "/multiupload")
     public String multiUpload() {
