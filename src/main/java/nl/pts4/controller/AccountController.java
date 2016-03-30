@@ -193,8 +193,9 @@ public class AccountController {
      * @return to login screen.
      */
     @RequestMapping(value = "/logout")
-    public String accountLogout(@CookieValue(value = AccountCookie, required = true) String accountCookie,
+    public String accountLogout(@CookieValue(value = AccountCookie) String accountCookie,
                                 Model m,
+                                HttpServletRequest request,
                                 HttpServletResponse response) {
         if (accountCookie != null) {
             Cookie cookie = new Cookie(AccountCookie, "");
@@ -202,7 +203,8 @@ public class AccountController {
             response.addCookie(cookie);
         }
 
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Logout");
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Home");
+        m.addAttribute(MainController.SUCCESS_ATTRIBUTE, messageSource.getMessage("logout.success", null, request.getLocale()));
         return "login";
     }
 
