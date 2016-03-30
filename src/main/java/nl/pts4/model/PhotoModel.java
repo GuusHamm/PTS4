@@ -53,4 +53,8 @@ public class PhotoModel {
 	public String getFilePath() {
 		return filePath;
 	}
+
+	public double getRoundedPrice() {
+		return (double) price - .01;
+	}
 }

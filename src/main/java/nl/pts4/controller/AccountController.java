@@ -174,13 +174,16 @@ public class AccountController {
      * @throws IOException : When input / output is incorrect
      */
     @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
-    public String accountSettingsGet(@CookieValue(value = AccountCookie) String account,
+    public String accountSettingsGet(@CookieValue(value = AccountCookie, required = false) String account,
                                      Model m,
+                                     HttpServletRequest request,
                                      HttpServletResponse response) throws IOException {
         AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
-        if (accountModel == null)
-            response.sendRedirect("/");
+        if (accountModel == null || account == null) {
+            m.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
+            return "login";
+        }
         m.addAttribute(AccountController.AccountModelKey, accountModel);
         return "account_settings";
     }

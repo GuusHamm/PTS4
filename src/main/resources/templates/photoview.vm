@@ -5,11 +5,10 @@
     #foreach ($photo in $photos)
         <div class="col-sm-6">
             <div class="card card-inverse" style="background-color: #333; border-color: #333;">
-                <img class="card-img-top" src="$photo.filePath" alt="Card image cap">
+                <img class="card-img-top" src="$photo.getFilePath()" alt="Card image cap">
                 <div class="card-block">
-                    <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
-                    #set($priceRound = $photo.price - .01)
-                    <a href="/buy?pt=$photo.uuid" class="btn btn-primary">Buy this photo for only $priceRound</a>
+                    <p class="card-text">Gemaakt door $photo.getPhotographer().getName(), op $photo.getCaptureDate()</p>
+                    <a href="/buy?pt=$photo.uuid" class="btn btn-primary">Buy this photo for only $photo.getRoundedPrice()</a>
                 </div>
             </div>
         </div>
