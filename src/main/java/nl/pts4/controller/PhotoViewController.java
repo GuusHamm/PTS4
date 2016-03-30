@@ -14,7 +14,12 @@ import java.util.List;
  */
 @Controller
 public class PhotoViewController {
-
+    /**
+     * Show all the photos
+     * @param account   : The current account cookie
+     * @param m         : The model / template
+     * @return photoview to get the correct template
+     */
     @RequestMapping("/photos")
     public String photosGet(@CookieValue(AccountController.AccountCookie) String account, Model m) {
         AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
