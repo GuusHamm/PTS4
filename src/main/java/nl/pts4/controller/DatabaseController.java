@@ -322,42 +322,43 @@ public class DatabaseController {
      * @return the corresponding PhotoConfigurationModel with the ID
      */
     public PhotoConfigurationModel getPhotoConfigurationModelById(int photoConfigid) {
-        JdbcTemplate select = new JdbcTemplate(dataSource);
-
-        ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid FROM photoconfiguration pc, photo p WHERE p.id = pc.photoid AND pc.id = " + photoConfigid + ";", (resultSet, i) -> {
-            ArrayList<PhotoConfigurationModel> photoConfigurationModels1 = new ArrayList<>(i);
-
-            //This code is to make sure we don't crash when not getting any rows.
-            if (resultSet == null) {
-                return null;
-            }
-
-            do {
-                int id = resultSet.getInt("id");
-                int effectid = resultSet.getInt("effectid");
-                int itemid = resultSet.getInt("itemid");
-                UUID photoid = UUID.fromString(resultSet.getString("photoid"));
-                int price = resultSet.getInt("price");
-                Date capturedate = resultSet.getDate("capturedate");
-                String pathtophoto = resultSet.getString("pathtophoto");
-                UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
-                UUID childid = UUID.fromString(resultSet.getString("childid"));
-                int schoolid = resultSet.getInt("schoolid");
-
-                //TODO get this with a database query
-                SchoolModel schoolModel = new SchoolModel();
-                EffectModel effectModel = new EffectModel();
-                ItemModel itemModel = new ItemModel();
-
-                File photoFile = new File(pathtophoto);
-                PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
-                photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
-
-            } while (resultSet.next());
-
-            return photoConfigurationModels1;
-        });
-        return photoConfigurationModels.get(0);
+//        JdbcTemplate select = new JdbcTemplate(dataSource);
+//
+//        ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid FROM photoconfiguration pc, photo p WHERE p.id = pc.photoid AND pc.id = " + photoConfigid + ";", (resultSet, i) -> {
+//            ArrayList<PhotoConfigurationModel> photoConfigurationModels1 = new ArrayList<>(i);
+//
+//            //This code is to make sure we don't crash when not getting any rows.
+//            if (resultSet == null) {
+//                return null;
+//            }
+//
+//            do {
+//                int id = resultSet.getInt("id");
+//                int effectid = resultSet.getInt("effectid");
+//                int itemid = resultSet.getInt("itemid");
+//                UUID photoid = UUID.fromString(resultSet.getString("photoid"));
+//                int price = resultSet.getInt("price");
+//                Date capturedate = resultSet.getDate("capturedate");
+//                String pathtophoto = resultSet.getString("pathtophoto");
+//                UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
+//                UUID childid = UUID.fromString(resultSet.getString("childid"));
+//                int schoolid = resultSet.getInt("schoolid");
+//
+//                //TODO get this with a database query
+//                SchoolModel schoolModel = new SchoolModel();
+//                EffectModel effectModel = new EffectModel();
+//                ItemModel itemModel = new ItemModel();
+//
+//                File photoFile = new File(pathtophoto);
+//                PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
+//                photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
+//
+//            } while (resultSet.next());
+//
+//            return photoConfigurationModels1;
+//        });
+//        return photoConfigurationModels.get(0);
+        return null;
     }
 
     /**
@@ -469,4 +470,32 @@ public class DatabaseController {
             return null;
         }
     }
+
+    /**
+     * Gets all the schools the photographer photographs for by his PhotographerID
+     * @param photographerID
+     * @return
+     */
+    public List<SchoolModel> getSchools(UUID photographerID) {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                    "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
+                "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
+
+                new Object[]{photographerID,photographerID});
+        List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+            int id = (Integer) row.get("id");
+            String name= (String) row.get("name");
+            String location= (String) row.get("location");
+            String country = (String) row.get("country");
+
+            schoolModels.add(new SchoolModel(id, name,location,country));
+        }
+        return schoolModels;
+    }
+
+
 }

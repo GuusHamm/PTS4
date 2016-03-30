@@ -1,31 +1,46 @@
 #parse("header.vm")
-<div class="container">
-    <div class="alert alert-danger hidden" role="alert" id="errorBox">
-        Invalid login
-    </div>
-    <form class="form-signin" id="loginForm" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <br/>
-        <label for="inputDescription" class="sr-only">#springMessageText("description", "Description")</label>
-        <input type="text" id="inputdescription" name="description" class="form-control"
-               placeholder=#springMessageText("description", "Description") required=""
-               autofocus="">
-        <br/>
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="well bs-component">
 
-        <input type="text" id="inputType" name="Type" class="form-control"
-               placeholder=#springMessageText("type", "Type") required=""
-               autofocus="">
-        <br/>
-        <select class="form-control" draggable="true" title="school" >
-            <option  value="" disabled selected >#springMessageText("select","----Select-----")</option>
-            #set ($counter=0)
-            #foreach ($school in $scholen)
-                <option value="${counter}">${school}</option>
-                $counter++;
-            #end
-        </select>
-        <br/>
-        <button id="btnMakeItem" class="btn btn-lg btn-primary btn-block" type="submit">#springMessageText("make.item", "Make item")</button>
+    <form class="form-group" id="makeItemForm" method="post">
+        <fieldset>
+            <div class="form-group" >
+                <h2 class="form-signin-heading">#springMessageText("make.item", "Make a item")</h2>
+                <br/>
+                <label for="inputMakeItem" class="sr-only">#springMessageText("make.item", "Make an item")</label>
+##                <input type="text" id="inputName" name="name" class="form-control"
+##                       placeholder=#springMessageText("name", "Name") required=""
+##                       autofocus="">
+                <input type="text" id="inputType" name="Type" class="form-control"
+                       placeholder=#springMessageText("type", "Type") required=""
+                       autofocus="">
+                <br/>
+                <input type="text" id="inputdescription" name="description" class="form-control"
+                       placeholder=#springMessageText("description", "Description") required=""
+                       autofocus="">
+                <br/>
+                <select class="form-control" draggable="true" title="school">
+                    <option value="" disabled selected>#springMessageText("select","----Select-----")</option>
+                    #set ($counter=0)
+                    #foreach ($school in $scholen)
+                        <option value="${counter}">${school}</option>
+                        $counter++;
+                    #end
+                </select>
+                <br/>
+                <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input type="number" value="5" min="0" step="0,5" data-number-to-fixed="2" data-number-stepfactor="1000" class="form-control currency" id="c2" />
+                </div>
+                <br/>
+
+
+                <button id="btnMakeItem" class="btn btn-lg btn-primary btn-block" type="submit">#springMessageText(
+                    "make.item", "Make item")</button>
+
+            </div>
+        </fieldset>
     </form>
 </div>
+    </div>
 #parse("footer.vm")

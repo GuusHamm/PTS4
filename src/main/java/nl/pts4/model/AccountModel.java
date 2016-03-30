@@ -16,6 +16,7 @@ public class AccountModel {
 	private boolean active;
 	private AccountTypeEnum accountTypeEnum;
 
+
 	public enum AccountTypeEnum {
 		customer,
 		photographer
