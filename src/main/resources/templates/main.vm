@@ -1,5 +1,7 @@
 #parse("header.vm")
 <div class="container">
     Test
+    <br>
+    #springMessageText("welcome.springmvc", "kk")
 </div>
 #parse("footer.vm")
