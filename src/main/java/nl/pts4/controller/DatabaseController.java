@@ -324,7 +324,13 @@ public class DatabaseController {
     public PhotoConfigurationModel getPhotoConfigurationModelById(int photoConfigid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid FROM photoconfiguration pc, photo p WHERE p.id = pc.photoid AND pc.id = " + photoConfigid + ";", (resultSet, i) -> {
+        ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid, s.name, s.location, s.country, e.type, e.description, e.price as effectprice, i.price as itemprice, i.description as itemdescription, i.thumbnailpath "
+                                                                                                    + "FROM photoconfiguration pc, photo p, school s, effect e, item i " +
+                                                                                                    "WHERE p.id = pc.photoid" +
+                                                                                                    "AND s.id = p.schoolid " +
+                                                                                                    "AND pc.effectid = e.id " +
+                                                                                                    "AND pc.itemid = i.id " +
+                                                                                                    " AND pc.id = " + photoConfigid + ";", (resultSet, i) -> {
             ArrayList<PhotoConfigurationModel> photoConfigurationModels1 = new ArrayList<>(i);
 
             //This code is to make sure we don't crash when not getting any rows.
@@ -334,15 +340,30 @@ public class DatabaseController {
 
             do {
                 int id = resultSet.getInt("id");
-                int effectid = resultSet.getInt("effectid");
-                int itemid = resultSet.getInt("itemid");
                 UUID photoid = UUID.fromString(resultSet.getString("photoid"));
                 int price = resultSet.getInt("price");
                 Date capturedate = resultSet.getDate("capturedate");
                 String pathtophoto = resultSet.getString("pathtophoto");
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
                 UUID childid = UUID.fromString(resultSet.getString("childid"));
+
+                //School data
                 int schoolid = resultSet.getInt("schoolid");
+                String name = resultSet.getString("name");
+                String location = resultSet.getString("location");
+                String country = resultSet.getString("country");
+
+                //Effect data
+                int effectid = resultSet.getInt("effectid");
+                String type = resultSet.getString("type");
+                String description = resultSet.getString("description");
+                int effectprice = resultSet.getInt("effectprice");
+
+                //Item data
+                int itemid = resultSet.getInt("itemid");
+                int itemprice = resultSet.getInt("itemprice");
+                String itemdescription = resultSet.getString("itemdescription");
+                String thumbnailpath = resultSet.getString("thumbnailpath");
 
                 //TODO get this with a database query
                 SchoolModel schoolModel = new SchoolModel();
