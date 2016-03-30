@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
     public static final String TITLE_ATTRIBUTE = "title";
+    public static final String ERROR_ATTRIBUTE = "error";
+    public static final String SUCCESS_ATTRIBUTE = "success";
 
     @RequestMapping(value = "/")
     public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {

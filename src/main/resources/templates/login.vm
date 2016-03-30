@@ -1,8 +1,5 @@
 #parse("header.vm")
 <div class="container">
-    <div class="alert alert-danger hidden" role="alert" id="errorBox">
-        Invalid login
-    </div>
     <form class="form-signin" id="loginForm" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
 

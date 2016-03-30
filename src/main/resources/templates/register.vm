@@ -1,9 +1,6 @@
 #parse("header.vm")
 <body>
 <div class="container">
-    <div class="alert alert-danger hidden" role="alert" id="errorBox">
-        #springMessageText("error.email.taken", "Email is already taken")
-    </div>
     <form class="form-signin" method="post">
         <h2 class="form-signin-heading">#springMessageText("signup","Sign up")</h2>
 
