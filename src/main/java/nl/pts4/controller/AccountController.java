@@ -4,6 +4,8 @@ import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.AccountModel;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -30,7 +32,8 @@ public class AccountController {
 
     public static final String AccountCookie = "ACC_SESSION";
     public static final String AccountModelKey = "user";
-
+    @Autowired
+    MessageSource messageSource;
     public static final String CSRFToken = "CSRF";
     public static final int CSRFExpiry = 60 * 10; // 10 Minutes
 
