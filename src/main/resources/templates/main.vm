@@ -7,6 +7,13 @@
     <div class="panel">
         <div class="panel-body">
             <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <a href="/photos" class="btn btn-default btn-block btn-lg">#springMessageText(
+                        "main.photos", "View Photo's")</a>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
                 <div class="col-lg-4">
                     <a href="/multiupload" class="btn btn-primary btn-block btn-lg">#springMessageText(
                         "main.upload", "Upload a photo")</a>
@@ -16,7 +23,7 @@
                         "main.orders", "View Orders")</a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="/account/settings" class="btn btn-primary btn-block btn-lg">Settings</a>
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
                 </div>
             </div>
             <br/>
@@ -27,10 +34,13 @@
                 <div class="col-lg-4">
                     <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
                 </div>
+
                 <div class="col-lg-4">
-                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                    <a href="/account/settings" class="btn btn-warning btn-block btn-lg">#springMessageText(
+                        "main.settings", "Settings") <span class="glyphicon glyphicon-cog"></span></a>
                 </div>
             </div>
+            <br/>
         </div>
     </div>
 </div>
