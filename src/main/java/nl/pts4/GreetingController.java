@@ -51,6 +51,7 @@ public class GreetingController {
 //        Object a = localeChangeInterceptor;
 
         System.out.println(messageSource.getMessage("welcome.springmvc",new Object[]{}, RequestContextUtils.getLocale(request)));
+        System.out.println(messageSource.getMessage("welcome.springmvc",new Object[]{}, RequestContextUtils.getLocale(request)));
         return "main";
     }
 
