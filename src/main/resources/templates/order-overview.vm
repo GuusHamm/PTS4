@@ -1,8 +1,11 @@
 #parse("header.vm")
-<script src="http://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+##<script src="http://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css"/>
+<script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
 <div class="container">
     <div class="table-responsive">
-        <table class="table table-striped sortable">
+        <table class="table table-striped" id="orderTable">
             <thead>
             <tr>
                 <th>Order ID</th>
@@ -26,4 +29,9 @@
         </table>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#orderTable").DataTable();
+    });
+</script>
 #parse("footer.vm")
