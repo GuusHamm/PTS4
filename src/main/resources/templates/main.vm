@@ -8,15 +8,15 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-4">
-                    <a href="multiupload.vm" class="btn btn-primary btn-block btn-lg">#springMessageText(
+                    <a href="/multiupload" class="btn btn-primary btn-block btn-lg">#springMessageText(
                         "main.upload", "Upload a photo")</a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="order-overview.vm" class="btn btn-primary btn-block btn-lg">#springMessageText(
+                    <a href="/order-overview" class="btn btn-primary btn-block btn-lg">#springMessageText(
                         "main.orders", "View Orders")</a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="account_settings.vm" class="btn btn-primary btn-block btn-lg">Settings</a>
+                    <a href="/account/settings" class="btn btn-primary btn-block btn-lg">Settings</a>
                 </div>
             </div>
             <br/>

@@ -1,0 +1,4 @@
+#* @implicitly included *#
+#* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
+#* @vtlvariable name="title" type="java.lang.String" *#
+#* @vtlvariable name="allOrders" type="nl.pts4.model.OrderModel[]" file="../resources/templates/*" *#

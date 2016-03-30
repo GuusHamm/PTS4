@@ -22,8 +22,6 @@ import java.util.UUID;
 public class AccountRestController {
 
     public static final int WEEK = 60 * 60 * 24 * 7;
-
-
     @Autowired
     public MessageSource messageSource;
 

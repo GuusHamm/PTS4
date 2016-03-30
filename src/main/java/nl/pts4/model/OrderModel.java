@@ -1,5 +1,6 @@
 package nl.pts4.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
  */
 public class OrderModel
 {
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
     private int id;
     private Date orderDate;
     //TODO replace with an account
@@ -79,5 +82,9 @@ public class OrderModel
             totalPrice += olm.getPhotoConfiguration().getTotalPrice();
         }
         return totalPrice;
+    }
+
+    public String getOrderDateTemplate() {
+        return sdf.format(getOrderDate());
     }
 }

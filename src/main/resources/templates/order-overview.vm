@@ -19,7 +19,7 @@
                 #foreach( $order in $allOrders)
                 <tr>
                     <td>$order.id</td>
-                    <td>$order.orderDate</td>
+                    <td>$order.getOrderDateTemplate()</td>
                     <td>$order.account.name</td>
                     <td>$order.account.email</td>
                     <td>$order.getTotalPrice()</td>

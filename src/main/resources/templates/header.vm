@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
 
-    #if (! $title)
+    #if ($title == "" || !$title)
         <title>Whoops! No title, we forgot :(</title>
     #else
         <title>$title</title>

@@ -193,11 +193,11 @@ public class AccountController {
      * @return to login screen.
      */
     @RequestMapping(value = "/logout")
-    public String accountLogout(@CookieValue(value = AccountCookie, required = false) String accountCookie,
+    public String accountLogout(@CookieValue(value = AccountCookie, required = true) String accountCookie,
                                 Model m,
                                 HttpServletResponse response) {
         if (accountCookie != null) {
-            Cookie cookie = new Cookie(AccountCookie, null);
+            Cookie cookie = new Cookie(AccountCookie, "");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
