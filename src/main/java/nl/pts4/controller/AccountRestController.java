@@ -5,9 +5,12 @@ import nl.pts4.model.AccountModel;
 import nl.pts4.model.AccountRestModel;
 import nl.pts4.model.SettingsRestModel;
 import nl.pts4.security.HashConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,6 +23,10 @@ public class AccountRestController {
 
     public static final int WEEK = 60 * 60 * 24 * 7;
 
+
+    @Autowired
+    public MessageSource messageSource;
+
     /**
      * confirms if you can log in
      * @param email     : The email which you use to log in
@@ -30,8 +37,9 @@ public class AccountRestController {
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
     public AccountRestModel loginRest(@RequestParam(value = "email") String email,
                                       @RequestParam(value = "password") String password,
+                                      HttpServletRequest request,
                                       HttpServletResponse response) {
-        AccountRestModel arm = new AccountRestModel(email, password);
+        AccountRestModel arm = new AccountRestModel(email, password, request.getLocale(), messageSource);
         if (arm.isSuccess()) {
             UUID id = UUID.randomUUID();
             Cookie session = new Cookie(AccountController.AccountCookie, id.toString());

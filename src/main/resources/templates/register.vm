@@ -1,34 +1,49 @@
 #parse("header.vm")
 <body>
 <div class="container">
-    <form class="form-signin" method="post">
-        <h2 class="form-signin-heading">#springMessageText("signup","Sign up")</h2>
+    <div class="panel">
+        <div class="panel-body">
+            <div class="alert alert-dismissible alert-danger hidden" id="errorBox">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Oh snap!</strong> $error
+            </div>
+            <form class="form-signin" method="post">
+                <h2 class="form-signin-heading">#springMessageText("signup","Sign up")</h2>
 
-        <label for="inputName" class="sr-only">#springMessageText("name", "Name") </label>
-        <input type="text" id="inputName" name="name" class="form-control" placeholder=#springMessageText("name", "Name") required autofocus="1">
+                <label for="inputName" class="sr-only">#springMessageText("name", "Name") </label>
+                <input type="text" id="inputName" name="name" class="form-control"
+                       required autofocus placeholder=#springMessageText("name", "Name")>
 
-        <label for="inputEmail" class="sr-only">#springMessageText("email", "Email")</label>
-        <input type="email" id="inputEmail" name="email" class="form-control" placeholder=#springMessageText("email", "Email") required="">
+                <label for="inputEmail" class="sr-only">#springMessageText("email", "Email")</label>
+                <input type="email" id="inputEmail" name="email" class="form-control"
+                       required="" placeholder=#springMessageText("email", "Email")>
 
-        <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder=#springMessageText("password", "Password") required="">
+                <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
+                <input type="password" id="inputPassword" name="password" class="form-control"
+                       required="" placeholder=#springMessageText("password", "Password")>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnRegister">#springMessageText("register", "Register")</button>
-    </form>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnRegister">#springMessageText(
+                    "register", "Register")</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         var btnRegister = $("#btnRegister");
+
         function setFormInvalid(bInvalid) {
             if (bInvalid) {
                 btnRegister.prop("disabled", "disabled");
-            }else{
+            } else {
                 btnRegister.prop("disabled", null);
             }
         }
 
         var errorBox = $("#errorBox");
+
         function showError(error) {
             errorBox.removeClass('hidden');
             errorBox.text(error);
@@ -39,7 +54,7 @@
         }
 
         var socket = io("http://localhost:8081/");
-        socket.on("email", function(data) {
+        socket.on("email", function (data) {
             setFormInvalid(data);
             if (data) {
                 showError("#springMessageText("error.email.taken", "Email is already taken")");
@@ -54,7 +69,7 @@
         });
 
         var inputPassword = $("#inputPassword");
-        inputPassword.on('input', function() {
+        inputPassword.on('input', function () {
             validatePassword();
         });
 
@@ -71,18 +86,21 @@
             var pass = inputPassword.val();
             if (pass.indexOf(' ') != -1) {
                 setFormInvalid(true);
-                showError("#springMessageText("error.password.characters", "Password can't contain any of the following characters: ' '")");
+                showError("#springMessageText(
+                    "error.password.characters", "Password can't contain any of the following characters: ' '")");
                 return;
             }
             if (pass.length < 6) {
                 setFormInvalid(true);
-                showError("#springMessageText("error.password.length", "Invalid password, minimal length must be at least 6 characters")");
+                showError("#springMessageText(
+                    "error.password.length", "Invalid password, minimal length must be at least 6 characters")");
                 return;
             }
             setFormInvalid(false);
             hideError();
             validateEmail();
         }
+
         validate();
     });
 </script>

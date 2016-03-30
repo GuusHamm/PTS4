@@ -1,23 +1,34 @@
 #parse("header.vm")
 <div class="container">
-    <form class="form-signin" id="loginForm" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
+    <div class="panel">
+        <div class="panel-body">
+            <div class="alert alert-dismissible alert-danger hidden" id="errorBox">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Oh snap!</strong> $error
+            </div>
+            <form class="form-signin" id="loginForm" method="post">
+                <h2 class="form-signin-heading">Please sign in</h2>
 
-        <label for="inputEmail" class="sr-only">#springMessageText("email", "Email")</label>
-        <input type="email" id="inputEmail" name="email" class="form-control" placeholder=#springMessageText("email", "Email") required=""
-               autofocus="">
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input type="email" id="inputEmail" name="email" class="form-control" required autofocus=""
+                       placeholder=#springMessageText("email", "Email")>
 
-        <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder=#springMessageText("password", "Password")
-               required="">
+                <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
+                <input type="password" id="inputPassword" name="password" class="form-control"
+                       placeholder=#springMessageText("password", "Password")
+                               required="">
 
-        <button id="btnLogin" class="btn btn-lg btn-primary btn-block" type="submit">#springMessageText("login", "Login")</button>
-    </form>
+                <button id="btnLogin" class="btn btn-lg btn-info" type="submit">#springMessageText(
+                    "login", "Login")</button>
+            </form>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
         var loginBtn = $("#btnLogin");
         var errorBox = $("#errorBox");
+        console.log(errorBox);
 
         function setLogin(b) {
             if (b) {
@@ -52,7 +63,7 @@
                 "success": function (data) {
                     var result = data;
                     if (!result.success) {
-                        showError("Invalid username or password");
+                        showError(result.message);
                         setLogin(false);
                     } else {
                         window.location.replace("/");
@@ -61,7 +72,7 @@
                 "error": function (data) {
                     console.log(data);
                     setLogin(false);
-                    showError("Something went wrong with the result, try again later")
+                    showError("#springMessageText("error.server", "Something went wrong on the server")");
                 }
             });
         });
