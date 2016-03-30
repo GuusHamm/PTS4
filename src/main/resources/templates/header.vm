@@ -39,7 +39,7 @@
                         #else
                             $user.name
                         #end
-                        <span class="caret></span>"</a>
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         #if (!$user)
                             <li><a href="/login">#springMessageText("login", "Login")</a></li>
