@@ -1,7 +1,40 @@
 #parse("header.vm")
 <div class="container">
-    Test
-    <br>
-    #springMessageText("welcome.springmvc", "kk")
+    <div class="jumbotron text-center">
+        <h1>#springMessageText("main.welcome", "Welcome to the photostore")</h1>
+    </div>
+
+    <div class="panel">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <a href="multiupload.vm" class="btn btn-primary btn-block btn-lg">#springMessageText(
+                        "main.upload", "Upload a photo")</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="order-overview.vm" class="btn btn-primary btn-block btn-lg">#springMessageText(
+                        "main.orders", "View Orders")</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="account_settings.vm" class="btn btn-primary btn-block btn-lg">Settings</a>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-lg-4">
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                </div>
+                <div class="col-lg-4">
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                </div>
+            </div>
+        </div>
+        Test
+        <br>
+        #springMessageText("main.welcome", "kk")
+    </div>
 </div>
 #parse("footer.vm")
