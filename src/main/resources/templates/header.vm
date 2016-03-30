@@ -54,14 +54,22 @@
         </div>
     </nav>
 
-    #if (!$error)
-    <div class="alert alert-error hidden" role="alert" id="errorBox">
-        $error
-    </div>
+    #if ($error)
+        <div class="alert alert-danger" role="alert" id="errorBox">
+            $error
+        </div>
+    #else
+        <div class="alert alert-danger hidden" role="alert" id="errorBox">
+            $error
+        </div>
     #end
-    #if (!$success)
-    <div class="alert alert-success hidden" role="alert" id="successBox">
-        $success
-    </div>
+    #if ($success)
+        <div class="alert alert-success" role="alert" id="successBox">
+            $success
+        </div>
+    #else
+        <div class="alert alert-success hidden" role="alert" id="successBox">
+            $success
+        </div>
     #end
 </div>
