@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>3.0.4.RELEASE</version>
+			<version>4.2.5.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
+			<version>4.2.5.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.corundumstudio.socketio</groupId>
 			<artifactId>netty-socketio</artifactId>
-			<version>1.7.8</version>
+			<version>1.7.10</version>
 		</dependency>
 
 		<dependency>
