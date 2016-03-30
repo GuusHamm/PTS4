@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/_login.css"/>
-    <link rel="stylesheet" href="css/_footer.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/_login.css"/>
+    <link rel="stylesheet" href="/css/_footer.css"/>
 
     #if (! $title)
         <title>Whoops! No title, we forgot :(</title>
     #else
         <title>$title</title>
     #end
-    <script src="js/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
