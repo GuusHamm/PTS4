@@ -27,6 +27,10 @@ public class DatabaseController {
 
     private static DatabaseController instance;
 
+    /**
+     * Get the instance of the DatabaseControlle
+     * @return the singleton instance of DatabaseController
+     */
     public static DatabaseController getInstance() {
         if (instance == null) {
             instance = new DatabaseController();
@@ -35,6 +39,10 @@ public class DatabaseController {
         return instance;
     }
 
+    /**
+     * returns an instance for testing
+     * @return returns the instance with the default test data set.
+     */
     public static DatabaseController getTestInstance() {
         instance = getInstance();
         instance.setupDefaultTestDataSource();
@@ -42,6 +50,9 @@ public class DatabaseController {
         return instance;
     }
 
+    /**
+     * Sets the default data source to connect to the database
+     */
     private void setDefaultDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(DatabaseCredentials.Driver);
@@ -52,6 +63,9 @@ public class DatabaseController {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Sets the test data source to connect to the test database
+     */
     private void setupDefaultTestDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(DatabaseCredentials.Driver);
@@ -62,6 +76,10 @@ public class DatabaseController {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Run the create_tables script
+     * @return true if there is no SQL exception, returns false when there is.
+     */
     public boolean createTables() {
         Resource resource = new ClassPathResource("create_tables.sql");
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
@@ -75,6 +93,13 @@ public class DatabaseController {
         return true;
     }
 
+    /**
+     * Create an account with the parameters
+     * @param name     : The username the user chooses
+     * @param email    : The email of the user
+     * @param password : The password that the users enters
+     * @return The account that was created
+     */
     public AccountModel createAccount(String name, String email, String password) {
         UUID accountUUID = UUID.randomUUID();
 
@@ -84,24 +109,47 @@ public class DatabaseController {
         return getAccount(accountUUID);
     }
 
+    /**
+     * Change the email from an account
+     * @param ac    : The account which email needs to be changed
+     * @param email : The new email
+     * @return if the update worked or not
+     */
     public boolean setAccountEmail(AccountModel ac, String email) {
         ac.setEmail(email);
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE account SET email = ? WHERE id = ?", email, ac.getUuid()) == 1;
     }
 
+    /**
+     * Change the username from an account
+     * @param ac   : The account which username needs to be changed
+     * @param name : The new username
+     * @return if the update worked or not
+     */
     public boolean setAccountName(AccountModel ac, String name) {
         ac.setName(name);
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE account SET name = ? WHERE id = ?", name, ac.getUuid()) == 1;
     }
 
+    /**
+     * Sets the password from an account
+     * @param ac   : The account which password needs to be changed
+     * @param hash : The new hash for the database
+     * @return if the update worked or not
+     */
     public boolean setAccountHash(AccountModel ac, String hash) {
         ac.setHash(hash);
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUuid()) == 1;
     }
 
+    /**
+     * Get an account with a uuid
+     * @param uuid : The UUID of the account
+     * @return the account from the database with the parameter
+     */
     public AccountModel getAccount(final UUID uuid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
@@ -118,6 +166,11 @@ public class DatabaseController {
         }
     }
 
+    /**
+     * Return an account with an email
+     * @param email : The email of the account
+     * @return the account from the database with the parameter
+     */
     public AccountModel getAccount(final String email) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
         AccountModel am;
@@ -160,6 +213,10 @@ public class DatabaseController {
 //        return orderModels;
 //    }
 
+    /**
+     * Get all the orders from the database
+     * @return a list of order models from the database
+     */
     public List<OrderModel> getAllOrders() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
@@ -198,6 +255,11 @@ public class DatabaseController {
         return orderModels;
     }
 
+    /**
+     * Get all the order lines with the order ID
+     * @param orderID : The order that you want to have the order lines of.
+     * @return a list of order lines
+     */
     public List<OrderLineModel> getAllOrderLinesByOrderId(int orderID) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
         ArrayList<OrderLineModel> orderlineModels;
@@ -232,6 +294,10 @@ public class DatabaseController {
         return orderlineModels;
     }
 
+    /**
+     * Get all the photos
+     * @return a list of all the photoModels
+     */
     public List<PhotoModel> getPhotos() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
@@ -250,6 +316,11 @@ public class DatabaseController {
         return photoModels;
     }
 
+    /**
+     * Get a photo config item by id
+     * @param photoConfigid : The id of the item that you want
+     * @return the corresponding PhotoConfigurationModel with the ID
+     */
     public PhotoConfigurationModel getPhotoConfigurationModelById(int photoConfigid) {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
@@ -289,7 +360,12 @@ public class DatabaseController {
         return photoConfigurationModels.get(0);
     }
 
-
+    /**
+     * Inserts a rating of a photo / photograph into the database
+     * @param accountId : The one that is rating the photo
+     * @param photoId : The photo that is being rated
+     * @param points : Between 1 to 5, 5 being highest and 1 lowest
+     */
     public void insertRating(UUID accountId, UUID photoId, int points) {
         JdbcTemplate insert = new JdbcTemplate(dataSource);
         //Make sure points is in range.
@@ -301,13 +377,22 @@ public class DatabaseController {
     }
 
 
-
+    /**
+     * Create a cookie with an account and a cookie UUID
+     * @param user        : The account of the current user
+     * @param cookieuuid  : The ID which you use to identify the cookie
+     */
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         template.update("INSERT INTO user_cookie (id, account) VALUES (?, ?)", cookieuuid, user.getUuid());
     }
 
+    /**
+     * Get an account with a cookie string
+     * @param cookie : The cookie where you want the account from
+     * @return The account that was in the cookie, if empty return null
+     */
     public AccountModel getAccountByCookie(final String cookie) {
         if (cookie == null) return null;
         JdbcTemplate template = new JdbcTemplate(dataSource);
@@ -325,6 +410,12 @@ public class DatabaseController {
         }
     }
 
+    /**
+     * Delete an account from the database
+     * @param uuid : The UUID of the account that needs to be deleted
+     * @return true if the update succeeded an false if you get an Empty result data access Exception
+     * @throws IllegalArgumentException when UUId is null
+     */
     public boolean deleteAccount(UUID uuid) throws IllegalArgumentException {
         if (uuid == null) throw new IllegalArgumentException ("Invalid UUID");
 
@@ -338,10 +429,20 @@ public class DatabaseController {
         }
     }
 
+    /**
+     * Get an account with a cookie
+     * @param cookie : The cookie which contains the account
+     * @return The account from the cookie
+     */
     public AccountModel getAccountByCookie(Cookie cookie) {
         return getAccountByCookie(cookie.getValue());
     }
 
+    /**
+     * Get an account from a resultset
+     * @param resultSet the resultset from getAccount
+     * @return the account from the resultSet
+     */
     private AccountModel getAccountFromResultSet(ResultSet resultSet) {
         try {
             UUID uuid = UUID.fromString(resultSet.getString("id"));

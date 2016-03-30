@@ -40,6 +40,14 @@ public class AccountController {
     private Map<String, Date> tokens = new HashMap<>();
     private SecureRandom random = new SecureRandom();
 
+    /**
+     * When you go the the delete page with a get method
+     * @param m        : The model
+     * @param request  : The request made
+     * @param response : The response given
+     * @param cookie   : The current cookie
+     * @return delete to get the correct template
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteGet(Model m, HttpServletRequest request, HttpServletResponse response, @CookieValue(value = AccountCookie) String cookie) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Delete!");
@@ -50,6 +58,18 @@ public class AccountController {
         return "delete";
     }
 
+    /**
+     * When you go to the delete page with a post method
+     * @param m             : The model
+     * @param request       : The request made
+     * @param response      : The response given
+     * @param accountCookie : The cookie from the account
+     * @param password      : The password to delete the account
+     * @param csrfToken     : The token to prevent CSRF (Cross side request forgery)
+     * @return delete to get the correct template
+     * @throws IllegalArgumentException : when response isn't good
+     * @throws IOException : When response isn't good
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(Model m,
                          HttpServletRequest request,
@@ -93,18 +113,38 @@ public class AccountController {
         return now.before(expiry);
     }
 
+    /**
+     * Going to the login page
+     * @param m : The model / template
+     * @return login to get the correct template
+     */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model m){
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
         return "login";
     }
 
+    /**
+     * Going to the register page
+     * @param m : The model / template
+     * @return register to get the register template
+     */
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register(Model m) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
         return "register";
     }
 
+    /**
+     * Actualle registering an account
+     * @param email     : The email used when registering, has to be unqiue
+     * @param password  : Password for the account, minimal 8 characters, maximal 32 characters
+     * @param name      : the username for the account
+     * @param response  : The response from the server
+     * @param m         : The model / template
+     * @return Null
+     * @throws IOException : When the input / output is incorrect
+     */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String register(@RequestParam(value = "email", required = true) String email,
                            @RequestParam(value = "password", required = true) String password,
@@ -125,6 +165,14 @@ public class AccountController {
         return null;
     }
 
+    /**
+     * Get the account settings page
+     * @param account   : The account which is logged in
+     * @param m         : The model / template
+     * @param response  : The response from the server
+     * @return account_settings to get the correct template
+     * @throws IOException : When input / output is incorrect
+     */
     @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
     public String accountSettingsGet(@CookieValue(value = AccountCookie) String account,
                                      Model m,
@@ -137,6 +185,13 @@ public class AccountController {
         return "account_settings";
     }
 
+    /**
+     * Logging out, has to be logged in first to log out.
+     * @param accountCookie : The cookie which contains the account
+     * @param m             : The model / template
+     * @param response      : The response from the server
+     * @return to login screen.
+     */
     @RequestMapping(value = "/logout")
     public String accountLogout(@CookieValue(value = AccountCookie, required = false) String accountCookie,
                                 Model m,

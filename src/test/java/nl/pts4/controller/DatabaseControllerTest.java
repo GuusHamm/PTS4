@@ -17,4 +17,11 @@ public class DatabaseControllerTest {
 	public void testGetAllOrders() throws Exception {
 		DatabaseController.getInstance().getAllOrders();
 	}
+
+	@Test
+	public void testRegisterAccount() throws Exception {
+		// Test short password
+		databaseController.createAccount("Name name", "email@email.com", "sh");
+
+	}
 }

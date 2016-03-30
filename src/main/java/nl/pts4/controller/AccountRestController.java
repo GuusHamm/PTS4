@@ -20,6 +20,13 @@ public class AccountRestController {
 
     public static final int WEEK = 60 * 60 * 24 * 7;
 
+    /**
+     * confirms if you can log in
+     * @param email     : The email which you use to log in
+     * @param password  : The password from the account
+     * @param response  : The response from the server
+     * @return The AccountRestModel that the javascript will use to validate the login
+     */
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
     public AccountRestModel loginRest(@RequestParam(value = "email") String email,
                                       @RequestParam(value = "password") String password,
@@ -37,6 +44,16 @@ public class AccountRestController {
         return arm;
     }
 
+    /**
+     * Changing your account variables
+     * @param name              : The username from the user
+     * @param email             : The email from the user
+     * @param oldPassword       : The old password for if you want to change your password
+     * @param newPassword       : The new password
+     * @param newPasswordRepeat : The new password once again for confirmation
+     * @param accountCookie     : The current cookie where you can get the account from
+     * @return
+     */
     @RequestMapping(value = "/settings-rest", method = RequestMethod.POST)
     public SettingsRestModel settingsRest(@RequestParam(value = "name") String name,
                                           @RequestParam(value = "email") String email,
