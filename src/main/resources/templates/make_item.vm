@@ -1,0 +1,31 @@
+#parse("header.vm")
+<div class="container">
+    <div class="alert alert-danger hidden" role="alert" id="errorBox">
+        Invalid login
+    </div>
+    <form class="form-signin" id="loginForm" method="post">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <br/>
+        <label for="inputDescription" class="sr-only">#springMessageText("description", "Description")</label>
+        <input type="text" id="inputdescription" name="description" class="form-control"
+               placeholder=#springMessageText("description", "Description") required=""
+               autofocus="">
+        <br/>
+
+        <input type="text" id="inputType" name="Type" class="form-control"
+               placeholder=#springMessageText("type", "Type") required=""
+               autofocus="">
+        <br/>
+        <select class="form-control" draggable="true" title="school" >
+            <option  value="" disabled selected >#springMessageText("select","----Select-----")</option>
+            #set ($counter=0)
+            #foreach ($school in $scholen)
+                <option value="${counter}">${school}</option>
+                $counter++;
+            #end
+        </select>
+        <br/>
+        <button id="btnMakeItem" class="btn btn-lg btn-primary btn-block" type="submit">#springMessageText("make.item", "Make item")</button>
+    </form>
+</div>
+#parse("footer.vm")
