@@ -19,6 +19,11 @@ public class OrderController {
 		return null;
 	}
 
+	/**
+	 * get all the orders and show them in order_overview
+	 * @param m	: The model / template
+     * @return order_overview to get the correct template
+     */
 	@RequestMapping(value = "/order-overview")
 	public String orderView(Model m) {
 		ArrayList<OrderModel> orders = new ArrayList<>();
