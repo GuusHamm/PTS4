@@ -1,0 +1,18 @@
+#parse("header.vm")
+<div class="container">
+    <div class="panel">
+        <div class="panel-heading">
+            <h2>Upload a file:</h2>
+        </div>
+        <div class="panel-body">
+            <form method="post" enctype="multipart/form-data" action="multiupload">
+                <input type="file" name="file">
+                <input type="file" name="file">
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Upload</button>
+        </div>
+    </div>
+    </form>
+</div>
+#parse("footer.vm")
