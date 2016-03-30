@@ -29,6 +29,7 @@ public class DatabaseController {
 
     /**
      * Get the instance of the DatabaseControlle
+     *
      * @return the singleton instance of DatabaseController
      */
     public static DatabaseController getInstance() {
@@ -41,6 +42,7 @@ public class DatabaseController {
 
     /**
      * returns an instance for testing
+     *
      * @return returns the instance with the default test data set.
      */
     public static DatabaseController getTestInstance() {
@@ -78,6 +80,7 @@ public class DatabaseController {
 
     /**
      * Run the create_tables script
+     *
      * @return true if there is no SQL exception, returns false when there is.
      */
     public boolean createTables() {
@@ -95,6 +98,7 @@ public class DatabaseController {
 
     /**
      * Create an account with the parameters
+     *
      * @param name     : The username the user chooses
      * @param email    : The email of the user
      * @param password : The password that the users enters
@@ -111,6 +115,7 @@ public class DatabaseController {
 
     /**
      * Change the email from an account
+     *
      * @param ac    : The account which email needs to be changed
      * @param email : The new email
      * @return if the update worked or not
@@ -123,6 +128,7 @@ public class DatabaseController {
 
     /**
      * Change the username from an account
+     *
      * @param ac   : The account which username needs to be changed
      * @param name : The new username
      * @return if the update worked or not
@@ -135,6 +141,7 @@ public class DatabaseController {
 
     /**
      * Sets the password from an account
+     *
      * @param ac   : The account which password needs to be changed
      * @param hash : The new hash for the database
      * @return if the update worked or not
@@ -147,6 +154,7 @@ public class DatabaseController {
 
     /**
      * Get an account with a uuid
+     *
      * @param uuid : The UUID of the account
      * @return the account from the database with the parameter
      */
@@ -168,6 +176,7 @@ public class DatabaseController {
 
     /**
      * Return an account with an email
+     *
      * @param email : The email of the account
      * @return the account from the database with the parameter
      */
@@ -215,6 +224,7 @@ public class DatabaseController {
 
     /**
      * Get all the orders from the database
+     *
      * @return a list of order models from the database
      */
     public List<OrderModel> getAllOrders() {
@@ -232,7 +242,7 @@ public class DatabaseController {
             Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findFirst();
             if (op.isPresent()) {
                 am = op.get();
-            }else{
+            } else {
                 am = getAccount(account);
                 accountModels.add(am);
             }
@@ -257,6 +267,7 @@ public class DatabaseController {
 
     /**
      * Get all the order lines with the order ID
+     *
      * @param orderID : The order that you want to have the order lines of.
      * @return a list of order lines
      */
@@ -290,12 +301,12 @@ public class DatabaseController {
         }
 
 
-
         return orderlineModels;
     }
 
     /**
      * Get all the photos
+     *
      * @return a list of all the photoModels
      */
     public List<PhotoModel> getPhotos() {
@@ -318,6 +329,7 @@ public class DatabaseController {
 
     /**
      * Get a photo config item by id
+     *
      * @param photoConfigid : The id of the item that you want
      * @return the corresponding PhotoConfigurationModel with the ID
      */
@@ -363,9 +375,10 @@ public class DatabaseController {
 
     /**
      * Inserts a rating of a photo / photograph into the database
+     *
      * @param accountId : The one that is rating the photo
-     * @param photoId : The photo that is being rated
-     * @param points : Between 1 to 5, 5 being highest and 1 lowest
+     * @param photoId   : The photo that is being rated
+     * @param points    : Between 1 to 5, 5 being highest and 1 lowest
      */
     public void insertRating(UUID accountId, UUID photoId, int points) {
         JdbcTemplate insert = new JdbcTemplate(dataSource);
@@ -380,8 +393,9 @@ public class DatabaseController {
 
     /**
      * Create a cookie with an account and a cookie UUID
-     * @param user        : The account of the current user
-     * @param cookieuuid  : The ID which you use to identify the cookie
+     *
+     * @param user       : The account of the current user
+     * @param cookieuuid : The ID which you use to identify the cookie
      */
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
@@ -391,6 +405,7 @@ public class DatabaseController {
 
     /**
      * Get an account with a cookie string
+     *
      * @param cookie : The cookie where you want the account from
      * @return The account that was in the cookie, if empty return null
      */
@@ -413,12 +428,13 @@ public class DatabaseController {
 
     /**
      * Delete an account from the database
+     *
      * @param uuid : The UUID of the account that needs to be deleted
      * @return true if the update succeeded an false if you get an Empty result data access Exception
      * @throws IllegalArgumentException when UUId is null
      */
     public boolean deleteAccount(UUID uuid) throws IllegalArgumentException {
-        if (uuid == null) throw new IllegalArgumentException ("Invalid UUID");
+        if (uuid == null) throw new IllegalArgumentException("Invalid UUID");
 
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
@@ -432,6 +448,7 @@ public class DatabaseController {
 
     /**
      * Get an account with a cookie
+     *
      * @param cookie : The cookie which contains the account
      * @return The account from the cookie
      */
@@ -441,6 +458,7 @@ public class DatabaseController {
 
     /**
      * Get an account from a resultset
+     *
      * @param resultSet the resultset from getAccount
      * @return the account from the resultSet
      */
@@ -473,6 +491,7 @@ public class DatabaseController {
 
     /**
      * Gets all the schools the photographer photographs for by his PhotographerID
+     *
      * @param photographerID
      * @return
      */
@@ -480,21 +499,34 @@ public class DatabaseController {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
         List<Map<String, Object>> rows = select.queryForList(
-                    "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
-                "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
+                "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
+                        "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
 
-                new Object[]{photographerID,photographerID});
+                new Object[]{photographerID, photographerID});
         List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
 
         for (Map<String, Object> row : rows) {
             int id = (Integer) row.get("id");
-            String name= (String) row.get("name");
-            String location= (String) row.get("location");
+            String name = (String) row.get("name");
+            String location = (String) row.get("location");
             String country = (String) row.get("country");
 
-            schoolModels.add(new SchoolModel(id, name,location,country));
+            schoolModels.add(new SchoolModel(id, name, location, country));
         }
         return schoolModels;
+    }
+
+    public boolean insertItem(double price, String type, String description, String thumbnailPath) {
+
+        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        try {
+            insert.update("INSERT INTO item ( type, price, description, thumbnailpath) VALUES (?,?,?,?)", type, price, description, thumbnailPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+
     }
 
 

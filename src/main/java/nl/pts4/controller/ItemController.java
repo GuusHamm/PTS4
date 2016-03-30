@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,10 +27,14 @@ public class ItemController {
     @Autowired
     MessageSource messageSource;
 
-    @RequestMapping("makeitem")
-    public String makeItem(HttpServletRequest request, Model model, @CookieValue(AccountController.AccountCookie) String cookie){
+    @RequestMapping(value = "makeitem", method = RequestMethod.GET)
+    public String makeItem(HttpServletRequest request, Model model, @CookieValue(AccountController.AccountCookie) String cookie, @RequestParam(value = "PreviousInsert",defaultValue = "0")int wentwell){
 
-
+        if(wentwell==1){
+            model.addAttribute("success", messageSource.getMessage("success.database",null,RequestContextUtils.getLocale(request)));
+        }else if(wentwell==2){
+            model.addAttribute("error", messageSource.getMessage("error.database",null,RequestContextUtils.getLocale(request)));
+        }
         DatabaseController databaseController = DatabaseController.getInstance();
         AccountModel photographer= databaseController.getAccountByCookie(cookie);
 
@@ -46,5 +52,24 @@ public class ItemController {
         model.addAttribute("scholen", scholen);
 
         return "make_item";
+    }
+
+    @RequestMapping(value = "makeitem", method = RequestMethod.POST)
+    public String makeItem( @RequestParam(value = "type", required = true) String type,
+                                @RequestParam(value = "price", required = true) double price,
+                                @RequestParam(value = "description" , required = true) String description,
+                                @RequestParam(value = "thumbnailpath", required = true) String thumbnailPath ,
+                                HttpServletRequest request,
+                                Model model,
+                                @CookieValue(AccountController.AccountCookie) String cookie){
+
+        DatabaseController databaseController = DatabaseController.getInstance();
+
+        int wentWell = 0;
+        if(databaseController.insertItem(price, type,description,thumbnailPath))    wentWell=1;
+        else wentWell=2;
+
+        return makeItem(request,model,cookie, wentWell);
+
     }
 }

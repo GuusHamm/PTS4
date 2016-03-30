@@ -1,17 +1,14 @@
 #parse("header.vm")
 <div class="container" xmlns="http://www.w3.org/1999/html">
-    <div class="well bs-component">
-
-    <form class="form-group" id="makeItemForm" method="post">
+    <div class="well bs-component" >
+    <form class="form-group" id="makeItemForm" action="makeitem" method="POST">
         <fieldset>
             <div class="form-group" >
                 <h2 class="form-signin-heading">#springMessageText("make.item", "Make a item")</h2>
                 <br/>
                 <label for="inputMakeItem" class="sr-only">#springMessageText("make.item", "Make an item")</label>
-##                <input type="text" id="inputName" name="name" class="form-control"
-##                       placeholder=#springMessageText("name", "Name") required=""
-##                       autofocus="">
-                <input type="text" id="inputType" name="Type" class="form-control"
+
+                <input  type="text" id="inputType" name="type" class="form-control"
                        placeholder=#springMessageText("type", "Type") required=""
                        autofocus="">
                 <br/>
@@ -19,7 +16,7 @@
                        placeholder=#springMessageText("description", "Description") required=""
                        autofocus="">
                 <br/>
-                <select class="form-control" draggable="true" title="school">
+                <select class="form-control" draggable="true" name="school" required="">
                     <option value="" disabled selected>#springMessageText("select","----Select-----")</option>
                     #set ($counter=0)
                     #foreach ($school in $scholen)
@@ -29,14 +26,16 @@
                 </select>
                 <br/>
                 <div class="input-group">
-                    <span class="input-group-addon">$</span>
-                    <input type="number" value="5" min="0" step="0,5" data-number-to-fixed="2" data-number-stepfactor="1000" class="form-control currency" id="c2" />
+                    <span class="input-group-addon">€</span>
+                    <input name="price" type="number" value="5" min="0" step="0.5" data-number-to-fixed="2" data-number-stepfactor="1000" class="form-control glyphicon-euro" id="c2" />
                 </div>
                 <br/>
+                <input name="thumbnailpath" type="text" id="inputdescription" name="description" class="form-control"
+                       placeholder=#springMessageText("description", "Description") required=""
+                       autofocus="">
+                <br/>
 
-
-                <button id="btnMakeItem" class="btn btn-lg btn-primary btn-block" type="submit">#springMessageText(
-                    "make.item", "Make item")</button>
+                <button id="btnMakeItem" class="btn btn-lg btn-primary btn-block" type="submit" value="makeitem">#springMessageText("make.item", "Make item")</button>
 
             </div>
         </fieldset>
