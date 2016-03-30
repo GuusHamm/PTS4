@@ -18,10 +18,10 @@
             <tbody>
                 #foreach( $order in $allOrders)
                 <tr>
-                    <td>$order.id</td>
+                    <td>$order.getId()</td>
                     <td>$order.getOrderDateTemplate()</td>
-                    <td>$order.account.name</td>
-                    <td>$order.account.email</td>
+                    <td>$order.getAccount().getName()</td>
+                    <td>$order.getAccount().getEmail()</td>
                     <td>$order.getTotalPrice()</td>
                 </tr>
                 #end

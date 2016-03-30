@@ -1,4 +1,6 @@
 #* @implicitly included *#
+#* @vtlvariable name="scholen" type="nl.pts4.model.SchoolModel[]" file="../resources/templates/make_item.vm" *#
+#* @vtlvariable name="photos" type="nl.pts4.model.PhotoModel[]" file="../resources/templates/photoview.vm" *#
 #* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
 #* @vtlvariable name="title" type="java.lang.String" *#
-#* @vtlvariable name="allOrders" type="nl.pts4.model.OrderModel[]" file="../resources/templates/*" *#
+#* @vtlvariable name="allOrders" type="nl.pts4.model.OrderModel[]" file="../resources/templates/order-overview.vm" *#

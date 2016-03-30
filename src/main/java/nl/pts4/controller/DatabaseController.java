@@ -326,7 +326,7 @@ public class DatabaseController {
 
         ArrayList<PhotoConfigurationModel> photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid, s.name, s.location, s.country, e.type, e.description, e.price as effectprice, i.price as itemprice, i.description as itemdescription, i.thumbnailpath "
                                                                                                     + "FROM photoconfiguration pc, photo p, school s, effect e, item i " +
-                                                                                                    "WHERE p.id = pc.photoid" +
+                                                                                                    "WHERE p.id = pc.photoid " +
                                                                                                     "AND s.id = p.schoolid " +
                                                                                                     "AND pc.effectid = e.id " +
                                                                                                     "AND pc.itemid = i.id " +
