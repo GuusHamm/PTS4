@@ -16,6 +16,12 @@ public class MainController {
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String SUCCESS_ATTRIBUTE = "success";
 
+    /**
+     * The main page
+     * @param m         : The model / template
+     * @param account   : The account cookie, is not required
+     * @return main to load the correct template
+     */
     @RequestMapping(value = "/")
     public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
@@ -24,6 +30,12 @@ public class MainController {
         return "main";
     }
 
+    /**
+     * The header of the page
+     * @param m         : The model / template
+     * @param account   : The account cookie, is not required
+     * @return header to get the correct template
+     */
     @RequestMapping(value = "/header")
     public String header(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
