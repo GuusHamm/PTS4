@@ -22,4 +22,12 @@ public class MainController {
         return "main";
     }
 
+    @RequestMapping(value = "/header")
+    public String header(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
+        AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
+        m.addAttribute("user", am);
+        return "header";
+    }
+
 }
