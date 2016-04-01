@@ -23,9 +23,8 @@ import java.util.logging.Logger;
  * Created by GuusHamm on 16-3-2016.
  */
 public class DatabaseController {
-    private DataSource dataSource;
-
     private static DatabaseController instance;
+    private DataSource dataSource;
 
     /**
      * Get the instance of the DatabaseControlle
@@ -109,6 +108,14 @@ public class DatabaseController {
         return getAccount(accountUUID);
     }
 
+    public boolean createPhoto(UUID uuid, String path, UUID photographer, UUID child) {
+        int price = 5;
+        Date captureDate = new Date();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid) VALUES (?, ?, ?, ?, ?, ?);", uuid, price, captureDate, path, photographer, child) == 1;
+    }
+
     /**
      * Change the email from an account
      * @param ac    : The account which email needs to be changed
@@ -185,6 +192,11 @@ public class DatabaseController {
             return null;
         }
         return am;
+    }
+
+    public ChildModel createChildModel() {
+
+        return null;
     }
 
 //    public List<OrderModel> getAllOrders() {

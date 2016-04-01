@@ -25,6 +25,15 @@ public class PhotoModel {
 		this.filePath = filePath;
 	}
 
+	public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, int price, Date captureDate, String filePath) {
+		this.uuid = uuid;
+		this.photographer = photographer;
+		this.child = child;
+		this.price = price;
+		this.captureDate = captureDate;
+		this.filePath = filePath;
+	}
+
 	public int getPrice()
 	{
 		return price;
