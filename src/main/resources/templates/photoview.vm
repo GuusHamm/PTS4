@@ -12,8 +12,8 @@
                         <div class="col-lg-8 col-lg-offset-2">
                             <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
                             #set($priceRound = $photo.price - .01)
-                            <button class="btn btn-primary" href="/photos?id=$photo.uuid">Buy this photo for
-                                only $priceRound</button>
+                            <a class="btn btn-primary" href="/photos?id=$photo.uuid">Buy this photo for
+                                only $priceRound</a>
                         </div>
                     </div>
                 </div>

@@ -9,7 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Created by guushamm on 23-3-16.
@@ -37,12 +40,14 @@ public class FileUploadController {
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();
 
+        UUID uuid = UUID.randomUUID();
+
         if (files != null) {
             for (MultipartFile multipartFile : files) {
                 if (!multipartFile.getOriginalFilename().equals("")) {
                     if (allowedFileTypes.contains(multipartFile.getContentType())) {
-
-                        if (!writeFile(multipartFile)) {
+                        String fileName = writeFile(multipartFile, uuid);
+                        if (fileName.isEmpty()) {
                             m.addAttribute("error", "Something went wrong on the server, try again later");
                             return "multiupload";
                         }
@@ -66,19 +71,23 @@ public class FileUploadController {
         }
     }
 
-    private boolean writeFile(MultipartFile file) {
+    private String writeFile(MultipartFile file, UUID uuid) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, file.getContentType().substring(file.getContentType().indexOf("/") + 1));
+
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/Uploads/%s", System.getProperty("user.home"), file.getOriginalFilename()))));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/Uploads/%s", System.getProperty("user.home"), filename))));
             bufferedOutputStream.write(file.getBytes());
             bufferedOutputStream.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return false;
+            return "";
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return "";
         }
-        return true;
+        return filename;
     }
 
 }
