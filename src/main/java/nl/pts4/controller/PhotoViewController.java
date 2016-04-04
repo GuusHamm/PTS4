@@ -60,6 +60,7 @@ public class PhotoViewController {
 		if (id != null) {
 			cart.add(DatabaseController.getInstance().getPhotoByUUID(id));
 			request.getSession().setAttribute("Cart", cart);
+
 		}
 		request.getSession().setAttribute("Cart", cart);
 		request.getSession().setAttribute("Succes", true);

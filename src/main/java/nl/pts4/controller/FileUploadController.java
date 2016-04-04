@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +21,8 @@ import java.util.UUID;
  */
 @Controller
 public class FileUploadController {
+    public final static String StaticLocation = "images/";
+    public final static String ImageLocation = String.format("%s/src/main/resources/static/images/", System.getProperty("user.dir"));
     private LinkedList<String> allowedFileTypes;
 
     public FileUploadController() {
@@ -51,7 +55,11 @@ public class FileUploadController {
                             m.addAttribute("error", "Something went wrong on the server, try again later");
                             return "multiupload";
                         }
+//                        if (multipartFile.getContentType()!="image/jpg"){
+//                            convertFileToJpg(ImageLocation+fileName);
+//                        }
                         message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
+                        DatabaseController.getInstance().createPhoto(uuid, fileName, DatabaseController.getInstance().getRandomPhotographerUUID(), DatabaseController.getInstance().getRandomChildUUID());
                     } else {
                         warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                     }
@@ -77,7 +85,7 @@ public class FileUploadController {
         String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, file.getContentType().substring(file.getContentType().indexOf("/") + 1));
 
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/Uploads/%s", System.getProperty("user.home"), filename))));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), filename))));
             bufferedOutputStream.write(file.getBytes());
             bufferedOutputStream.close();
         } catch (FileNotFoundException e) {
@@ -88,6 +96,23 @@ public class FileUploadController {
             return "";
         }
         return filename;
+    }
+
+    private boolean convertFileToJpg(String filePath) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(filePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath.substring(0, filePath.indexOf(".")) + ".jpg");
+            BufferedImage bufferedImage = ImageIO.read(fileInputStream);
+            ImageIO.write(bufferedImage, "JPG", fileOutputStream);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }
