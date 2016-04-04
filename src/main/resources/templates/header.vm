@@ -31,8 +31,9 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Shopping
-                        Cart <span class="badge"> #if($cart) $cart.size() #else 0  #end  </span><span
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">#springMessageText("header.cart", "Shopping Cart") <span
+                            class="badge"> #if($cart) $cart.size() #else 0  #end  </span><span
                                 class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         #if($cart)
@@ -40,10 +41,12 @@
                             #foreach ($item in $cart)
                                 #set($total=$total+$item.price)
                             #end
-                            <p>Total: €$total</p>
+                            <p>#springMessageText("header.cart.total", "Total"): €$total</p>
                             <div class="btn-group btn-group-justified">
-                                <a href="/clearcart" class="btn btn-danger btn-block">Clear Cart</a>
-                                <a href="#" class="btn btn-primary btn-block">Checkout</a>
+                                <a href="/clearcart" class="btn btn-danger btn-block">#springMessageText(
+                                    "header.cart.clear", "Clear")</a>
+                                <a href="#" class="btn btn-primary btn-block">#springMessageText(
+                                    "header.cart.checkout", "Checkout")</a>
                             </div>
                             #foreach ($item in $cart)
                                 <li class="list-group-item"><img class="thumbnail list-group-item-heading"
@@ -55,7 +58,8 @@
 
 
                         #else
-                            <li class="list-group-item">Your cart is empty</li>
+                            <li class="list-group-item">#springMessageText(
+                                "header.cart.empty", "Your cart is empty")</li>
                         #end
 
                     </ul>
