@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 /**
@@ -28,13 +29,16 @@ public class OrderController {
 	@RequestMapping(value = "/order-overview")
 	public String orderView(
 			@CookieValue(AccountController.AccountCookie) String am,
-			Model m) {
+			Model m, HttpServletRequest request) {
 		ArrayList<OrderModel> orders = new ArrayList<>();
 		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
+
+		request.getSession();
 //		Add some items to the orders list to show them
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
 		m.addAttribute("allOrders", orders);
 		m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
+		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
 		return "order-overview";
 	}

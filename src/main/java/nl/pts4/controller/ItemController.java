@@ -24,6 +24,8 @@ public class ItemController {
         scholen.add("Eindhoven");
         model.addAttribute("scholen", scholen);
 
+        model.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
 
 
         return "make_item";

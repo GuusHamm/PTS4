@@ -6,13 +6,13 @@
                 <div class="list-group-item">
                     <div class="row">
                         <div class="col-lg-2">
-                            <a href="/buy?pt=$photo.uuid"><img class="thumbnail" src="$photo.filePath"
-                                                               alt="Card image cap"></a>
+                            <a href="/photos?id=$photo.uuid"><img class="thumbnail" src="$photo.filePath"
+                                                                  alt="Card image cap"></a>
                         </div>
                         <div class="col-lg-8 col-lg-offset-2">
                             <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
                             #set($priceRound = $photo.price - .01)
-                            <button class="btn btn-primary" href="/buy?pt=$photo.uuid">Buy this photo for
+                            <button class="btn btn-primary" href="/photos?id=$photo.uuid">Buy this photo for
                                 only $priceRound</button>
                         </div>
                     </div>
@@ -20,5 +20,6 @@
             </div>
         #end
     </div>
+
 </div>
 #parse("footer.vm")

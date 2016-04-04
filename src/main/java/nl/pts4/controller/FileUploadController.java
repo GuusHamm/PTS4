@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.LinkedList;
 
@@ -27,12 +27,13 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload")
-    public String multiUpload() {
+    public String multiUpload(Model m, HttpServletRequest request) {
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "multiupload";
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletRequest request, Model m) {
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();
 
@@ -57,6 +58,7 @@ public class FileUploadController {
             if (!message.toString().equals("")) {
                 m.addAttribute("success", message.toString());
             }
+            m.addAttribute("cart", request.getSession().getAttribute("Cart"));
             return "multiupload";
         } else {
             m.addAttribute("error", "You have to select a file for upload.");

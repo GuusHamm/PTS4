@@ -23,9 +23,8 @@ import java.util.logging.Logger;
  * Created by GuusHamm on 16-3-2016.
  */
 public class DatabaseController {
-    private DataSource dataSource;
-
     private static DatabaseController instance;
+    private DataSource dataSource;
 
     /**
      * Get the instance of the DatabaseControlle
@@ -314,6 +313,28 @@ public class DatabaseController {
             photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path));
         }
         return photoModels;
+    }
+
+    public PhotoModel getPhotoByUUID(UUID uuid) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        PhotoModel photoModel = template.queryForObject("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p where id=?", new Object[]{uuid}, ((resultSet, i) -> {
+            try {
+                UUID id = UUID.fromString(resultSet.getString("id"));
+                UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
+                UUID childid = UUID.fromString(resultSet.getString("childid"));
+                int schoolid = resultSet.getInt("schoolid");
+                int price = resultSet.getInt("price");
+                Date captureDate = resultSet.getDate("capturedate");
+                String path = resultSet.getString("pathtophoto");
+                //TODO create a get school
+                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }));
+        return photoModel;
     }
 
     /**

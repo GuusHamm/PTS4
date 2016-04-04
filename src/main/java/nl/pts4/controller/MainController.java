@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by Teun on 20-3-2016.
  */
@@ -23,10 +25,11 @@ public class MainController {
      * @return main to load the correct template
      */
     @RequestMapping(value = "/")
-    public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
+    public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
         AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
         m.addAttribute("user", am);
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "main";
     }
 

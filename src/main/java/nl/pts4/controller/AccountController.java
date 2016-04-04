@@ -32,13 +32,22 @@ public class AccountController {
 
     public static final String AccountCookie = "ACC_SESSION";
     public static final String AccountModelKey = "user";
-    @Autowired
-    MessageSource messageSource;
     public static final String CSRFToken = "CSRF";
     public static final int CSRFExpiry = 60 * 10; // 10 Minutes
-
+    @Autowired
+    MessageSource messageSource;
     private Map<String, Date> tokens = new HashMap<>();
     private SecureRandom random = new SecureRandom();
+
+    /**
+     * Checks the password for a account
+     * @param account Account to check the password for
+     * @param password Password to check against
+     * @return True if password is correct, false otherwise
+     */
+    public static boolean checkPassword(AccountModel account, String password) {
+        return !(password == null || Objects.equals(password, "") || account == null) && SCryptUtil.check(password, account.getHash());
+    }
 
     /**
      * When you go the the delete page with a get method
@@ -55,6 +64,7 @@ public class AccountController {
         String randomToken = new BigInteger(130, random).toString(32);
         tokens.put(randomToken, new Date());
         m.addAttribute(CSRFToken, randomToken);
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "delete";
     }
 
@@ -97,6 +107,8 @@ public class AccountController {
             response.sendRedirect("/");
         }
 
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
         tokens.remove(csrfToken);
         return "delete";
     }
@@ -119,8 +131,9 @@ public class AccountController {
      * @return login to get the correct template
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model m){
+    public String login(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "login";
     }
 
@@ -130,8 +143,9 @@ public class AccountController {
      * @return register to get the register template
      */
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String register(Model m) {
+    public String register(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "register";
     }
 
@@ -150,7 +164,8 @@ public class AccountController {
                            @RequestParam(value = "password", required = true) String password,
                            @RequestParam(value = "name", required = true) String name,
                            HttpServletResponse response,
-                           Model m) throws IOException {
+                           Model m,
+                           HttpServletRequest request) throws IOException {
         String sanitizedName = Jsoup.clean(name, Whitelist.simpleText());
         String sanitizedEmail = Jsoup.clean(email, Whitelist.simpleText());
         String sanitizedPassword = Jsoup.clean(password, Whitelist.simpleText());
@@ -161,6 +176,7 @@ public class AccountController {
 
         AccountModel accountModel = DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         response.sendRedirect("/login");
         return null;
     }
@@ -185,6 +201,7 @@ public class AccountController {
             return "login";
         }
         m.addAttribute(AccountController.AccountModelKey, accountModel);
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "account_settings";
     }
 
@@ -208,16 +225,7 @@ public class AccountController {
 
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Home");
         m.addAttribute(MainController.SUCCESS_ATTRIBUTE, messageSource.getMessage("logout.success", null, request.getLocale()));
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "login";
-    }
-
-    /**
-     * Checks the password for a account
-     * @param account Account to check the password for
-     * @param password Password to check against
-     * @return True if password is correct, false otherwise
-     */
-    public static boolean checkPassword(AccountModel account, String password) {
-        return !(password == null || Objects.equals(password, "") || account == null) && SCryptUtil.check(password, account.getHash());
     }
 }

@@ -1,4 +1,5 @@
 #* @implicitly included *#
+#* @vtlvariable name="cart" type="java.util.LinkedList" file="../resources/templates/header.vm" *#
 #* @vtlvariable name="scholen" type="nl.pts4.model.SchoolModel[]" file="../resources/templates/make_item.vm" *#
 #* @vtlvariable name="photos" type="nl.pts4.model.PhotoModel[]" file="../resources/templates/photoview.vm" *#
 #* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
