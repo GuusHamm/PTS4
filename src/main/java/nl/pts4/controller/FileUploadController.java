@@ -7,15 +7,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Created by guushamm on 23-3-16.
  */
 @Controller
 public class FileUploadController {
+    public final static String StaticLocation = "images/";
+    public final static String ImageLocation = String.format("%s/src/main/resources/WEB-INF/public-resources/", System.getProperty("user.dir"));
     private LinkedList<String> allowedFileTypes;
 
     public FileUploadController() {
@@ -25,43 +32,34 @@ public class FileUploadController {
         this.allowedFileTypes.add("image/jpg");
         this.allowedFileTypes.add("image/jpeg");
     }
-    //  @RequestMapping(method = RequestMethod.GET, value = "/upload")
-//  public String provideUploadInfo(Model model) {
-//    File rootFolder = new File(Application.ROOT);
-//    List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//        .map(f -> f.getName())
-//        .collect(Collectors.toList());
-//
-//    model.addAttribute("files",
-//        Arrays.stream(rootFolder.listFiles())
-//            .sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//            .map(f -> f.getName())
-//            .collect(Collectors.toList())
-//    );
-//
-//    return "uploadForm";
-//  }
 
     @RequestMapping(value = "/multiupload")
-    public String multiUpload() {
+    public String multiUpload(Model m, HttpServletRequest request) {
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "multiupload";
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletRequest request, Model m) {
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();
+
+        UUID uuid = UUID.randomUUID();
 
         if (files != null) {
             for (MultipartFile multipartFile : files) {
                 if (!multipartFile.getOriginalFilename().equals("")) {
                     if (allowedFileTypes.contains(multipartFile.getContentType())) {
-
-                        if (!writeFile(multipartFile)) {
+                        String fileName = writeFile(multipartFile, uuid);
+                        if (fileName.isEmpty()) {
                             m.addAttribute("error", "Something went wrong on the server, try again later");
                             return "multiupload";
                         }
+//                        if (multipartFile.getContentType()!="image/jpg"){
+//                            convertFileToJpg(ImageLocation+fileName);
+//                        }
                         message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
+//                        DatabaseController.getInstance().createPhoto(uuid, fileName, DatabaseController.getInstance().getRandomPhotographerUUID(), DatabaseController.getInstance().getRandomChildUUID());///////////////////////////TODO uncomment this when merged!!!!
                     } else {
                         warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                     }
@@ -73,6 +71,7 @@ public class FileUploadController {
             if (!message.toString().equals("")) {
                 m.addAttribute("success", message.toString());
             }
+            m.addAttribute("cart", request.getSession().getAttribute("Cart"));
             return "multiupload";
         } else {
             m.addAttribute("error", "You have to select a file for upload.");
@@ -80,11 +79,51 @@ public class FileUploadController {
         }
     }
 
-    private boolean writeFile(MultipartFile file) {
+    public String uploadItemThumbnail(MultipartFile file) {
+
+
+        UUID uuid = UUID.randomUUID();
+        String fileName = "";
+
+        if (file != null && !file.getOriginalFilename().equals("")) {
+
+            if (allowedFileTypes.contains(file.getContentType())) {
+                fileName = writeFile(file, uuid);
+//                if (fileName.isEmpty()) {
+//                    return "";
+//                }
+            }
+        }
+        return fileName;
+
+    }
+
+    private String writeFile(MultipartFile file, UUID uuid) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, file.getContentType().substring(file.getContentType().indexOf("/") + 1));
+
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/Uploads/%s", System.getProperty("user.home"), file.getOriginalFilename()))));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(ImageLocation + filename)));
             bufferedOutputStream.write(file.getBytes());
             bufferedOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return filename;
+    }
+
+    private boolean convertFileToJpg(String filePath) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(filePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath.substring(0, filePath.indexOf(".")) + ".jpg");
+            BufferedImage bufferedImage = ImageIO.read(fileInputStream);
+            ImageIO.write(bufferedImage, "JPG", fileOutputStream);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;

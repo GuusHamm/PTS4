@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,11 +46,11 @@ public class ItemController {
             return "main";
         }
 
-        List<SchoolModel> scholen= new ArrayList<>();
-        for(SchoolModel s: databaseController.getSchools(photographer.getUuid())){
-            scholen.add(s);
-        }
-        model.addAttribute("scholen", scholen);
+//        List<SchoolModel> scholen= new ArrayList<>();
+//        for(SchoolModel s: databaseController.getSchools(photographer.getUuid())){
+//            scholen.add(s);
+//        }
+//        model.addAttribute("scholen", scholen);
 
         return "make_item";
     }
@@ -58,13 +59,16 @@ public class ItemController {
     public String makeItem( @RequestParam(value = "type", required = true) String type,
                                 @RequestParam(value = "price", required = true) double price,
                                 @RequestParam(value = "description" , required = true) String description,
-                                @RequestParam(value = "thumbnailpath", required = true) String thumbnailPath ,
+                                @RequestParam(value = "file", required = true) MultipartFile file,
                                 HttpServletRequest request,
                                 Model model,
-                                @CookieValue(AccountController.AccountCookie) String cookie){
+                                @CookieValue(AccountController.AccountCookie) String cookie
+
+                            ){
 
         DatabaseController databaseController = DatabaseController.getInstance();
 
+        String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
         int wentWell = 0;
         if(databaseController.insertItem(price, type,description,thumbnailPath))    wentWell=1;
         else wentWell=2;
