@@ -2,6 +2,7 @@ package nl.pts4.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -34,7 +36,10 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload")
-    public String multiUpload(Model m, HttpServletRequest request) {
+    public String multiUpload(Model m, HttpServletRequest request, @CookieValue(value = AccountController.AccountCookie, required = false) String account, HttpServletResponse response) {
+        if (MainController.assertUserIsPrivileged(account, request, response)) {
+            return null;
+        }
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "multiupload";
     }

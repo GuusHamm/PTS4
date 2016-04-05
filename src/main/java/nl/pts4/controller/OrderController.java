@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
 /**
@@ -28,8 +29,11 @@ public class OrderController {
      */
 	@RequestMapping(value = "/order-overview")
 	public String orderView(
-			@CookieValue(AccountController.AccountCookie) String am,
-			Model m, HttpServletRequest request) {
+			@CookieValue(value = AccountController.AccountCookie, required = false) String am,
+			Model m, HttpServletRequest request, HttpServletResponse response) {
+		if (!MainController.assertUserIsPrivileged(am, request, response)) {
+			return null;
+		}
 		ArrayList<OrderModel> orders = new ArrayList<>();
 		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 

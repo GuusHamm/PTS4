@@ -16,17 +16,6 @@ public class AccountModel {
 	private boolean active;
 	private AccountTypeEnum accountTypeEnum;
 
-	public enum AccountTypeEnum {
-		customer,
-		photographer
-	}
-
-	public enum OAuthProviderEnum {
-		google,
-		facebook,
-		twitter
-	}
-
 	public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
 		this.uuid = uuid;
 		this.oAuthKey = oAuthKey;
@@ -49,33 +38,52 @@ public class AccountModel {
 		this.accountTypeEnum = accountTypeEnum;
 	}
 
-
 	public UUID getUuid() {
 		return uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getEmail() {
 		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public boolean isActive() {
 		return active;
 	}
 
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	public AccountTypeEnum getAccountTypeEnum() {
 		return accountTypeEnum;
+	}
+
+	public void setAccountTypeEnum(AccountTypeEnum accountTypeEnum) {
+		this.accountTypeEnum = accountTypeEnum;
 	}
 
 	public String getHash() {
 		return hash;
 	}
 
-	public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	public void setoAuthKey(String oAuthKey) {
@@ -86,23 +94,15 @@ public class AccountModel {
 		this.oAuhtProvider = oAuhtProvider;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public enum AccountTypeEnum {
+		customer,
+		photographer,
+		administrator
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public void setHash(String hash) {
-		this.hash = hash;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public void setAccountTypeEnum(AccountTypeEnum accountTypeEnum) {
-		this.accountTypeEnum = accountTypeEnum;
+	public enum OAuthProviderEnum {
+		google,
+		facebook,
+		twitter
 	}
 }

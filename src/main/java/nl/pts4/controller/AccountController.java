@@ -134,6 +134,16 @@ public class AccountController {
     public String login(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+        if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
+            m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
+            request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
+        }
+        if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
+            m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
+            request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
+        }
+
         return "login";
     }
 

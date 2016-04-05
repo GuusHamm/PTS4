@@ -42,9 +42,13 @@ public class PhotoViewController {
 		m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
-		if (request.getSession().getAttribute("Succes") != null && (boolean) request.getSession().getAttribute("Succes") == true) {
-			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo has been added to your cart");
-			request.getSession().removeAttribute("Succes");
+		if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
+			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
+			request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
+		}
+		if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
+			m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
+			request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
 		}
 		return "photoview";
 	}
@@ -63,7 +67,7 @@ public class PhotoViewController {
 
 		}
 		request.getSession().setAttribute("Cart", cart);
-		request.getSession().setAttribute("Succes", true);
+		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 
 
 		try {
@@ -72,6 +76,24 @@ public class PhotoViewController {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	@RequestMapping(value = "deletephoto", params = {"id"})
+	public String deletePhoto(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+		if (id != null) {
+			if (DatabaseController.getInstance().deletePhoto(id)) {
+				request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Removed");
+			} else {
+				m.addAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
+			}
+		}
+
+		try {
+			response.sendRedirect("/photos");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

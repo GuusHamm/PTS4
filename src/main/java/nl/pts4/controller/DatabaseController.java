@@ -589,6 +589,20 @@ public class DatabaseController {
 		}
 	}
 
+	public boolean deletePhoto(UUID uuid) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		return template.update("DELETE FROM photo WHERE id=?", uuid) == 1;
+	}
+
+	public boolean checkPrivalegedUser(UUID uuid) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		return template.queryForObject("SELECT * FROM account WHERE id = ? AND type IN ('photographer','administrator')", new Object[]{uuid}, ((resultSet, i) -> {
+			return resultSet != null;
+		}));
+	}
+
 	/**
 	 * Get an account with a cookie
 	 *
@@ -731,8 +745,8 @@ public class DatabaseController {
     public boolean updateItem(int id, double price, String  type, String description, String thumbnailPath) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE item SET (price, type, description, thumbnailpath) = (?,?,?,?)  " +
-                "WHERE id= ? ", new Object[]{price,type,description,thumbnailPath,id})==1;
-    }
+				"WHERE id= ? ", price, type, description, thumbnailPath, id) == 1;
+	}
 
     /**
      * updates the item in the database with all new values without changing the image
@@ -745,8 +759,8 @@ public class DatabaseController {
     public boolean updateItem(int id, double price, String  type, String description) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return template.update("UPDATE item SET (price, type, description) = (?,?,?)  " +
-                "WHERE id= ? ", new Object[]{price,type,description,id})==1;
-    }
+				"WHERE id= ? ", price, type, description, id) == 1;
+	}
     /**
      * Gets all the schools the photographer photographs for by his PhotographerID
      *
@@ -760,8 +774,8 @@ public class DatabaseController {
                 "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
                         "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
 
-                new Object[]{photographerID, photographerID});
-        List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
+				photographerID, photographerID);
+		List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
 
         for (Map<String, Object> row : rows) {
             int id = (Integer) row.get("id");

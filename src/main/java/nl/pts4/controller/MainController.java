@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by Teun on 20-3-2016.
@@ -17,6 +19,19 @@ public class MainController {
     public static final String TITLE_ATTRIBUTE = "title";
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String SUCCESS_ATTRIBUTE = "success";
+
+    public static boolean assertUserIsPrivileged(String account, HttpServletRequest request, HttpServletResponse response) {
+        if (account == null || !DatabaseController.getInstance().checkPrivalegedUser(DatabaseController.getInstance().getAccountByCookie(account).getUuid())) {
+            try {
+                request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "You are not allowed to do that");
+                response.sendRedirect("/login");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        return true;
+    }
 
     /**
      * The main page
@@ -46,5 +61,4 @@ public class MainController {
         m.addAttribute("user", am);
         return "header";
     }
-
 }
