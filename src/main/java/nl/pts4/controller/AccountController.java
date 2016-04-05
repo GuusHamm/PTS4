@@ -96,7 +96,7 @@ public class AccountController {
         if (isExpired(tokenDate))
             m.addAttribute(ERROR_ATTRIBUTE, "Token not found expired");
 
-        AccountModel am = DatabaseController.getInstance().getAccountByCookie(accountCookie);
+        AccountModel am = MainController.getCurrentUser(accountCookie, request);
         if (!checkPassword(am, password))
             m.addAttribute(ERROR_ATTRIBUTE, "Password invalid");
 
@@ -204,7 +204,7 @@ public class AccountController {
                                      Model m,
                                      HttpServletRequest request,
                                      HttpServletResponse response) throws IOException {
-        AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+        AccountModel accountModel = MainController.getCurrentUser(account, request);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
         if (accountModel == null || account == null) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));

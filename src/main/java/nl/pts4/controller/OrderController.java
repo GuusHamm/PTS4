@@ -31,17 +31,16 @@ public class OrderController {
 	public String orderView(
 			@CookieValue(value = AccountController.AccountCookie, required = false) String am,
 			Model m, HttpServletRequest request, HttpServletResponse response) {
-		if (!MainController.assertUserIsPrivileged(am, request, response)) {
+		if (!MainController.assertUserIsPrivileged(am, request, response, true)) {
 			return null;
 		}
 		ArrayList<OrderModel> orders = new ArrayList<>();
 		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 
-		request.getSession();
 //		Add some items to the orders list to show them
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
 		m.addAttribute("allOrders", orders);
-		m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
+		m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(am, request));
 		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
 		return "order-overview";

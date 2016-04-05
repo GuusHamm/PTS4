@@ -37,7 +37,7 @@ public class FileUploadController {
 
     @RequestMapping(value = "/multiupload")
     public String multiUpload(Model m, HttpServletRequest request, @CookieValue(value = AccountController.AccountCookie, required = false) String account, HttpServletResponse response) {
-        if (MainController.assertUserIsPrivileged(account, request, response)) {
+        if (!MainController.assertUserIsPrivileged(account, request, response, true)) {
             return null;
         }
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));

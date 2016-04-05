@@ -21,6 +21,7 @@ public class MainController {
 	public static final String ERROR_ATTRIBUTE = "error";
 	public static final String SUCCESS_ATTRIBUTE = "success";
 	public static final String PRIVILEGED_ATTRIBUTE = "privileged";
+	public static final String ACCOUNT_ATTRIBUTE = "account";
 
 	public static boolean assertUserIsPrivileged(String account, HttpServletRequest request, HttpServletResponse response, boolean redirect) {
 		Object privilegedAttribute = request.getSession().getAttribute(PRIVILEGED_ATTRIBUTE);
@@ -33,7 +34,7 @@ public class MainController {
 		}
 
 		if (privilegedAttribute == null) {
-			privilegedAttribute = DatabaseController.getInstance().checkPrivalegedUser(DatabaseController.getInstance().getAccountByCookie(account).getUuid());
+			privilegedAttribute = DatabaseController.getInstance().checkPrivalegedUser(MainController.getCurrentUser(account, request).getUuid());
 			request.getSession().setAttribute(PRIVILEGED_ATTRIBUTE, privilegedAttribute);
 		} else {
 			privilegedAttribute = request.getSession().getAttribute(PRIVILEGED_ATTRIBUTE);
@@ -45,6 +46,20 @@ public class MainController {
 			}
 		}
 		return (boolean) privilegedAttribute;
+	}
+
+	public static AccountModel getCurrentUser(String account, HttpServletRequest request) {
+		AccountModel accountModel = (AccountModel) request.getSession().getAttribute(ACCOUNT_ATTRIBUTE);
+
+		if (account == null) {
+			return null;
+		}
+
+		if (accountModel == null) {
+			accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+			request.getSession().setAttribute(ACCOUNT_ATTRIBUTE, accountModel);
+		}
+		return accountModel;
 	}
 
 	private static void redirectToLogin(HttpServletRequest request, HttpServletResponse response) {
@@ -66,7 +81,7 @@ public class MainController {
 	@RequestMapping(value = "/")
 	public String main(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account, HttpServletRequest request, HttpServletResponse response) {
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
-		AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
+		AccountModel am = getCurrentUser(account, request);
 		m.addAttribute("user", am);
 		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 		m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(account, request, response, false));
@@ -81,9 +96,9 @@ public class MainController {
 	 * @return header to get the correct template
 	 */
 	@RequestMapping(value = "/header")
-	public String header(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account) {
+	public String header(Model m, @CookieValue(value = AccountController.AccountCookie, required = false) String account, HttpServletRequest request) {
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
-		AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
+		AccountModel am = getCurrentUser(account, request);
 		m.addAttribute("user", am);
 		return "header";
 	}

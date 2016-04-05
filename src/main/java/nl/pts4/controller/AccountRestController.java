@@ -66,8 +66,9 @@ public class AccountRestController {
                                           @RequestParam(value = "oldPassword") String oldPassword,
                                           @RequestParam(value = "newPassword") String newPassword,
                                           @RequestParam(value = "newPasswordRepeat") String newPasswordRepeat,
-                                          @CookieValue(value = AccountController.AccountCookie) String accountCookie) {
-        AccountModel ac = DatabaseController.getInstance().getAccountByCookie(accountCookie);
+                                          @CookieValue(value = AccountController.AccountCookie) String accountCookie,
+                                          HttpServletRequest request) {
+        AccountModel ac = MainController.getCurrentUser(accountCookie, request);
         boolean hitChange = false, passwordInvalid = false;
         String message = "Data invalid or hasn't changed";
 

@@ -33,14 +33,16 @@ public class PhotoViewController {
 	 * @return photoview to get the correct template
 	 */
 	@RequestMapping("/photos")
-	public String photosGet(@CookieValue(AccountController.AccountCookie) String account, Model m, HttpServletRequest request) {
-		AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+	public String photosGet(@CookieValue(value = AccountController.AccountCookie, required = false) String account, Model m, HttpServletRequest request, HttpServletResponse response) {
+		AccountModel accountModel = MainController.getCurrentUser(account, request);
 		List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
 
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Photos");
 		m.addAttribute(AccountController.AccountModelKey, accountModel);
 		m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+		m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(account, request, response, false));
 
 		if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
 			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));

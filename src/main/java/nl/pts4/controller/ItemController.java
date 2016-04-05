@@ -2,11 +2,8 @@ package nl.pts4.controller;
 
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.ItemModel;
-import nl.pts4.model.PhotoModel;
-import nl.pts4.model.SchoolModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -17,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,7 +35,7 @@ public class ItemController {
             model.addAttribute("error", messageSource.getMessage("error.database", null, RequestContextUtils.getLocale(request)));
         }
         DatabaseController databaseController = DatabaseController.getInstance();
-        AccountModel photographer = databaseController.getAccountByCookie(cookie);
+        AccountModel photographer = MainController.getCurrentUser(cookie, request);
 
         if (photographer == null || photographer.getAccountTypeEnum() != AccountModel.AccountTypeEnum.photographer) {
 
@@ -91,7 +87,7 @@ public class ItemController {
             }
 
             DatabaseController databaseController = DatabaseController.getInstance();
-            AccountModel photographer = databaseController.getAccountByCookie(cookie);
+            AccountModel photographer = MainController.getCurrentUser(cookie, request);
 
             if (photographer == null || photographer.getAccountTypeEnum() != AccountModel.AccountTypeEnum.photographer) {
 
@@ -161,7 +157,7 @@ public class ItemController {
     ){
 
 
-        AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(cookie);
+        AccountModel accountModel = MainController.getCurrentUser(cookie, request);
 
         if(accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
 
@@ -189,7 +185,7 @@ public class ItemController {
         int wentwell=0;
 
         DatabaseController dbc = DatabaseController.getInstance();
-        AccountModel accountModel = dbc.getAccountByCookie(cookie);
+        AccountModel accountModel = MainController.getCurrentUser(cookie, request);
         if(accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
 
                 wentwell =dbc.deleteItem(id)?1:2;
