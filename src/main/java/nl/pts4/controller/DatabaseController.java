@@ -151,6 +151,29 @@ public class DatabaseController {
 		return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUuid()) == 1;
 	}
 
+	public HashMap<UUID, AccountModel> getAllAccounts() {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+		HashMap<UUID, AccountModel> accountModels = new HashMap<>();
+		List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type FROM account");
+
+		for (Map<String, Object> row : rows) {
+			UUID uuid = (UUID) row.get("id");
+
+			String name = (String) row.get("name");
+			boolean active = (boolean) row.get("active");
+
+			String type = (String) row.get("type");
+			String email = (String) row.get("email");
+			AccountModel.AccountTypeEnum accountTypeEnum = null;
+			if (type != null)
+				accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
+
+			accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum));
+
+		}
+		return accountModels;
+	}
+
 	/**
 	 * Get an account with a uuid
 	 *
@@ -396,6 +419,7 @@ public class DatabaseController {
 
 		List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p");
 		List<PhotoModel> photoModels = new ArrayList<>(rows.size());
+		HashMap<UUID, AccountModel> accountModels = getAllAccounts();
 		for (Map<String, Object> row : rows) {
 			UUID uuid = (UUID) row.get("id");
 			UUID photographerid = (UUID) row.get("photographerid");
@@ -405,7 +429,7 @@ public class DatabaseController {
 			int price = Integer.parseInt(String.valueOf(row.get("price")));
 			Date captureDate = (Date) row.get("capturedate");
 			String path = String.valueOf(row.get("pathtophoto"));
-			photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path));
+			photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
 		}
 		return photoModels;
 	}
