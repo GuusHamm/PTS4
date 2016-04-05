@@ -1,0 +1,23 @@
+#parse("header.vm")
+<div class="container">
+    <div class="list-group">
+        #foreach ($item in $items)
+            <div class="col-lg-6">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <a href="/photos?id=$item.getId()"><img class="img-responsive img img-rounded"
+                                                                  src="$item.getThumbnailPath()"
+                                                                  alt="Card image cap" si></a>
+                        </div>
+                        <div class="col-lg-8 col">
+                            <a class="btn btn-primary" href="/photos?id=$item.getId()">€ $item.getPrice()</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        #end
+    </div>
+
+</div>
+#parse("footer.vm")

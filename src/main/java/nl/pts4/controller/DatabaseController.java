@@ -480,12 +480,13 @@ public class DatabaseController {
 					int itemid = resultSet.getInt("itemid");
 					int itemprice = resultSet.getInt("itemprice");
 					String itemdescription = resultSet.getString("itemdescription");
+					String itemType = resultSet.getString("itemdescription");
 					String thumbnailpath = resultSet.getString("thumbnailpath");
 
 					//TODO get this with a database query
-					SchoolModel schoolModel = new SchoolModel();
+					SchoolModel schoolModel = new SchoolModel(schoolid,name,location,country);//////////////////////////todo THIS WILL NEVER WORK RIGHT 0.o
 					EffectModel effectModel = new EffectModel();
-					ItemModel itemModel = new ItemModel();
+					ItemModel itemModel = new ItemModel(itemid,itemprice,itemType,itemdescription,thumbnailpath);
 
 					File photoFile = new File(pathtophoto);
 					PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
@@ -630,6 +631,15 @@ public class DatabaseController {
 			return null;
 		}
 	}
+
+    /**
+     * Inserts a new item into the database
+     * @param price
+     * @param type
+     * @param description
+     * @param thumbnailPath
+     * @return
+     */
 	public boolean insertItem(double price, String type, String description, String thumbnailPath) {
 
 		JdbcTemplate insert = new JdbcTemplate(dataSource);
@@ -642,4 +652,125 @@ public class DatabaseController {
 		return true;
 
 	}
+
+    /**
+     * Gets a ItemModel by id from the database
+     * @param id
+     * @return
+     */
+	public ItemModel getItemByID(int id) {
+
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		try {
+			ItemModel im = template.queryForObject("SELECT * FROM item i WHERE i.id = ?", new Object[]{id}, new RowMapper<ItemModel>() {
+				@Override
+				public ItemModel mapRow(ResultSet resultSet, int i) throws SQLException {
+					return getItemFromResultSet(resultSet);
+				}
+			});
+			return im;
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+    /**
+     * Gets all ItemModel from the database
+     * @return
+     */
+    public List<ItemModel> getItems() {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                "SELECT  * FROM item");
+
+        List<ItemModel> itemModels = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+            int id = (Integer) row.get("id");
+            int price = (Integer) row.get("price");
+            String type= (String) row.get("type");
+            String description = (String) row.get("description");
+            String thumbnailPath = (String) row.get("thumbnailPath");
+
+            itemModels.add(new ItemModel(id,price,type,description,thumbnailPath));
+        }
+        return itemModels;
+
+    }
+
+    /**
+     * Gets a Itemmodel from a resultset
+     * @param resultSet
+     * @return
+     */
+	private ItemModel getItemFromResultSet(ResultSet resultSet) {
+		try {
+			int id = resultSet.getInt("id");
+			int price = resultSet.getInt("price");
+			String type = resultSet.getString("type");
+			String description= resultSet.getString("description");
+			String thumbnailPath = resultSet.getString("thumbnailpath");
+
+			return new ItemModel(id,price,type,description,thumbnailPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+    /**
+     * updates the item in the database with all new values
+     * @param id
+     * @param price
+     * @param type
+     * @param description
+     * @param thumbnailPath
+     * @return
+     */
+    public boolean updateItem(int id, double price, String  type, String description, String thumbnailPath) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE item SET (price, type, description, thumbnailpath) = (?,?,?,?)  " +
+                "WHERE id= ? ", new Object[]{price,type,description,thumbnailPath,id})==1;
+    }
+
+    /**
+     * updates the item in the database with all new values without changing the image
+     * @param id
+     * @param price
+     * @param type
+     * @param description
+     * @return
+     */
+    public boolean updateItem(int id, double price, String  type, String description) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE item SET (price, type, description) = (?,?,?)  " +
+                "WHERE id= ? ", new Object[]{price,type,description,id})==1;
+    }
+    /**
+     * Gets all the schools the photographer photographs for by his PhotographerID
+     *
+     * @param photographerID
+     * @return
+     */
+    public List<SchoolModel> getSchools(UUID photographerID) {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
+                        "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
+
+                new Object[]{photographerID, photographerID});
+        List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+            int id = (Integer) row.get("id");
+            String name = (String) row.get("name");
+            String location = (String) row.get("location");
+            String country = (String) row.get("country");
+
+            schoolModels.add(new SchoolModel(id, name, location, country));
+        }
+        return schoolModels;
+    }
 }
