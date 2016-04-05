@@ -78,6 +78,24 @@ public class FileUploadController {
             return "multiupload";
         }
     }
+    public String uploadItemThumbnail(MultipartFile file) {
+
+
+        UUID uuid = UUID.randomUUID();
+        String fileName = "";
+
+        if (file != null && !file.getOriginalFilename().equals("")) {
+
+            if (allowedFileTypes.contains(file.getContentType())) {
+                fileName = writeFile(file, uuid);
+                if (fileName.length()>0) {
+                    fileName= "/images/" + fileName;
+                }
+            }
+        }
+        return fileName;
+
+    }
 
     private String writeFile(MultipartFile file, UUID uuid) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");

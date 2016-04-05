@@ -630,4 +630,16 @@ public class DatabaseController {
 			return null;
 		}
 	}
+	public boolean insertItem(double price, String type, String description, String thumbnailPath) {
+
+		JdbcTemplate insert = new JdbcTemplate(dataSource);
+		try {
+			insert.update("INSERT INTO item ( type, price, description, thumbnailpath) VALUES (?,?,?,?)", type, price, description, thumbnailPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+
+	}
 }
