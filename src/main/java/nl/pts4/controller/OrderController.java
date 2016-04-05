@@ -31,7 +31,7 @@ public class OrderController {
 	public String orderView(
 			@CookieValue(value = AccountController.AccountCookie, required = false) String am,
 			Model m, HttpServletRequest request, HttpServletResponse response) {
-		if (!MainController.assertUserIsPrivileged(am, request, response)) {
+		if (!MainController.assertUserIsPrivileged(am, request, response, true)) {
 			return null;
 		}
 		ArrayList<OrderModel> orders = new ArrayList<>();
