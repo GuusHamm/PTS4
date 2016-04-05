@@ -598,9 +598,7 @@ public class DatabaseController {
 	public boolean checkPrivalegedUser(UUID uuid) {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 
-		return template.queryForObject("SELECT * FROM account WHERE id = ? AND type IN ('photographer','administrator')", new Object[]{uuid}, ((resultSet, i) -> {
-			return resultSet != null;
-		}));
+		return template.queryForObject("SELECT count(id) FROM account WHERE id = ? AND type IN ('photographer','administrator')", new Object[]{uuid}, Integer.TYPE) > 0;
 	}
 
 	/**

@@ -45,6 +45,11 @@ public class MainController {
         AccountModel am = DatabaseController.getInstance().getAccountByCookie(account);
         m.addAttribute("user", am);
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+        if (account == null) {
+            m.addAttribute("privileged", false);
+        } else {
+            m.addAttribute("privileged", DatabaseController.getInstance().checkPrivalegedUser(DatabaseController.getInstance().getAccountByCookie(account).getUuid()));
+        }
         return "main";
     }
 
