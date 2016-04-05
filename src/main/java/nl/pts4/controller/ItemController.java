@@ -137,7 +137,8 @@ public class ItemController {
         String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
         //TODO optimize this, i think i can write this better.
         int wentWell = 0;
-        if (file == null) {
+
+        if (file.isEmpty()) {
             if (databaseController.updateItem(id, price, type, description)) wentWell = 1;
             else wentWell = 2;
         } else {

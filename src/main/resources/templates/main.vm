@@ -23,7 +23,7 @@
                         "main.orders", "View Orders")</a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                    <a href="/itemoverview" class="btn btn-primary btn-block btn-lg">Items</a>
                 </div>
             </div>
             <br/>
