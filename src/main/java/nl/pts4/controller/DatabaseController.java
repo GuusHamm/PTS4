@@ -336,22 +336,14 @@ public class DatabaseController {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 
 		List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o");
-		List<AccountModel> accountModels = new ArrayList<>(rows.size());
+		HashMap<UUID, AccountModel> accountModels = getAllAccounts();
 		List<OrderModel> orderModels = new ArrayList<>(rows.size());
 		for (Map<String, Object> row : rows) {
 			int id = (int) row.get("id");
 			UUID account = (UUID) row.get("accountid");
 			Date orderDate = (Date) row.get("orderdate");
 
-			AccountModel am;
-			Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findFirst();
-			if (op.isPresent()) {
-				am = op.get();
-			} else {
-				am = getAccount(account);
-				accountModels.add(am);
-			}
-			orderModels.add(new OrderModel(id, orderDate, am));
+			orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
 		}
 
 		rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
