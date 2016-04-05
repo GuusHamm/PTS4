@@ -37,7 +37,7 @@
 
 
                     <div class="well">
-                        <input type="file" name="file">
+                        <input type="file" name="file" required="">
                     </div>
 
 
