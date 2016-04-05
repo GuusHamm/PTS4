@@ -761,7 +761,8 @@ public class DatabaseController {
         return template.update("UPDATE item SET (price, type, description) = (?,?,?)  " +
 				"WHERE id= ? ", price, type, description, id) == 1;
 	}
-    /**
+
+	/**
      * Gets all the schools the photographer photographs for by his PhotographerID
      *
      * @param photographerID
