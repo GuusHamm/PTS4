@@ -42,4 +42,17 @@ public class OrderController {
 
 		return "order-overview";
 	}
+
+	@RequestMapping(value = "/order")
+	public String order(@CookieValue(AccountController.AccountCookie) String am,
+			Model m, HttpServletRequest request) {
+		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order");
+		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+		m.addAttribute("effects", DatabaseController.getInstance().getEffects());
+		m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
+
+
+
+		return "order";
+	}
 }

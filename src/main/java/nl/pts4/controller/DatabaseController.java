@@ -433,6 +433,49 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Get all the effects from the database
+	 * @return a list with all the effects in effectmodels
+     */
+	public List<EffectModel> getEffects() {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		List<Map<String, Object>> rows = template.queryForList("SELECT id, type, description, price  FROM effect");
+		List<EffectModel> effectModels = new ArrayList<>(rows.size());
+
+		for (Map<String, Object> row : rows) {
+			int id = (int) row.get("id");
+			String type = (String) row.get("type");
+			String description = (String) row.get("description");
+			int price = (int) row.get("price");
+
+			effectModels.add(new EffectModel(id, type, description, price));
+		}
+
+		return effectModels;
+	}
+
+	public List<ItemModel> getItems() {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		List<Map<String, Object>> rows = template.queryForList("SELECT id, price, type, description, thumbnailpath  FROM item");
+		List<ItemModel> itemModels = new ArrayList<>(rows.size());
+
+		for (Map<String, Object> row : rows) {
+			int id = (int) row.get("id");
+			int price = (int) row.get("price");
+			String type = (String) row.get("type");
+			String description = (String) row.get("description");
+			String thumbnail = (String) row.get("thumbnailpath");
+
+
+			//TODO use the actual constructor
+			itemModels.add(new ItemModel());
+		}
+
+		return itemModels;
+	}
+
+	/**
 	 * Get a photo config item by id
 	 *
 	 * @param photoConfigid : The id of the item that you want
@@ -484,7 +527,7 @@ public class DatabaseController {
 
 					//TODO get this with a database query
 					SchoolModel schoolModel = new SchoolModel();
-					EffectModel effectModel = new EffectModel();
+					EffectModel effectModel = new EffectModel(effectid, type, description, effectprice);
 					ItemModel itemModel = new ItemModel();
 
 					File photoFile = new File(pathtophoto);
