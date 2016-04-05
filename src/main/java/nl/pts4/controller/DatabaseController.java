@@ -773,4 +773,16 @@ public class DatabaseController {
         }
         return schoolModels;
     }
+    public boolean deleteItem(int id) throws IllegalArgumentException {
+
+
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        try {
+            template.update("DELETE FROM item i WHERE i.id = ?", id);
+            return true;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+    }
 }

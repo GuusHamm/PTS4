@@ -48,12 +48,6 @@ public class ItemController {
             return "main";
         }
 
-//        List<SchoolModel> scholen= new ArrayList<>();
-//        for(SchoolModel s: databaseController.getSchools(photographer.getUuid())){
-//            scholen.add(s);
-//        }
-//        model.addAttribute("scholen", scholen);
-
         return "make_item";
     }
 
@@ -136,7 +130,7 @@ public class ItemController {
     ) {
 
         int id = (Integer) request.getSession().getAttribute("itemID");
-//        request.getSession().setAttribute("itemID", null);
+
 
         DatabaseController databaseController = DatabaseController.getInstance();
 
@@ -150,6 +144,7 @@ public class ItemController {
             if (databaseController.updateItem(id, price, type, description, thumbnailPath)) wentWell = 1;
             else wentWell = 2;
         }
+
         return changeItem(request, model, cookie, wentWell,id);
 
     }
@@ -160,7 +155,9 @@ public class ItemController {
     public String itemOverView(
             HttpServletRequest request,
             Model model,
-            @CookieValue(AccountController.AccountCookie) String cookie){
+            @CookieValue(AccountController.AccountCookie) String cookie,
+            @RequestParam(value = "PreviousInsert", defaultValue = "0") int wentwell
+    ){
 
 
         AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(cookie);
@@ -171,6 +168,33 @@ public class ItemController {
             model.addAttribute("items", items.toArray());
         }
 
+
+        if (wentwell == 1) {
+            model.addAttribute("success", messageSource.getMessage("success.delete.item.database", null, RequestContextUtils.getLocale(request)));
+        } else if (wentwell == 2) {
+            model.addAttribute("error", messageSource.getMessage("error.delete.item.database", null, RequestContextUtils.getLocale(request)));
+        }
+
+
         return "item_overview";
+    }
+    @RequestMapping(value = "itemoverviewdelete", method = RequestMethod.GET)
+    public String deleteItem(
+            HttpServletRequest request,
+            Model model,
+            @CookieValue(AccountController.AccountCookie) String cookie,
+            @RequestParam(value = "itemid", required = true) int id
+    ){
+        int wentwell=0;
+
+        DatabaseController dbc = DatabaseController.getInstance();
+        AccountModel accountModel = dbc.getAccountByCookie(cookie);
+        if(accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
+
+                wentwell =dbc.deleteItem(id)?1:2;
+
+        }
+
+        return itemOverView(request,model,cookie,wentwell );
     }
 }
