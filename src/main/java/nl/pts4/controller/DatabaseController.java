@@ -466,10 +466,8 @@ public class DatabaseController {
 			String type = (String) row.get("type");
 			String description = (String) row.get("description");
 			String thumbnail = (String) row.get("thumbnailpath");
-
-
-			//TODO use the actual constructor
-			itemModels.add(new ItemModel());
+			
+			itemModels.add(new ItemModel(id, price, type, description, thumbnail));
 		}
 
 		return itemModels;
