@@ -24,7 +24,6 @@ public class MainController {
 
     public static boolean assertUserIsPrivileged(HttpServletRequest request, HttpServletResponse response, boolean redirect) {
         Object privilegedAttribute = request.getSession().getAttribute(PRIVILEGED_ATTRIBUTE);
-
         AccountModel accountModel = (AccountModel) request.getSession().getAttribute(ACCOUNT_ATTRIBUTE);
 
         if (accountModel == null) {
@@ -35,7 +34,7 @@ public class MainController {
         }
 
         if (privilegedAttribute == null) {
-            privilegedAttribute = DatabaseController.getInstance().checkPriviledgedUser(accountModel.getUuid());
+            privilegedAttribute = DatabaseController.getInstance().checkPriviledgedUser(accountModel.getUUID());
             request.getSession().setAttribute(PRIVILEGED_ATTRIBUTE, privilegedAttribute);
         } else {
             privilegedAttribute = request.getSession().getAttribute(PRIVILEGED_ATTRIBUTE);

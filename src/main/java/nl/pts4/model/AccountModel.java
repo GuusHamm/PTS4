@@ -38,7 +38,7 @@ public class AccountModel {
         this.accountTypeEnum = accountTypeEnum;
     }
 
-    public UUID getUuid() {
+    public UUID getUUID() {
         return uuid;
     }
 

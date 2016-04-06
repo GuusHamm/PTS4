@@ -1,8 +1,6 @@
 package nl.pts4.controller;
 
-import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
-import nl.pts4.model.PhotoConfigurationModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +15,6 @@ import java.util.ArrayList;
 @Controller
 public class OrderController {
 
-    public OrderModel createNewOrder(AccountModel accountModel, PhotoConfigurationModel photoConfigurationModel) {
-        return null;
-    }
-
     /**
      * get all the orders and show them in order_overview
      *
@@ -32,10 +26,9 @@ public class OrderController {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }
-        ArrayList<OrderModel> orders = new ArrayList<>();
-        orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
+        ArrayList<OrderModel> orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 
-//		Add some items to the orders list to show them
+        // Add some items to the orders list to show them
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
         m.addAttribute("allOrders", orders);
         m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(request));
@@ -45,15 +38,12 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/order")
-    public String order(String am,
-                        Model m, HttpServletRequest request) {
+    public String order(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order");
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         m.addAttribute("effects", DatabaseController.getInstance().getEffects());
         m.addAttribute("items", DatabaseController.getInstance().getItems());
-        m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
-
-
+        m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(request));
         return "order";
     }
 }

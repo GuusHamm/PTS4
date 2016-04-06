@@ -77,7 +77,7 @@ public class AccountRestController {
                     hitChange = false;
                     message = "Passwords not equal";
                 } else {
-                    String hash = SCryptUtil.scrypt(newPassword, HashConstants.N, HashConstants.r, HashConstants.p);
+                    String hash = SCryptUtil.scrypt(newPassword, HashConstants.N, HashConstants.R, HashConstants.P);
                     DatabaseController.getInstance().setAccountHash(ac, hash);
                     hitChange = true;
                     message = "Password has been changed";

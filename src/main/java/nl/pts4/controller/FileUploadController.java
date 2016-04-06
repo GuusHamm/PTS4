@@ -13,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,14 +25,15 @@ import java.util.UUID;
 public class FileUploadController {
     public final static String StaticLocation = "images/";
     public final static String ImageLocation = String.format("%s/src/main/resources/static/images/", System.getProperty("user.dir"));
-    private LinkedList<String> allowedFileTypes;
+    private List<String> allowedFileTypes;
 
     public FileUploadController() {
-        this.allowedFileTypes = new LinkedList<>();
+        this.allowedFileTypes = new ArrayList<>(5);
         this.allowedFileTypes.add("image/png");
         this.allowedFileTypes.add("image/bmp");
         this.allowedFileTypes.add("image/jpg");
         this.allowedFileTypes.add("image/jpeg");
+        this.allowedFileTypes.add("image/gif");
     }
 
     @RequestMapping(value = "/multiupload")
@@ -44,7 +46,11 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletRequest request, Model m) {
+    public String uploadMultiFile(@RequestParam("multiPartFile") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response, Model m) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+            return null;
+        }
+
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();
 
@@ -52,64 +58,60 @@ public class FileUploadController {
 
         if (files != null) {
             for (MultipartFile multipartFile : files) {
-                if (!multipartFile.getOriginalFilename().equals("")) {
-                    if (allowedFileTypes.contains(multipartFile.getContentType())) {
-                        String fileName = writeFile(multipartFile, uuid);
-                        if (fileName.isEmpty()) {
-                            m.addAttribute("error", "Something went wrong on the server, try again later");
-                            return "multiupload";
-                        }
-//                        if (multipartFile.getContentType()!="image/jpg"){
-//                            convertFileToJpg(ImageLocation+fileName);
-//                        }
-                        message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
-                        DatabaseController.getInstance().createPhoto(uuid, fileName, DatabaseController.getInstance().getRandomPhotographerUUID(), DatabaseController.getInstance().getRandomChildUUID());
-                    } else {
-                        warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
+                if (multipartFile.isEmpty()) {
+                    continue;
+                }
+                if (allowedFileTypes.contains(multipartFile.getContentType())) {
+                    String fileName = writeFile(multipartFile, uuid);
+                    if (fileName.isEmpty()) {
+                        m.addAttribute("error", "Something went wrong on the server, try again later");
+                        return "multiupload";
                     }
+                    message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
+                    // TODO Check last parameter
+                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(), DatabaseController.getInstance().getRandomChildUUID());
+                } else {
+                    warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                 }
             }
-            if (!warning.toString().equals("")) {
+            if (warning.length() > 0) {
                 m.addAttribute("warning", warning.toString());
             }
-            if (!message.toString().equals("")) {
+            if (message.length() > 0) {
                 m.addAttribute("success", message.toString());
             }
-            m.addAttribute("cart", request.getSession().getAttribute("Cart"));
-            return "multiupload";
         } else {
-            m.addAttribute("error", "You have to select a file for upload.");
-            return "multiupload";
+            m.addAttribute("error", "You have to select a multiPartFile for upload.");
         }
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+        return "multiupload";
     }
 
     public String uploadItemThumbnail(MultipartFile file) {
-
-
         UUID uuid = UUID.randomUUID();
         String fileName = "";
 
-        if (file != null && !file.getOriginalFilename().equals("")) {
-
-            if (allowedFileTypes.contains(file.getContentType())) {
-                fileName = writeFile(file, uuid);
-                if (fileName.length() > 0) {
-                    fileName = "/images/" + fileName;
-                }
+        if (file != null && !file.isEmpty() && allowedFileTypes.contains(file.getContentType())) {
+            fileName = writeFile(file, uuid);
+            if (fileName.length() > 0) {
+                fileName = StaticLocation + fileName;
             }
         }
         return fileName;
 
     }
 
-    private String writeFile(MultipartFile file, UUID uuid) {
+    private String writeFile(MultipartFile multiPartFile, UUID uuid) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, file.getContentType().substring(file.getContentType().indexOf("/") + 1));
+        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, multiPartFile.getContentType().substring(multiPartFile.getContentType().indexOf("/") + 1));
 
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), filename))));
-            bufferedOutputStream.write(file.getBytes());
+            File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), filename));
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+
+            bufferedOutputStream.write(multiPartFile.getBytes());
             bufferedOutputStream.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -121,6 +123,7 @@ public class FileUploadController {
         return filename;
     }
 
+    @Deprecated
     private boolean convertFileToJpg(String filePath) {
         try {
             FileInputStream fileInputStream = new FileInputStream(filePath);

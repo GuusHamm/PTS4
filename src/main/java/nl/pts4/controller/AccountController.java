@@ -98,7 +98,7 @@ public class AccountController {
             m.addAttribute(ERROR_ATTRIBUTE, "Password invalid");
 
         if (!m.containsAttribute(ERROR_ATTRIBUTE)) {
-            DatabaseController.getInstance().deleteAccount(accountModel.getUuid());
+            DatabaseController.getInstance().deleteAccount(accountModel.getUUID());
             response.sendRedirect("/logout");
         }
 

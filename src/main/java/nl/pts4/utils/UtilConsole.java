@@ -36,7 +36,7 @@ public class UtilConsole {
 
             System.out.println("Result hash(es):");
             for (int i = 0; i < iteration; i++) {
-                String hash = SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p);
+                String hash = SCryptUtil.scrypt(password, HashConstants.N, HashConstants.R, HashConstants.P);
                 System.out.println(hash);
             }
         }

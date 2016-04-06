@@ -29,15 +29,10 @@ public class ItemController {
     @RequestMapping(value = "makeitem", method = RequestMethod.GET)
     public String makeItem(HttpServletRequest request,
                            HttpServletResponse response,
-                           Model model
-    ) {
+                           Model model) {
 
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
-
-
-        DatabaseController databaseController = DatabaseController.getInstance();
         AccountModel photographer = MainController.getCurrentUser(request);
-
         if (photographer == null) {
             Locale locale = RequestContextUtils.getLocale(request);
             model.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.warning.not.allowed", null, locale));
@@ -48,25 +43,21 @@ public class ItemController {
     }
 
     @RequestMapping(value = "makeitem", method = RequestMethod.POST)
-    public String makeItem(@RequestParam(value = "type", required = true) String type,
-                           @RequestParam(value = "price", required = true) double price,
-                           @RequestParam(value = "description", required = true) String description,
-                           @RequestParam(value = "file", required = true) MultipartFile file,
+    public String makeItem(@RequestParam(value = "type") String type,
+                           @RequestParam(value = "price") double price,
+                           @RequestParam(value = "description") String description,
+                           @RequestParam(value = "file") MultipartFile file,
                            HttpServletRequest request,
                            HttpServletResponse response,
-                           Model model
-    ) {
+                           Model model) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
         DatabaseController databaseController = DatabaseController.getInstance();
 
         String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
-        int wentWell = 0;
-        if (databaseController.insertItem(price, type, description, thumbnailPath)) wentWell = 1;
-        else wentWell = 2;
-        if (wentWell == 1) {
+        if (databaseController.insertItem(price, type, description, thumbnailPath)) {
             model.addAttribute("success", messageSource.getMessage("success.database", null, RequestContextUtils.getLocale(request)));
-        } else if (wentWell == 2) {
+        } else {
             model.addAttribute("error", messageSource.getMessage("error.database", null, RequestContextUtils.getLocale(request)));
         }
         return makeItem(request, response, model);
@@ -77,13 +68,11 @@ public class ItemController {
     public String changeItem(HttpServletRequest request,
                              HttpServletResponse response,
                              Model model,
-                             @RequestParam(value = "itemid", required = true) int id
-    ) {
+                             @RequestParam(value = "itemid") Integer id) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
-        Integer itemid = id;
-        request.getSession().setAttribute("itemID", itemid);
-        if (itemid != null) {
+        request.getSession().setAttribute("itemID", id);
+        if (id != null) {
 
 
             DatabaseController databaseController = DatabaseController.getInstance();
@@ -95,7 +84,7 @@ public class ItemController {
                 model.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.warning.not.allowed", null, locale));
                 return "main";
             }
-            ItemModel itemModel = DatabaseController.getInstance().getItemByID(itemid);
+            ItemModel itemModel = DatabaseController.getInstance().getItemByID(id);
 
             model.addAttribute("type", itemModel.getType());
             model.addAttribute("price", itemModel.getPrice());
@@ -114,15 +103,13 @@ public class ItemController {
      * Handles the logic of the actual button press, after that it calls the get method for changeitem
      */
     public String changeItem(
-
-            @RequestParam(value = "type", required = true) String type,
-            @RequestParam(value = "price", required = true) double price,
-            @RequestParam(value = "description", required = true) String description,
-            @RequestParam(value = "file", required = true) MultipartFile file,
+            @RequestParam(value = "type") String type,
+            @RequestParam(value = "price") double price,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response,
-            Model model
-    ) {
+            Model model) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
         int id = (Integer) request.getSession().getAttribute("itemID");
@@ -132,22 +119,19 @@ public class ItemController {
 
         String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
         //TODO optimize this, i think i can write this better.
-        int wentWell = 0;
 
         if (file.isEmpty()) {
-            if (databaseController.updateItem(id, price, type, description)) wentWell = 1;
-            else wentWell = 2;
+            if (databaseController.updateItem(id, price, type, description))
+                model.addAttribute("success", messageSource.getMessage("success.item.change.database", null, RequestContextUtils.getLocale(request)));
         } else {
-            if (databaseController.updateItem(id, price, type, description, thumbnailPath)) wentWell = 1;
-            else wentWell = 2;
+            if (databaseController.updateItem(id, price, type, description, thumbnailPath))
+                model.addAttribute("success", messageSource.getMessage("success.item.change.database", null, RequestContextUtils.getLocale(request)));
+        }
+        if (!model.containsAttribute("success")) {
+            model.addAttribute("error", messageSource.getMessage("error.item.change.database", null, RequestContextUtils.getLocale(request)));
         }
 
         //TODO check if the item corresponds with who made it.
-        if (wentWell == 1) {
-            model.addAttribute("success", messageSource.getMessage("success.item.change.database", null, RequestContextUtils.getLocale(request)));
-        } else if (wentWell == 2) {
-            model.addAttribute("error", messageSource.getMessage("error.item.change.database", null, RequestContextUtils.getLocale(request)));
-        }
         return changeItem(request, response, model, id);
 
     }
@@ -165,7 +149,6 @@ public class ItemController {
 
         AccountModel accountModel = MainController.getCurrentUser(request);
 
-
         List<ItemModel> items = DatabaseController.getInstance().getItems();
         model.addAttribute("items", items.toArray());
 
@@ -177,18 +160,11 @@ public class ItemController {
             HttpServletRequest request,
             HttpServletResponse response,
             Model model,
-            @RequestParam(value = "itemid", required = true) int id
-    ) {
+            @RequestParam(value = "itemid") int id) {
 
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
-        int wentwell = 0;
-
-        DatabaseController dbc = DatabaseController.getInstance();
-        AccountModel accountModel = MainController.getCurrentUser(request);
-
-        wentwell = dbc.deleteItem(id) ? 1 : 2;
-
+        DatabaseController.getInstance().deleteItem(id);
 
         return itemOverView(request, response, model);
     }

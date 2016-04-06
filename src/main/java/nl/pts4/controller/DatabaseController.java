@@ -107,7 +107,7 @@ public class DatabaseController {
         UUID accountUUID = UUID.randomUUID();
 
         JdbcTemplate insert = new JdbcTemplate(dataSource);
-        insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.r, HashConstants.p));
+        insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.R, HashConstants.P));
 
         return getAccount(accountUUID);
     }
@@ -122,7 +122,7 @@ public class DatabaseController {
     public boolean setAccountEmail(AccountModel ac, String email) {
         ac.setEmail(email);
         JdbcTemplate template = new JdbcTemplate(dataSource);
-        return template.update("UPDATE account SET email = ? WHERE id = ?", email, ac.getUuid()) == 1;
+        return template.update("UPDATE account SET email = ? WHERE id = ?", email, ac.getUUID()) == 1;
     }
 
     /**
@@ -135,7 +135,7 @@ public class DatabaseController {
     public boolean setAccountName(AccountModel ac, String name) {
         ac.setName(name);
         JdbcTemplate template = new JdbcTemplate(dataSource);
-        return template.update("UPDATE account SET name = ? WHERE id = ?", name, ac.getUuid()) == 1;
+        return template.update("UPDATE account SET name = ? WHERE id = ?", name, ac.getUUID()) == 1;
     }
 
     /**
@@ -148,7 +148,7 @@ public class DatabaseController {
     public boolean setAccountHash(AccountModel ac, String hash) {
         ac.setHash(hash);
         JdbcTemplate template = new JdbcTemplate(dataSource);
-        return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUuid()) == 1;
+        return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUUID()) == 1;
     }
 
     public HashMap<UUID, AccountModel> getAllAccounts() {
@@ -582,7 +582,7 @@ public class DatabaseController {
     public void createUserCookie(AccountModel user, UUID cookieuuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        template.update("INSERT INTO user_cookie (id, account) VALUES (?, ?)", cookieuuid, user.getUuid());
+        template.update("INSERT INTO user_cookie (id, account) VALUES (?, ?)", cookieuuid, user.getUUID());
     }
 
     /**

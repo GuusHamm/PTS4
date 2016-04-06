@@ -21,7 +21,7 @@ public class AccountControllerTest {
 
     @Test
     public void checkPassword() throws Exception {
-        String hash = SCryptUtil.scrypt("password", HashConstants.N, HashConstants.r, HashConstants.p);
+        String hash = SCryptUtil.scrypt("password", HashConstants.N, HashConstants.R, HashConstants.P);
         AccountModel accountModel = databaseController.getAccount("njones0@amazonaws.com");
         accountModel.setHash(hash);
 

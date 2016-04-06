@@ -4,6 +4,8 @@ import nl.pts4.model.AccountModel;
 import nl.pts4.model.PhotoModel;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +26,13 @@ import java.util.UUID;
  */
 @Controller
 public class PhotoViewController {
+
+    @Autowired
+    private MessageSource messageSource;
+
     /**
      * Show all the photos
      *
-     * @param account : The current account cookie
      * @param m       : The model / template
      * @return photoview to get the correct template
      */
@@ -55,7 +60,7 @@ public class PhotoViewController {
     }
 
     @RequestMapping(value = "/photos", params = {"id"})
-    public String photosAddToCart(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+    public void photosAddToCart(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         LinkedList<PhotoModel> cart;
         if (request.getSession().getAttribute("Cart") == null) {
             cart = new LinkedList<>();
@@ -65,48 +70,33 @@ public class PhotoViewController {
         if (id != null) {
             cart.add(DatabaseController.getInstance().getPhotoByUUID(id));
             request.getSession().setAttribute("Cart", cart);
-
         }
         request.getSession().setAttribute("Cart", cart);
+        // TODO Add translation
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 
-
-        try {
-            response.sendRedirect("/photos");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        response.sendRedirect("/photos");
     }
 
     @RequestMapping(value = "deletephoto", params = {"id"})
-    public String deletePhoto(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+    public void deletePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (id != null) {
             if (DatabaseController.getInstance().deletePhoto(id)) {
+                // TODO Add translation
                 request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Removed");
             } else {
-                m.addAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
+                // TODO Add translation
+                request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
             }
         }
 
-        try {
-            response.sendRedirect("/photos");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        response.sendRedirect("/photos");
     }
 
     @RequestMapping(value = "/clearcart")
-    public String clearCart(HttpServletRequest request, HttpServletResponse response) {
+    public void clearCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().removeAttribute("Cart");
-        try {
-            response.sendRedirect(request.getHeader("referer"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        response.sendRedirect(request.getHeader("referer"));
     }
 
     public BufferedImage reduceImageQuility(File imageSource) throws ImageReadException, IOException {
@@ -119,12 +109,11 @@ public class PhotoViewController {
 
     public BufferedImage reduceImageQuility(BufferedImage imageSource) throws ImageReadException, IOException {
         BufferedImage resizedImage = resizeImage(imageSource, imageSource.getWidth() / 10, imageSource.getHeight() / 10);
-
         return resizedImage;
     }
 
     public BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        int type = 0;
+        int type;
         type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
         BufferedImage resizedImage = new BufferedImage(width, height, type);
         Graphics2D g = resizedImage.createGraphics();
