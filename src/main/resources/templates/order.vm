@@ -24,6 +24,10 @@
                                 #end
                             </select>
                         </div>
+
+                        <div class="col-lg-5">
+                            <Label class="h5">Price: &#8364;</Label>
+                        </div>
                 </div>
             </div>
         #end
