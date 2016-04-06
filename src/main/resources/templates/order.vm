@@ -1,0 +1,36 @@
+#parse("header.vm")
+<div class="container">
+    <div class="list-group">
+        #foreach ($photo in $cart)
+            <div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <img class="img-responsive img img-rounded" src="$photo.filePath" alt="Card image cap" si>
+                        </div>
+                        <div class="col-lg-2">
+                            <Label class="h6">Filter</Label>
+                            <select class="form-control">
+                                #foreach ($effect in $effects)
+                                    <option>$effect.type</option>
+                                #end
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <Label class="h6">Item</Label>
+                            <select class="form-control">
+                                #foreach ($item in $items)
+                                    <option>$item.type</option>
+                                #end
+                            </select>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <Label class="h5">Price: &#8364;</Label>
+                        </div>
+                </div>
+            </div>
+        #end
+    </div>
+</div>
+#parse("footer.vm")

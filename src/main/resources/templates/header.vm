@@ -45,7 +45,7 @@
                             <div class="btn-group btn-group-justified">
                                 <a href="/clearcart" class="btn btn-danger btn-block">#springMessageText(
                                     "header.cart.clear", "Clear")</a>
-                                <a href="#" class="btn btn-primary btn-block">#springMessageText(
+                                <a href="/order" class="btn btn-primary btn-block">#springMessageText(
                                     "header.cart.checkout", "Checkout")</a>
                             </div>
                             #foreach ($item in $cart)
