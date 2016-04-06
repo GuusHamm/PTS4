@@ -409,7 +409,7 @@ public class DatabaseController {
 	public List<PhotoModel> getPhotos() {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 
-		List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p");
+		List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p ORDER BY capturedate");
 		List<PhotoModel> photoModels = new ArrayList<>(rows.size());
 		HashMap<UUID, AccountModel> accountModels = getAllAccounts();
 		for (Map<String, Object> row : rows) {
