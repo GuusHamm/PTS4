@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +28,15 @@ public class ItemController {
     MessageSource messageSource;
 
     @RequestMapping(value = "makeitem", method = RequestMethod.GET)
-    public String makeItem(HttpServletRequest request, Model model, @CookieValue(AccountController.AccountCookie) String cookie, @RequestParam(value = "PreviousInsert", defaultValue = "0") int wentwell) {
+    public String makeItem(HttpServletRequest request,
+                           HttpServletResponse response,
+                           Model model,
+                           @CookieValue(AccountController.AccountCookie) String cookie,
+                           @RequestParam(value = "PreviousInsert", defaultValue = "0") int wentwell
+    ) {
+
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
+
 
         if (wentwell == 1) {
             model.addAttribute("success", messageSource.getMessage("success.database", null, RequestContextUtils.getLocale(request)));
@@ -53,10 +62,13 @@ public class ItemController {
                            @RequestParam(value = "description", required = true) String description,
                            @RequestParam(value = "file", required = true) MultipartFile file,
                            HttpServletRequest request,
+                           HttpServletResponse response,
                            Model model,
                            @CookieValue(AccountController.AccountCookie) String cookie
 
     ) {
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
+
         DatabaseController databaseController = DatabaseController.getInstance();
 
         String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
@@ -64,20 +76,23 @@ public class ItemController {
         if (databaseController.insertItem(price, type, description, thumbnailPath)) wentWell = 1;
         else wentWell = 2;
 
-        return makeItem(request, model, cookie, wentWell);
+        return makeItem(request, response, model, cookie, wentWell);
 
     }
 
     @RequestMapping(value = "changeitem", method = RequestMethod.GET)
-    public String changeItem(HttpServletRequest request, Model model,
+    public String changeItem(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Model model,
                              @CookieValue(AccountController.AccountCookie) String cookie,
                              @RequestParam(value = "PreviousInsert", defaultValue = "0") int wentwell,
                              @RequestParam(value = "itemid", required = true) int id
     ) {
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
 
-        Integer itemid =id;
-        request.getSession().setAttribute("itemID",itemid);
-        if (itemid !=null) {
+        Integer itemid = id;
+        request.getSession().setAttribute("itemID", itemid);
+        if (itemid != null) {
 
             //TODO check if the item corresponds with who made it.
             if (wentwell == 1) {
@@ -100,7 +115,7 @@ public class ItemController {
             model.addAttribute("type", itemModel.getType());
             model.addAttribute("price", itemModel.getPrice());
             model.addAttribute("description", itemModel.getDescription());
-        }else{
+        } else {
             model.addAttribute("error", messageSource.getMessage("error.item.not.selected", null, RequestContextUtils.getLocale(request)));
             //Todo this will lead the user to a page that is blank and pretty much does nothing since it updates by id.
             //it might be a good ides to lead him back to the previous page
@@ -120,10 +135,12 @@ public class ItemController {
             @RequestParam(value = "description", required = true) String description,
             @RequestParam(value = "file", required = true) MultipartFile file,
             HttpServletRequest request,
+            HttpServletResponse response,
             Model model,
             @CookieValue(AccountController.AccountCookie) String cookie
 
     ) {
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
 
         int id = (Integer) request.getSession().getAttribute("itemID");
 
@@ -142,26 +159,29 @@ public class ItemController {
             else wentWell = 2;
         }
 
-        return changeItem(request, model, cookie, wentWell,id);
+        return changeItem(request,response, model, cookie, wentWell, id);
 
     }
-    @RequestMapping(value = "itemoverview", method = RequestMethod.GET)
+
+    @RequestMapping(value = "items", method = RequestMethod.GET)
     /**
      * Handles the logic of the actual button press, after that it calls the get method for changeitem
      */
     public String itemOverView(
             HttpServletRequest request,
+            HttpServletResponse response,
             Model model,
-            @CookieValue(AccountController.AccountCookie) String cookie,
+            @CookieValue(value = AccountController.AccountCookie, required = false) String cookie,
             @RequestParam(value = "PreviousInsert", defaultValue = "0") int wentwell
-    ){
+    ) {
 
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
 
         AccountModel accountModel = MainController.getCurrentUser(cookie, request);
 
-        if(accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
+        if (accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
 
-            List<ItemModel> items= DatabaseController.getInstance().getItems();
+            List<ItemModel> items = DatabaseController.getInstance().getItems();
             model.addAttribute("items", items.toArray());
         }
 
@@ -175,23 +195,28 @@ public class ItemController {
 
         return "item_overview";
     }
+
     @RequestMapping(value = "itemoverviewdelete", method = RequestMethod.GET)
     public String deleteItem(
             HttpServletRequest request,
+            HttpServletResponse response,
             Model model,
             @CookieValue(AccountController.AccountCookie) String cookie,
             @RequestParam(value = "itemid", required = true) int id
-    ){
-        int wentwell=0;
+    ) {
+
+        if(!MainController.assertUserIsPrivileged(cookie, request, response, true))return null;
+
+        int wentwell = 0;
 
         DatabaseController dbc = DatabaseController.getInstance();
         AccountModel accountModel = MainController.getCurrentUser(cookie, request);
-        if(accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
+        if (accountModel.getAccountTypeEnum() == AccountModel.AccountTypeEnum.photographer) {
 
-                wentwell =dbc.deleteItem(id)?1:2;
+            wentwell = dbc.deleteItem(id) ? 1 : 2;
 
         }
 
-        return itemOverView(request,model,cookie,wentwell );
+        return itemOverView(request, response, model, cookie, wentwell);
     }
 }
