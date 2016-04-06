@@ -24,10 +24,11 @@
                             <a href="/order-overview" class="btn btn-primary btn-block btn-lg">#springMessageText(
                         "main.orders", "View Orders")</a>
                         </div>
+                        <div class="list-group-item col-lg-4">
+                            <a href="/items" class="btn btn-primary btn-block btn-lg">Items</a>
+                        </div>
                     #end
-                    <div class="list-group-item col-lg-4">
-                        <a href="/items" class="btn btn-primary btn-block btn-lg">Items</a>
-                    </div>
+
                     <div class="list-group-item col-lg-4">
                         <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
                     </div>
