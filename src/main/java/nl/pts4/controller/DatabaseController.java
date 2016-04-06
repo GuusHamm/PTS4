@@ -470,25 +470,6 @@ public class DatabaseController {
 		return effectModels;
 	}
 
-	public List<ItemModel> getItems() {
-		JdbcTemplate template = new JdbcTemplate(dataSource);
-
-		List<Map<String, Object>> rows = template.queryForList("SELECT id, price, type, description, thumbnailpath  FROM item");
-		List<ItemModel> itemModels = new ArrayList<>(rows.size());
-
-		for (Map<String, Object> row : rows) {
-			int id = (int) row.get("id");
-			int price = (int) row.get("price");
-			String type = (String) row.get("type");
-			String description = (String) row.get("description");
-			String thumbnail = (String) row.get("thumbnailpath");
-
-			itemModels.add(new ItemModel(id, price, type, description, thumbnail));
-		}
-
-		return itemModels;
-	}
-
 	/**
 	 * Get a photo config item by id
 	 *
@@ -542,7 +523,7 @@ public class DatabaseController {
 
 					//TODO get this with a database query
 					SchoolModel schoolModel = new SchoolModel(schoolid,name,location,country);//////////////////////////todo THIS WILL NEVER WORK RIGHT 0.o
-					EffectModel effectModel = new EffectModel();
+					EffectModel effectModel = new EffectModel(effectid, type, description, effectprice);
 					ItemModel itemModel = new ItemModel(itemid,itemprice,itemType,itemdescription,thumbnailpath);
 
 					File photoFile = new File(pathtophoto);
