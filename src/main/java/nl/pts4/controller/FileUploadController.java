@@ -47,7 +47,7 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("multiPartFile") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response, Model m) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }
