@@ -1,0 +1,22 @@
+<div class="col-lg-6">
+    <div class="list-group-item">
+        <div class="row">
+            <div class="col-lg-4 list-group-item-heading">
+                <a href="/photos?id=$photo.uuid"><img class="img-responsive img img-rounded"
+                                                      src="$photo.filePath"
+                                                      alt="Card image cap" si></a>
+            </div>
+            <div class="col-lg-7 col">
+                <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
+                #set($priceRound = $photo.price - .01)
+                <a class="btn btn-primary" href="/photos?id=$photo.uuid">#springMessageText(
+                    "photos.buy", "Buy this photo for
+                                only") $priceRound</a>
+            </div>
+            #if($privileged)
+                <a href="/deletephoto?id=$photo.uuid" class="btn btn-danger btn-sm">X</a>
+            #end
+
+        </div>
+    </div>
+</div>

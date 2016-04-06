@@ -6,26 +6,23 @@ import java.util.UUID;
  * Created by GuusHamm on 16-3-2016.
  */
 public class ItemModel {
-    private UUID uuid;
+    private int id;
     private double price;
     private String type;
     private String description;
     private String thumbnailPath;
 
-    public ItemModel(UUID uuid, double price, String type, String description, String thumbnailPath) {
-        this.uuid = uuid;
+    public ItemModel(int id, double price, String type, String description, String thumbnailPath) {
+        this.id = id;
         this.price = price;
         this.type = type;
         this.description = description;
         this.thumbnailPath = thumbnailPath;
     }
 
-    public ItemModel() {
-    }
 
-    public UUID getUuid() {
-
-        return uuid;
+    public int getId() {
+        return id;
     }
 
     public double getPrice() {

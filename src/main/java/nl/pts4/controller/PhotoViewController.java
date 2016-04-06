@@ -33,8 +33,8 @@ public class PhotoViewController {
 	 * @return photoview to get the correct template
 	 */
 	@RequestMapping("/photos")
-	public String photosGet(@CookieValue(AccountController.AccountCookie) String account, Model m, HttpServletRequest request) {
-		AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+	public String photosGet(@CookieValue(value = AccountController.AccountCookie, required = false) String account, Model m, HttpServletRequest request, HttpServletResponse response) {
+		AccountModel accountModel = MainController.getCurrentUser(account, request);
 		List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
 
 		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Photos");
@@ -42,9 +42,15 @@ public class PhotoViewController {
 		m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
-		if (request.getSession().getAttribute("Succes") != null && (boolean) request.getSession().getAttribute("Succes") == true) {
-			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo has been added to your cart");
-			request.getSession().removeAttribute("Succes");
+		m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(account, request, response, false));
+
+		if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
+			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
+			request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
+		}
+		if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
+			m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
+			request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
 		}
 		return "photoview";
 	}
@@ -63,7 +69,7 @@ public class PhotoViewController {
 
 		}
 		request.getSession().setAttribute("Cart", cart);
-		request.getSession().setAttribute("Succes", true);
+		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 
 
 		try {
@@ -72,6 +78,24 @@ public class PhotoViewController {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	@RequestMapping(value = "deletephoto", params = {"id"})
+	public String deletePhoto(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+		if (id != null) {
+			if (DatabaseController.getInstance().deletePhoto(id)) {
+				request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Removed");
+			} else {
+				m.addAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
+			}
+		}
+
+		try {
+			response.sendRedirect("/photos");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

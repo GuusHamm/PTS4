@@ -151,6 +151,29 @@ public class DatabaseController {
 		return template.update("UPDATE account SET hash = ? WHERE id = ?", hash, ac.getUuid()) == 1;
 	}
 
+	public HashMap<UUID, AccountModel> getAllAccounts() {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+		HashMap<UUID, AccountModel> accountModels = new HashMap<>();
+		List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type FROM account");
+
+		for (Map<String, Object> row : rows) {
+			UUID uuid = (UUID) row.get("id");
+
+			String name = (String) row.get("name");
+			boolean active = (boolean) row.get("active");
+
+			String type = (String) row.get("type");
+			String email = (String) row.get("email");
+			AccountModel.AccountTypeEnum accountTypeEnum = null;
+			if (type != null)
+				accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
+
+			accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum));
+
+		}
+		return accountModels;
+	}
+
 	/**
 	 * Get an account with a uuid
 	 *
@@ -313,22 +336,14 @@ public class DatabaseController {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 
 		List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o");
-		List<AccountModel> accountModels = new ArrayList<>(rows.size());
+		HashMap<UUID, AccountModel> accountModels = getAllAccounts();
 		List<OrderModel> orderModels = new ArrayList<>(rows.size());
 		for (Map<String, Object> row : rows) {
 			int id = (int) row.get("id");
 			UUID account = (UUID) row.get("accountid");
 			Date orderDate = (Date) row.get("orderdate");
 
-			AccountModel am;
-			Optional<AccountModel> op = accountModels.stream().filter(o -> o.getUuid() == account).findFirst();
-			if (op.isPresent()) {
-				am = op.get();
-			} else {
-				am = getAccount(account);
-				accountModels.add(am);
-			}
-			orderModels.add(new OrderModel(id, orderDate, am));
+			orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
 		}
 
 		rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
@@ -396,6 +411,7 @@ public class DatabaseController {
 
 		List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p");
 		List<PhotoModel> photoModels = new ArrayList<>(rows.size());
+		HashMap<UUID, AccountModel> accountModels = getAllAccounts();
 		for (Map<String, Object> row : rows) {
 			UUID uuid = (UUID) row.get("id");
 			UUID photographerid = (UUID) row.get("photographerid");
@@ -405,7 +421,7 @@ public class DatabaseController {
 			int price = Integer.parseInt(String.valueOf(row.get("price")));
 			Date captureDate = (Date) row.get("capturedate");
 			String path = String.valueOf(row.get("pathtophoto"));
-			photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path));
+			photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
 		}
 		return photoModels;
 	}
@@ -466,7 +482,7 @@ public class DatabaseController {
 			String type = (String) row.get("type");
 			String description = (String) row.get("description");
 			String thumbnail = (String) row.get("thumbnailpath");
-			
+
 			itemModels.add(new ItemModel(id, price, type, description, thumbnail));
 		}
 
@@ -521,12 +537,13 @@ public class DatabaseController {
 					int itemid = resultSet.getInt("itemid");
 					int itemprice = resultSet.getInt("itemprice");
 					String itemdescription = resultSet.getString("itemdescription");
+					String itemType = resultSet.getString("itemdescription");
 					String thumbnailpath = resultSet.getString("thumbnailpath");
 
 					//TODO get this with a database query
-					SchoolModel schoolModel = new SchoolModel();
-					EffectModel effectModel = new EffectModel(effectid, type, description, effectprice);
-					ItemModel itemModel = new ItemModel();
+					SchoolModel schoolModel = new SchoolModel(schoolid,name,location,country);//////////////////////////todo THIS WILL NEVER WORK RIGHT 0.o
+					EffectModel effectModel = new EffectModel();
+					ItemModel itemModel = new ItemModel(itemid,itemprice,itemType,itemdescription,thumbnailpath);
 
 					File photoFile = new File(pathtophoto);
 					PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
@@ -629,6 +646,18 @@ public class DatabaseController {
 		}
 	}
 
+	public boolean deletePhoto(UUID uuid) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		return template.update("DELETE FROM photo WHERE id=?", uuid) == 1;
+	}
+
+	public boolean checkPrivalegedUser(UUID uuid) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		return template.queryForObject("SELECT count(id) FROM account WHERE id = ? AND type IN ('photographer','administrator')", new Object[]{uuid}, Integer.TYPE) > 0;
+	}
+
 	/**
 	 * Get an account with a cookie
 	 *
@@ -671,6 +700,15 @@ public class DatabaseController {
 			return null;
 		}
 	}
+
+    /**
+     * Inserts a new item into the database
+     * @param price
+     * @param type
+     * @param description
+     * @param thumbnailPath
+     * @return
+     */
 	public boolean insertItem(double price, String type, String description, String thumbnailPath) {
 
 		JdbcTemplate insert = new JdbcTemplate(dataSource);
@@ -683,4 +721,138 @@ public class DatabaseController {
 		return true;
 
 	}
+
+    /**
+     * Gets a ItemModel by id from the database
+     * @param id
+     * @return
+     */
+	public ItemModel getItemByID(int id) {
+
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+
+		try {
+			ItemModel im = template.queryForObject("SELECT * FROM item i WHERE i.id = ?", new Object[]{id}, new RowMapper<ItemModel>() {
+				@Override
+				public ItemModel mapRow(ResultSet resultSet, int i) throws SQLException {
+					return getItemFromResultSet(resultSet);
+				}
+			});
+			return im;
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+    /**
+     * Gets all ItemModel from the database
+     * @return
+     */
+    public List<ItemModel> getItems() {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                "SELECT  * FROM item");
+
+        List<ItemModel> itemModels = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+            int id = (Integer) row.get("id");
+            int price = (Integer) row.get("price");
+            String type= (String) row.get("type");
+            String description = (String) row.get("description");
+            String thumbnailPath = (String) row.get("thumbnailPath");
+
+            itemModels.add(new ItemModel(id,price,type,description,thumbnailPath));
+        }
+        return itemModels;
+
+    }
+
+    /**
+     * Gets a Itemmodel from a resultset
+     * @param resultSet
+     * @return
+     */
+	private ItemModel getItemFromResultSet(ResultSet resultSet) {
+		try {
+			int id = resultSet.getInt("id");
+			int price = resultSet.getInt("price");
+			String type = resultSet.getString("type");
+			String description= resultSet.getString("description");
+			String thumbnailPath = resultSet.getString("thumbnailpath");
+
+			return new ItemModel(id,price,type,description,thumbnailPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+    /**
+     * updates the item in the database with all new values
+     * @param id
+     * @param price
+     * @param type
+     * @param description
+     * @param thumbnailPath
+     * @return
+     */
+    public boolean updateItem(int id, double price, String  type, String description, String thumbnailPath) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE item SET (price, type, description, thumbnailpath) = (?,?,?,?)  " +
+				"WHERE id= ? ", price, type, description, thumbnailPath, id) == 1;
+	}
+
+    /**
+     * updates the item in the database with all new values without changing the image
+     * @param id
+     * @param price
+     * @param type
+     * @param description
+     * @return
+     */
+    public boolean updateItem(int id, double price, String  type, String description) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE item SET (price, type, description) = (?,?,?)  " +
+				"WHERE id= ? ", price, type, description, id) == 1;
+	}
+
+	/**
+     * Gets all the schools the photographer photographs for by his PhotographerID
+     *
+     * @param photographerID
+     * @return
+     */
+    public List<SchoolModel> getSchools(UUID photographerID) {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
+                        "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
+
+				photographerID, photographerID);
+		List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+            int id = (Integer) row.get("id");
+            String name = (String) row.get("name");
+            String location = (String) row.get("location");
+            String country = (String) row.get("country");
+
+            schoolModels.add(new SchoolModel(id, name, location, country));
+        }
+        return schoolModels;
+    }
+    public boolean deleteItem(int id) throws IllegalArgumentException {
+
+
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        try {
+            template.update("DELETE FROM item i WHERE i.id = ?", id);
+            return true;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+    }
 }

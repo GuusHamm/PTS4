@@ -96,7 +96,7 @@ public class AccountController {
         if (isExpired(tokenDate))
             m.addAttribute(ERROR_ATTRIBUTE, "Token not found expired");
 
-        AccountModel am = DatabaseController.getInstance().getAccountByCookie(accountCookie);
+        AccountModel am = MainController.getCurrentUser(accountCookie, request);
         if (!checkPassword(am, password))
             m.addAttribute(ERROR_ATTRIBUTE, "Password invalid");
 
@@ -134,6 +134,16 @@ public class AccountController {
     public String login(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+        if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
+            m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
+            request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
+        }
+        if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
+            m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
+            request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
+        }
+
         return "login";
     }
 
@@ -194,7 +204,7 @@ public class AccountController {
                                      Model m,
                                      HttpServletRequest request,
                                      HttpServletResponse response) throws IOException {
-        AccountModel accountModel = DatabaseController.getInstance().getAccountByCookie(account);
+        AccountModel accountModel = MainController.getCurrentUser(account, request);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
         if (accountModel == null || account == null) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
