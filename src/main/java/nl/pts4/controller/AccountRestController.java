@@ -7,13 +7,13 @@ import nl.pts4.model.SettingsRestModel;
 import nl.pts4.security.HashConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * @author Teun
@@ -21,43 +21,36 @@ import java.util.UUID;
 @RestController
 public class AccountRestController {
 
-    public static final int WEEK = 60 * 60 * 24 * 7;
     @Autowired
     public MessageSource messageSource;
 
     /**
      * confirms if you can log in
-     * @param email     : The email which you use to log in
-     * @param password  : The password from the account
-     * @param response  : The response from the server
+     *
+     * @param email    : The email which you use to log in
+     * @param password : The password from the account
      * @return The AccountRestModel that the javascript will use to validate the login
      */
     @RequestMapping(value = "/login-rest", method = RequestMethod.POST)
     public AccountRestModel loginRest(@RequestParam(value = "email") String email,
                                       @RequestParam(value = "password") String password,
-                                      HttpServletRequest request,
-                                      HttpServletResponse response) {
+                                      HttpServletRequest request) {
         AccountRestModel arm = new AccountRestModel(email, password, request.getLocale(), messageSource);
         if (arm.isSuccess()) {
-            UUID id = UUID.randomUUID();
-            Cookie session = new Cookie(AccountController.AccountCookie, id.toString());
-            session.setMaxAge(WEEK);
-            response.addCookie(session);
-
-            AccountModel am = DatabaseController.getInstance().getAccount(email);
-            DatabaseController.getInstance().createUserCookie(am, id);
+            AccountModel accountModel = DatabaseController.getInstance().getAccount(email);
+            request.getSession().setAttribute(MainController.ACCOUNT_ATTRIBUTE, accountModel);
         }
         return arm;
     }
 
     /**
      * Changing your account variables
+     *
      * @param name              : The username from the user
      * @param email             : The email from the user
      * @param oldPassword       : The old password for if you want to change your password
      * @param newPassword       : The new password
      * @param newPasswordRepeat : The new password once again for confirmation
-     * @param accountCookie     : The current cookie where you can get the account from
      * @return
      */
     @RequestMapping(value = "/settings-rest", method = RequestMethod.POST)
@@ -66,9 +59,8 @@ public class AccountRestController {
                                           @RequestParam(value = "oldPassword") String oldPassword,
                                           @RequestParam(value = "newPassword") String newPassword,
                                           @RequestParam(value = "newPasswordRepeat") String newPasswordRepeat,
-                                          @CookieValue(value = AccountController.AccountCookie) String accountCookie,
                                           HttpServletRequest request) {
-        AccountModel ac = MainController.getCurrentUser(accountCookie, request);
+        AccountModel ac = MainController.getCurrentUser(request);
         boolean hitChange = false, passwordInvalid = false;
         String message = "Data invalid or hasn't changed";
 
@@ -84,7 +76,7 @@ public class AccountRestController {
                 if (!Objects.equals(newPassword, newPasswordRepeat)) {
                     hitChange = false;
                     message = "Passwords not equal";
-                }else{
+                } else {
                     String hash = SCryptUtil.scrypt(newPassword, HashConstants.N, HashConstants.r, HashConstants.p);
                     DatabaseController.getInstance().setAccountHash(ac, hash);
                     hitChange = true;

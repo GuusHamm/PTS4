@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,23 +23,23 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created by Teun on 16-3-2016.
+ * @author Teun
  */
 @Controller
 public class AccountController {
 
-    public static final String AccountCookie = "ACC_SESSION";
     public static final String AccountModelKey = "user";
     public static final String CSRFToken = "CSRF";
     public static final int CSRFExpiry = 60 * 10; // 10 Minutes
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
     private Map<String, Date> tokens = new HashMap<>();
     private SecureRandom random = new SecureRandom();
 
     /**
      * Checks the password for a account
-     * @param account Account to check the password for
+     *
+     * @param account  Account to check the password for
      * @param password Password to check against
      * @return True if password is correct, false otherwise
      */
@@ -51,18 +49,18 @@ public class AccountController {
 
     /**
      * When you go the the delete page with a get method
-     * @param m        : The model
-     * @param request  : The request made
-     * @param response : The response given
-     * @param cookie   : The current cookie
+     *
+     * @param m       : The model
+     * @param request : The request made
      * @return delete to get the correct template
      */
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String deleteGet(Model m, HttpServletRequest request, HttpServletResponse response, @CookieValue(value = AccountCookie) String cookie) {
+    public String deleteGet(Model m, HttpServletRequest request) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Delete!");
 
         String randomToken = new BigInteger(130, random).toString(32);
         tokens.put(randomToken, new Date());
+
         m.addAttribute(CSRFToken, randomToken);
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "delete";
@@ -70,21 +68,20 @@ public class AccountController {
 
     /**
      * When you go to the delete page with a post method
-     * @param m             : The model
-     * @param request       : The request made
-     * @param response      : The response given
-     * @param accountCookie : The cookie from the account
-     * @param password      : The password to delete the account
-     * @param csrfToken     : The token to prevent CSRF (Cross side request forgery)
+     *
+     * @param m         : The model
+     * @param request   : The request made
+     * @param response  : The response given
+     * @param password  : The password to delete the account
+     * @param csrfToken : The token to prevent CSRF (Cross side request forgery)
      * @return delete to get the correct template
      * @throws IllegalArgumentException : when response isn't good
-     * @throws IOException : When response isn't good
+     * @throws IOException              : When response isn't good
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(Model m,
                          HttpServletRequest request,
                          HttpServletResponse response,
-                         @CookieValue(AccountCookie) String accountCookie,
                          @RequestParam("password") String password,
                          @RequestParam(CSRFToken) String csrfToken) throws IllegalArgumentException, IOException {
         final String ERROR_ATTRIBUTE = "error";
@@ -96,15 +93,13 @@ public class AccountController {
         if (isExpired(tokenDate))
             m.addAttribute(ERROR_ATTRIBUTE, "Token not found expired");
 
-        AccountModel am = MainController.getCurrentUser(accountCookie, request);
-        if (!checkPassword(am, password))
+        AccountModel accountModel = MainController.getCurrentUser(request);
+        if (!checkPassword(accountModel, password))
             m.addAttribute(ERROR_ATTRIBUTE, "Password invalid");
 
         if (!m.containsAttribute(ERROR_ATTRIBUTE)) {
-            DatabaseController.getInstance().deleteAccount(am.getUuid());
-            Cookie cookie = new Cookie(AccountCookie, "");
-            cookie.setMaxAge(0);
-            response.sendRedirect("/");
+            DatabaseController.getInstance().deleteAccount(accountModel.getUuid());
+            response.sendRedirect("/logout");
         }
 
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
@@ -115,6 +110,7 @@ public class AccountController {
 
     /**
      * Checks if date is later than date + CSRFExpiry
+     *
      * @param date Date to check
      * @return True if date is earlier than date + CSRFExpiry, false otherwise
      */
@@ -127,6 +123,7 @@ public class AccountController {
 
     /**
      * Going to the login page
+     *
      * @param m : The model / template
      * @return login to get the correct template
      */
@@ -149,6 +146,7 @@ public class AccountController {
 
     /**
      * Going to the register page
+     *
      * @param m : The model / template
      * @return register to get the register template
      */
@@ -161,18 +159,19 @@ public class AccountController {
 
     /**
      * Actualle registering an account
-     * @param email     : The email used when registering, has to be unqiue
-     * @param password  : Password for the account, minimal 8 characters, maximal 32 characters
-     * @param name      : the username for the account
-     * @param response  : The response from the server
-     * @param m         : The model / template
+     *
+     * @param email    : The email used when registering, has to be unqiue
+     * @param password : Password for the account, minimal 8 characters, maximal 32 characters
+     * @param name     : the username for the account
+     * @param response : The response from the server
+     * @param m        : The model / template
      * @return Null
      * @throws IOException : When the input / output is incorrect
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@RequestParam(value = "email", required = true) String email,
-                           @RequestParam(value = "password", required = true) String password,
-                           @RequestParam(value = "name", required = true) String name,
+    public String register(@RequestParam(value = "email") String email,
+                           @RequestParam(value = "password") String password,
+                           @RequestParam(value = "name") String name,
                            HttpServletResponse response,
                            Model m,
                            HttpServletRequest request) throws IOException {
@@ -184,7 +183,7 @@ public class AccountController {
         if (accountExists)
             response.sendRedirect("/register");
 
-        AccountModel accountModel = DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
+        DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         response.sendRedirect("/login");
@@ -193,20 +192,17 @@ public class AccountController {
 
     /**
      * Get the account settings page
-     * @param account   : The account which is logged in
-     * @param m         : The model / template
-     * @param response  : The response from the server
+     *
+     * @param m : The model / template
      * @return account_settings to get the correct template
      * @throws IOException : When input / output is incorrect
      */
     @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
-    public String accountSettingsGet(@CookieValue(value = AccountCookie, required = false) String account,
-                                     Model m,
-                                     HttpServletRequest request,
-                                     HttpServletResponse response) throws IOException {
-        AccountModel accountModel = MainController.getCurrentUser(account, request);
+    public String accountSettingsGet(Model m,
+                                     HttpServletRequest request) throws IOException {
+        AccountModel accountModel = MainController.getCurrentUser(request);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
-        if (accountModel == null || account == null) {
+        if (accountModel == null) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
             return "login";
         }
@@ -217,25 +213,15 @@ public class AccountController {
 
     /**
      * Logging out, has to be logged in first to log out.
-     * @param accountCookie : The cookie which contains the account
-     * @param m             : The model / template
-     * @param response      : The response from the server
+     *
+     * @param response : The response from the server
      * @return to login screen.
      */
     @RequestMapping(value = "/logout")
-    public String accountLogout(@CookieValue(value = AccountCookie) String accountCookie,
-                                Model m,
-                                HttpServletRequest request,
-                                HttpServletResponse response) {
-        if (accountCookie != null) {
-            Cookie cookie = new Cookie(AccountCookie, "");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
-
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Home");
-        m.addAttribute(MainController.SUCCESS_ATTRIBUTE, messageSource.getMessage("logout.success", null, request.getLocale()));
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
-        return "login";
+    public void accountLogout(HttpServletRequest request,
+                              HttpServletResponse response) throws IOException {
+        request.getSession().setAttribute(MainController.ACCOUNT_ATTRIBUTE, null);
+        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, messageSource.getMessage("logout.success", null, request.getLocale()));
+        response.sendRedirect("/");
     }
 }

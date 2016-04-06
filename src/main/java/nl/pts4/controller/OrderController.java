@@ -5,7 +5,6 @@ import nl.pts4.model.OrderModel;
 import nl.pts4.model.PhotoConfigurationModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,45 +17,43 @@ import java.util.ArrayList;
 @Controller
 public class OrderController {
 
-	public OrderModel createNewOrder(AccountModel accountModel, PhotoConfigurationModel photoConfigurationModel){
-		return null;
-	}
+    public OrderModel createNewOrder(AccountModel accountModel, PhotoConfigurationModel photoConfigurationModel) {
+        return null;
+    }
 
-	/**
-	 * get all the orders and show them in order_overview
-	 * @param m	: The model / template
+    /**
+     * get all the orders and show them in order_overview
+     *
+     * @param m : The model / template
      * @return order_overview to get the correct template
      */
-	@RequestMapping(value = "/order-overview")
-	public String orderView(
-			@CookieValue(value = AccountController.AccountCookie, required = false) String am,
-			Model m, HttpServletRequest request, HttpServletResponse response) {
-		if (!MainController.assertUserIsPrivileged(am, request, response, true)) {
-			return null;
-		}
-		ArrayList<OrderModel> orders = new ArrayList<>();
-		orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
+    @RequestMapping(value = "/order-overview")
+    public String orderView(Model m, HttpServletRequest request, HttpServletResponse response) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+            return null;
+        }
+        ArrayList<OrderModel> orders = new ArrayList<>();
+        orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 
 //		Add some items to the orders list to show them
-		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
-		m.addAttribute("allOrders", orders);
-		m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(am, request));
-		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
+        m.addAttribute("allOrders", orders);
+        m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(request));
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
-		return "order-overview";
-	}
+        return "order-overview";
+    }
 
-	@RequestMapping(value = "/order")
-	public String order(@CookieValue(AccountController.AccountCookie) String am,
-			Model m, HttpServletRequest request) {
-		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order");
-		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
-		m.addAttribute("effects", DatabaseController.getInstance().getEffects());
-		m.addAttribute("items", DatabaseController.getInstance().getItems());
-		m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
+    @RequestMapping(value = "/order")
+    public String order(String am,
+                        Model m, HttpServletRequest request) {
+        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order");
+        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+        m.addAttribute("effects", DatabaseController.getInstance().getEffects());
+        m.addAttribute("items", DatabaseController.getInstance().getItems());
+        m.addAttribute(AccountController.AccountModelKey, DatabaseController.getInstance().getAccountByCookie(am));
 
 
-
-		return "order";
-	}
+        return "order";
+    }
 }

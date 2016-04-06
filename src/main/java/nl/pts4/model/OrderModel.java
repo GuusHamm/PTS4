@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Created by Nekkyou on 16-3-2016.
  */
-public class OrderModel
-{
+public class OrderModel {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     private int id;
@@ -18,14 +17,14 @@ public class OrderModel
     private AccountModel account;
     private List<OrderLineModel> orderLineModels;
 
-    public OrderModel(int id,Date orderDate, AccountModel account) {
+    public OrderModel(int id, Date orderDate, AccountModel account) {
         this.id = id;
         this.orderDate = orderDate;
         this.account = account;
         this.orderLineModels = new ArrayList<>();
     }
 
-    public OrderModel(int id,Date orderDate, AccountModel account, List<OrderLineModel> orderLineModels) {
+    public OrderModel(int id, Date orderDate, AccountModel account, List<OrderLineModel> orderLineModels) {
         this.id = id;
         this.orderDate = orderDate;
         //TODO account pakken met Account id
@@ -33,43 +32,35 @@ public class OrderModel
         this.orderLineModels = orderLineModels;
     }
 
-    public AccountModel getAccount()
-    {
+    public AccountModel getAccount() {
         return account;
     }
 
-    public void setAccount(AccountModel account)
-    {
+    public void setAccount(AccountModel account) {
         this.account = account;
     }
 
-    public Date getOrderDate()
-    {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Date orderDate)
-    {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public List<OrderLineModel> getOrderLineModels()
-    {
+    public List<OrderLineModel> getOrderLineModels() {
         return orderLineModels;
     }
 
-    public void setOrderLineModels(List<OrderLineModel> orderLineModels)
-    {
+    public void setOrderLineModels(List<OrderLineModel> orderLineModels) {
         this.orderLineModels = orderLineModels;
     }
 

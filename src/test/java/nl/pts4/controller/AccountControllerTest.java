@@ -22,12 +22,12 @@ public class AccountControllerTest {
     @Test
     public void checkPassword() throws Exception {
         String hash = SCryptUtil.scrypt("password", HashConstants.N, HashConstants.r, HashConstants.p);
-        AccountModel am = databaseController.getAccount("njones0@amazonaws.com");
-        am.setHash(hash);
+        AccountModel accountModel = databaseController.getAccount("njones0@amazonaws.com");
+        accountModel.setHash(hash);
 
-        Assert.assertTrue(AccountController.checkPassword(am, "password"));
-        Assert.assertFalse(AccountController.checkPassword(am, "password1"));
-        Assert.assertFalse(AccountController.checkPassword(am, null));
+        Assert.assertTrue(AccountController.checkPassword(accountModel, "password"));
+        Assert.assertFalse(AccountController.checkPassword(accountModel, "password1"));
+        Assert.assertFalse(AccountController.checkPassword(accountModel, null));
     }
 
 
