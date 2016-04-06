@@ -41,7 +41,8 @@ public class FileUploadController {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+        m = MainController.addDefaultAttributesToModel(m, "Upload a file", request, response);
         return "multiupload";
     }
 
@@ -50,6 +51,8 @@ public class FileUploadController {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }
+
+        m = MainController.addDefaultAttributesToModel(m, "Upload a file", request, response);
 
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();

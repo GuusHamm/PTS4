@@ -14,8 +14,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by wouter on 30-3-2016.
@@ -32,12 +32,8 @@ public class ItemController {
                            Model model) {
 
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
-        AccountModel photographer = MainController.getCurrentUser(request);
-        if (photographer == null) {
-            Locale locale = RequestContextUtils.getLocale(request);
-            model.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.warning.not.allowed", null, locale));
-            return "main";
-        }
+
+        model = MainController.addDefaultAttributesToModel(model, "Make Item", request, response);
 
         return "make_item";
     }
@@ -68,22 +64,11 @@ public class ItemController {
     public String changeItem(HttpServletRequest request,
                              HttpServletResponse response,
                              Model model,
-                             @RequestParam(value = "itemid") Integer id) {
+                             @RequestParam(value = "itemid") Integer id) throws IOException {
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
         request.getSession().setAttribute("itemID", id);
         if (id != null) {
-
-
-            DatabaseController databaseController = DatabaseController.getInstance();
-            AccountModel photographer = MainController.getCurrentUser(request);
-
-            if (photographer == null) {
-
-                Locale locale = RequestContextUtils.getLocale(request);
-                model.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.warning.not.allowed", null, locale));
-                return "main";
-            }
             ItemModel itemModel = DatabaseController.getInstance().getItemByID(id);
 
             model.addAttribute("type", itemModel.getType());
@@ -93,7 +78,10 @@ public class ItemController {
             model.addAttribute("error", messageSource.getMessage("error.item.not.selected", null, RequestContextUtils.getLocale(request)));
             //Todo this will lead the user to a page that is blank and pretty much does nothing since it updates by id.
             //it might be a good ides to lead him back to the previous page
+            response.sendRedirect(request.getHeader("referer"));
         }
+        model = MainController.addDefaultAttributesToModel(model, "Change Item", request, response);
+
 
         return "change_item";
     }
@@ -109,7 +97,7 @@ public class ItemController {
             @RequestParam(value = "file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response,
-            Model model) {
+            Model model) throws IOException {
         if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
 
         int id = (Integer) request.getSession().getAttribute("itemID");
@@ -151,6 +139,8 @@ public class ItemController {
 
         List<ItemModel> items = DatabaseController.getInstance().getItems();
         model.addAttribute("items", items.toArray());
+
+        model = MainController.addDefaultAttributesToModel(model, "Item Overview", request, response);
 
         return "item_overview";
     }

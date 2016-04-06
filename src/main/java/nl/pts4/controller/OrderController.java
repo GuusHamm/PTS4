@@ -28,22 +28,19 @@ public class OrderController {
         }
         ArrayList<OrderModel> orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 
-        // Add some items to the orders list to show them
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order overview");
+        m = MainController.addDefaultAttributesToModel(m, "Orders", request, response);
         m.addAttribute("allOrders", orders);
-        m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(request));
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
         return "order-overview";
     }
 
     @RequestMapping(value = "/order")
-    public String order(Model m, HttpServletRequest request) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Order");
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+    public String order(Model m, HttpServletRequest request, HttpServletResponse response) {
+        m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
+
         m.addAttribute("effects", DatabaseController.getInstance().getEffects());
         m.addAttribute("items", DatabaseController.getInstance().getItems());
-        m.addAttribute(AccountController.AccountModelKey, MainController.getCurrentUser(request));
+
         return "order";
     }
 }

@@ -21,6 +21,8 @@ public class MainController {
     public static final String SUCCESS_ATTRIBUTE = "success";
     public static final String PRIVILEGED_ATTRIBUTE = "privileged";
     public static final String ACCOUNT_ATTRIBUTE = "account";
+    public static final String CART_ATTRIBUTE = "cart";
+
 
     public static boolean assertUserIsPrivileged(HttpServletRequest request, HttpServletResponse response, boolean redirect) {
         Object privilegedAttribute = request.getSession().getAttribute(PRIVILEGED_ATTRIBUTE);
@@ -52,6 +54,26 @@ public class MainController {
         return (AccountModel) request.getSession().getAttribute(ACCOUNT_ATTRIBUTE);
     }
 
+    public static Model addDefaultAttributesToModel(Model model, String title, HttpServletRequest request, HttpServletResponse response) {
+        if (model != null) {
+            if (request.getSession().getAttribute(SUCCESS_ATTRIBUTE) != null) {
+                model.addAttribute(SUCCESS_ATTRIBUTE, request.getSession().getAttribute(SUCCESS_ATTRIBUTE));
+                request.getSession().removeAttribute(SUCCESS_ATTRIBUTE);
+            }
+            if (request.getSession().getAttribute(ERROR_ATTRIBUTE) != null) {
+                model.addAttribute(ERROR_ATTRIBUTE, request.getSession().getAttribute(ERROR_ATTRIBUTE));
+                request.getSession().removeAttribute(ERROR_ATTRIBUTE);
+            }
+
+            model.addAttribute(ACCOUNT_ATTRIBUTE, getCurrentUser(request));
+            model.addAttribute(TITLE_ATTRIBUTE, title);
+            model.addAttribute(CART_ATTRIBUTE, request.getSession().getAttribute(CART_ATTRIBUTE));
+            model.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(request, response, false));
+
+        }
+        return model;
+    }
+
     private static void redirectToLogin(HttpServletRequest request, HttpServletResponse response) {
         // TODO Internationalisation
         request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "You are not allowed to do that");
@@ -70,11 +92,7 @@ public class MainController {
      */
     @RequestMapping(value = "/")
     public String main(Model m, HttpServletRequest request, HttpServletResponse response) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
-        AccountModel am = getCurrentUser(request);
-        m.addAttribute("user", am);
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
-        m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(request, response, false));
+        m = addDefaultAttributesToModel(m, "Fotowinkel", request, response);
         return "main";
     }
 
@@ -86,9 +104,6 @@ public class MainController {
      */
     @RequestMapping(value = "/header")
     public String header(Model m, HttpServletRequest request) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Fotowinkel");
-        AccountModel am = getCurrentUser(request);
-        m.addAttribute("user", am);
         return "header";
     }
 }

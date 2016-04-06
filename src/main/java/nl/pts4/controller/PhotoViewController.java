@@ -41,37 +41,27 @@ public class PhotoViewController {
         AccountModel accountModel = MainController.getCurrentUser(request);
         List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
 
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Photos");
-        m.addAttribute(AccountController.AccountModelKey, accountModel);
+        m = MainController.addDefaultAttributesToModel(m, "Photos", request, response);
         m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
-        m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(request, response, false));
 
-        if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
-            m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
-            request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
-        }
-        if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
-            m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
-            request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
-        }
+
         return "photoview";
     }
 
     @RequestMapping(value = "/photos", params = {"id"})
     public void photosAddToCart(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         LinkedList<PhotoModel> cart;
-        if (request.getSession().getAttribute("Cart") == null) {
+        if (request.getSession().getAttribute(MainController.CART_ATTRIBUTE) == null) {
             cart = new LinkedList<>();
         } else {
-            cart = (LinkedList<PhotoModel>) request.getSession().getAttribute("Cart");
+            cart = (LinkedList<PhotoModel>) request.getSession().getAttribute(MainController.CART_ATTRIBUTE);
         }
         if (id != null) {
             cart.add(DatabaseController.getInstance().getPhotoByUUID(id));
-            request.getSession().setAttribute("Cart", cart);
+            request.getSession().setAttribute(MainController.CART_ATTRIBUTE, cart);
         }
-        request.getSession().setAttribute("Cart", cart);
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, cart);
         // TODO Add translation
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 

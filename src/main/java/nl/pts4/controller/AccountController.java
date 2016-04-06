@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static nl.pts4.controller.MainController.ERROR_ATTRIBUTE;
+
 /**
  * @author Teun
  */
@@ -55,11 +57,13 @@ public class AccountController {
      * @return delete to get the correct template
      */
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String deleteGet(Model m, HttpServletRequest request) {
+    public String deleteGet(Model m, HttpServletRequest request, HttpServletResponse response) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Delete!");
 
         String randomToken = new BigInteger(130, random).toString(32);
         tokens.put(randomToken, new Date());
+
+        m = MainController.addDefaultAttributesToModel(m, "Delete", request, response);
 
         m.addAttribute(CSRFToken, randomToken);
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
@@ -84,7 +88,8 @@ public class AccountController {
                          HttpServletResponse response,
                          @RequestParam("password") String password,
                          @RequestParam(CSRFToken) String csrfToken) throws IllegalArgumentException, IOException {
-        final String ERROR_ATTRIBUTE = "error";
+        m = MainController.addDefaultAttributesToModel(m, "Delete", request, response);
+
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account deleted");
         if (!tokens.containsKey(csrfToken))
             m.addAttribute(ERROR_ATTRIBUTE, "Token not found or expired");
@@ -101,8 +106,6 @@ public class AccountController {
             DatabaseController.getInstance().deleteAccount(accountModel.getUUID());
             response.sendRedirect("/logout");
         }
-
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
 
         tokens.remove(csrfToken);
         return "delete";
@@ -128,18 +131,8 @@ public class AccountController {
      * @return login to get the correct template
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model m, HttpServletRequest request) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Login");
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
-
-        if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
-            m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
-            request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
-        }
-        if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
-            m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
-            request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
-        }
+    public String login(Model m, HttpServletRequest request, HttpServletResponse response) {
+        m = MainController.addDefaultAttributesToModel(m, "Login", request, response);
 
         return "login";
     }
@@ -151,9 +144,9 @@ public class AccountController {
      * @return register to get the register template
      */
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String register(Model m, HttpServletRequest request) {
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+    public String register(Model m, HttpServletRequest request, HttpServletResponse response) {
+        m = MainController.addDefaultAttributesToModel(m, "Register", request, response);
+
         return "register";
     }
 
@@ -184,8 +177,7 @@ public class AccountController {
             response.sendRedirect("/register");
 
         DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
-        m.addAttribute(MainController.TITLE_ATTRIBUTE, "Register");
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
         response.sendRedirect("/login");
         return null;
     }
@@ -199,15 +191,16 @@ public class AccountController {
      */
     @RequestMapping(value = "/account/settings", method = RequestMethod.GET)
     public String accountSettingsGet(Model m,
-                                     HttpServletRequest request) throws IOException {
+                                     HttpServletRequest request,
+                                     HttpServletResponse response) throws IOException {
         AccountModel accountModel = MainController.getCurrentUser(request);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
         if (accountModel == null) {
-            m.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
+            m.addAttribute(ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
             return "login";
         }
-        m.addAttribute(AccountController.AccountModelKey, accountModel);
-        m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+
+        m = MainController.addDefaultAttributesToModel(m, "Settings", request, response);
         return "account_settings";
     }
 
