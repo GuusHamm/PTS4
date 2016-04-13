@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,7 +97,7 @@ public class PhotoViewController {
 
     @RequestMapping(value = "/clearcart")
     public void clearCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().removeAttribute("Cart");
+        request.getSession().removeAttribute(MainController.CART_ATTRIBUTE);
         response.sendRedirect(request.getHeader("referer"));
     }
 
