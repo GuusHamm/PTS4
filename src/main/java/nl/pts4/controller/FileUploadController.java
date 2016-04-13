@@ -23,7 +23,7 @@ import java.util.UUID;
  */
 @Controller
 public class FileUploadController {
-    public final static String StaticLocation = "images/";
+    public final static String StaticLocation = "/src/main/img/";
     public final static String ImageLocation = String.format("%s/src/main/resources/static/images/", System.getProperty("user.dir"));
     private List<String> allowedFileTypes;
 
