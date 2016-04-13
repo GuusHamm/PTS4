@@ -1,4 +1,11 @@
 #parse("header.vm")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#addField').click(function () {
+            $('#extraFields').append($('#defaultInput').html());
+        })
+    });
+</script>
 <div class="container">
     <div class="panel">
         <div class="panel-heading">
@@ -6,15 +13,20 @@
         </div>
         <div class="panel-body">
             <form method="post" enctype="multipart/form-data" action="multiupload">
-                <div class="well">
-                    <input type="file" name="file">
+                <div class="form-group row" id="defaultInput">
+                ##                    <div class="col-lg-6">
+                ##                        <input type="text" class="form-control" name="code" placeholder="#">
+                ##                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" type="file" name="file">
+                    </div>
                 </div>
-                <div class="well">
-                    <input type="file" name="file">
-                </div>
+                <div id="extraFields"></div>
+                <div class="btn btn-default btn-block" id="addField">+</div>
         </div>
+
         <div class="panel-footer">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Upload</button>
+            <a type="submit" class="btn btn-primary btn-lg btn-block">Upload</a>
         </div>
     </div>
     </form>

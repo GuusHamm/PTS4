@@ -5,9 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    #if ($account && $account.theme != "" && $account.theme != "null")
+        <link rel="stylesheet" href="/css/${account.theme}">
+    #else
+        <link rel="stylesheet" href="/css/bootstrap.yeti.min.css">
+    #end
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <script src="/js/jquery.min.js"></script>
 
     #if ($title == "" || !$title)
         <title>Whoops! No title, we forgot :(</title>

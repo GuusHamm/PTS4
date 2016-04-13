@@ -54,15 +54,23 @@ public class AccountRestController {
      * @return
      */
     @RequestMapping(value = "/settings-rest", method = RequestMethod.POST)
-    public SettingsRestModel settingsRest(@RequestParam(value = "name") String name,
-                                          @RequestParam(value = "email") String email,
-                                          @RequestParam(value = "oldPassword") String oldPassword,
-                                          @RequestParam(value = "newPassword") String newPassword,
-                                          @RequestParam(value = "newPasswordRepeat") String newPasswordRepeat,
+    public SettingsRestModel settingsRest(@RequestParam(value = "name", required = false) String name,
+                                          @RequestParam(value = "email", required = false) String email,
+                                          @RequestParam(value = "oldPassword", required = false) String oldPassword,
+                                          @RequestParam(value = "newPassword", required = false) String newPassword,
+                                          @RequestParam(value = "newPasswordRepeat", required = false) String newPasswordRepeat,
+                                          @RequestParam(value = "theme", required = false) String theme,
                                           HttpServletRequest request) {
         AccountModel ac = MainController.getCurrentUser(request);
         boolean hitChange = false, passwordInvalid = false;
         String message = "Data invalid or hasn't changed";
+
+        if (theme != null && !Objects.equals(theme, "") && !Objects.equals(ac.getTheme(), theme)) {
+            hitChange = true;
+            message = "Theme changed from " + ac.getTheme() + " to " + theme;
+            DatabaseController.getInstance().setAccountTheme(ac, theme);
+            return new SettingsRestModel(hitChange, message);
+        }
 
         if (!AccountController.checkPassword(ac, oldPassword)) {
             hitChange = false;

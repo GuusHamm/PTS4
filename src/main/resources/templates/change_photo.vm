@@ -1,0 +1,23 @@
+#parse("header.vm")
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="well bs-component" >
+        <form class="form-group" id="changePhotoValues" action="changephoto" method="POST" enctype="multipart/form-data" >
+            <fieldset>
+                <div class="form-group" >
+                    <h2 class="form-signin-heading">#springMessageText("change.photo", "Change photo")</h2>
+                    <br/>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">€</span>
+                        <input name="price" type="number" value="${photo.price}" min="0" step="0.5" data-number-to-fixed="2" data-number-stepfactor="1000" class="form-control glyphicon-euro" id="c2" />
+                    </div>
+                    <br/>
+
+                    <button id="btnEditPhoto" class="btn btn-lg btn-primary btn-block" type="submit" value="changePhoto">#springMessageText("change", "Change")</button>
+                    <input type="hidden" name="photoId" value="${photo.uuid}">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+#parse("footer.vm")

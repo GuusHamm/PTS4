@@ -132,7 +132,12 @@ public class AccountController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model m, HttpServletRequest request, HttpServletResponse response) {
+        Object o = request.getSession().getAttribute(MainController.REFERRER_ATTRIBUTE);
+        String referrer = String.valueOf(o);
+        request.getSession().setAttribute(MainController.REFERRER_ATTRIBUTE, null);
+
         m = MainController.addDefaultAttributesToModel(m, "Login", request, response);
+        m.addAttribute("referrer", referrer);
 
         return "login";
     }
@@ -193,14 +198,14 @@ public class AccountController {
     public String accountSettingsGet(Model m,
                                      HttpServletRequest request,
                                      HttpServletResponse response) throws IOException {
+        m = MainController.addDefaultAttributesToModel(m, "Settings", request, response);
         AccountModel accountModel = MainController.getCurrentUser(request);
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account Settings");
         if (accountModel == null) {
             m.addAttribute(ERROR_ATTRIBUTE, messageSource.getMessage("error.notloggedin", null, request.getLocale()));
-            return "login";
+            response.sendRedirect("/login");
         }
 
-        m = MainController.addDefaultAttributesToModel(m, "Settings", request, response);
         return "account_settings";
     }
 

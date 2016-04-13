@@ -17,7 +17,11 @@
                 <input type="password" id="inputPassword" name="password" class="form-control"
                        placeholder=#springMessageText("password", "Password")
                                required="">
-
+                #if (!$referrer || $referrer == "" || $referrer == "null")
+                    <input type="hidden" id="referrer" name="referrer" value="/">
+                #else
+                    <input type="hidden" id="referrer" name="referrer" value="${referrer}">
+                #end
                 <button id="btnLogin" class="btn btn-primary" type="submit">#springMessageText(
                     "login", "Login")</button>
                 <p/>
@@ -69,7 +73,7 @@
                         showError(result.message);
                         setLogin(false);
                     } else {
-                        window.location.replace("/");
+                        window.location.replace($("#referrer").val());
                     }
                 },
                 "error": function (data) {
