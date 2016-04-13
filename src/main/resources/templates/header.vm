@@ -12,6 +12,8 @@
     #end
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
     <script src="/js/jquery.min.js"></script>
 
     #if ($title == "" || !$title)
