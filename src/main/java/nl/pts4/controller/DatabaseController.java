@@ -845,4 +845,12 @@ public class DatabaseController {
             return false;
         }
     }
+
+    public void updatePhotoPrice(UUID photoId, double price) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        int newPrice = (int) (price * 100);
+
+        template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
+    }
 }
