@@ -1,4 +1,5 @@
 #* @implicitly included *#
+#* @vtlvariable name="account" type="nl.pts4.model.AccountModel" *#
 #* @vtlvariable name="cart" type="nl.pts4.model.PhotoModel[]" file="../resources/templates/order.vm" *#
 #* @vtlvariable name="effects" type="nl.pts4.model.EffectModel[]" file="../resources/templates/order.vm" *#
 #* @vtlvariable name="items" type="nl.pts4.model.ItemModel[]" file="../resources/templates/order.vm" *#
