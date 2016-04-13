@@ -12,14 +12,14 @@ public class SocketIORegistration {
 
     private static SocketIORegistration socketIORegistration;
 
-    public static void start() {
-        if (socketIORegistration == null) socketIORegistration = new SocketIORegistration();
-    }
-
     private SocketIORegistration() {
         SocketIOServer server = new SocketIOServer(getConfiguration());
         addEvents(server);
         server.start();
+    }
+
+    public static void start() {
+        if (socketIORegistration == null) socketIORegistration = new SocketIORegistration();
     }
 
     private void addEvents(SocketIOServer server) {

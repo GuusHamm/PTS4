@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class FotowinkelSpringApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FotowinkelSpringApplication.class, args);
-		SocketIORegistration.start();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FotowinkelSpringApplication.class, args);
+        SocketIORegistration.start();
+    }
 
 
 }

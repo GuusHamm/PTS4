@@ -4,9 +4,10 @@ import nl.pts4.model.AccountModel;
 import nl.pts4.model.PhotoModel;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,113 +26,90 @@ import java.util.UUID;
  */
 @Controller
 public class PhotoViewController {
-	/**
-	 * Show all the photos
-	 *
-	 * @param account : The current account cookie
-	 * @param m       : The model / template
-	 * @return photoview to get the correct template
-	 */
-	@RequestMapping("/photos")
-	public String photosGet(@CookieValue(value = AccountController.AccountCookie, required = false) String account, Model m, HttpServletRequest request, HttpServletResponse response) {
-		AccountModel accountModel = MainController.getCurrentUser(account, request);
-		List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
 
-		m.addAttribute(MainController.TITLE_ATTRIBUTE, "Photos");
-		m.addAttribute(AccountController.AccountModelKey, accountModel);
-		m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
-		m.addAttribute("cart", request.getSession().getAttribute("Cart"));
+    @Autowired
+    private MessageSource messageSource;
 
-		m.addAttribute(MainController.PRIVILEGED_ATTRIBUTE, MainController.assertUserIsPrivileged(account, request, response, false));
+    /**
+     * Show all the photos
+     *
+     * @param m       : The model / template
+     * @return photoview to get the correct template
+     */
+    @RequestMapping("/photos")
+    public String photosGet(Model m, HttpServletRequest request, HttpServletResponse response) {
+        AccountModel accountModel = MainController.getCurrentUser(request);
+        List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
 
-		if (request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE) != null) {
-			m.addAttribute(MainController.SUCCESS_ATTRIBUTE, request.getSession().getAttribute(MainController.SUCCESS_ATTRIBUTE));
-			request.getSession().removeAttribute(MainController.SUCCESS_ATTRIBUTE);
-		}
-		if (request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE) != null) {
-			m.addAttribute(MainController.ERROR_ATTRIBUTE, request.getSession().getAttribute(MainController.ERROR_ATTRIBUTE));
-			request.getSession().removeAttribute(MainController.ERROR_ATTRIBUTE);
-		}
-		return "photoview";
-	}
-
-	@RequestMapping(value = "/photos", params = {"id"})
-	public String photosAddToCart(Model m, @CookieValue(AccountController.AccountCookie) String account, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
-		LinkedList<PhotoModel> cart;
-		if (request.getSession().getAttribute("Cart") == null) {
-			cart = new LinkedList<>();
-		} else {
-			cart = (LinkedList<PhotoModel>) request.getSession().getAttribute("Cart");
-		}
-		if (id != null) {
-			cart.add(DatabaseController.getInstance().getPhotoByUUID(id));
-			request.getSession().setAttribute("Cart", cart);
-
-		}
-		request.getSession().setAttribute("Cart", cart);
-		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
+        m = MainController.addDefaultAttributesToModel(m, "Photos", request, response);
+        m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 
 
-		try {
-			response.sendRedirect("/photos");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		return null;
-	}
+        return "photoview";
+    }
 
-	@RequestMapping(value = "deletephoto", params = {"id"})
-	public String deletePhoto(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
-		if (id != null) {
-			if (DatabaseController.getInstance().deletePhoto(id)) {
-				request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Removed");
-			} else {
-				m.addAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
-			}
-		}
+    @RequestMapping(value = "/photos", params = {"id"})
+    public void photosAddToCart(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LinkedList<PhotoModel> cart;
+        if (request.getSession().getAttribute(MainController.CART_ATTRIBUTE) == null) {
+            cart = new LinkedList<>();
+        } else {
+            cart = (LinkedList<PhotoModel>) request.getSession().getAttribute(MainController.CART_ATTRIBUTE);
+        }
+        if (id != null) {
+            cart.add(DatabaseController.getInstance().getPhotoByUUID(id));
+            request.getSession().setAttribute(MainController.CART_ATTRIBUTE, cart);
+        }
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, cart);
+        // TODO Add translation
+        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 
-		try {
-			response.sendRedirect("/photos");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+        response.sendRedirect("/photos");
+    }
 
-	@RequestMapping(value = "/clearcart")
-	public String clearCart(HttpServletRequest request, HttpServletResponse response) {
-		request.getSession().removeAttribute("Cart");
-		try {
-			response.sendRedirect(request.getHeader("referer"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @RequestMapping(value = "deletephoto", params = {"id"})
+    public void deletePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (id != null) {
+            if (DatabaseController.getInstance().deletePhoto(id)) {
+                // TODO Add translation
+                request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Removed");
+            } else {
+                // TODO Add translation
+                request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
+            }
+        }
 
-	public BufferedImage reduceImageQuility(File imageSource) throws ImageReadException, IOException {
-		BufferedImage image = Imaging.getBufferedImage(imageSource);
+        response.sendRedirect("/photos");
+    }
 
-		BufferedImage resizedImage = resizeImage(image, image.getWidth() / 10, image.getHeight() / 10);
+    @RequestMapping(value = "/clearcart")
+    public void clearCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.getSession().removeAttribute("Cart");
+        response.sendRedirect(request.getHeader("referer"));
+    }
 
-		return resizedImage;
-	}
+    public BufferedImage reduceImageQuility(File imageSource) throws ImageReadException, IOException {
+        BufferedImage image = Imaging.getBufferedImage(imageSource);
 
-	public BufferedImage reduceImageQuility(BufferedImage imageSource) throws ImageReadException, IOException {
-		BufferedImage resizedImage = resizeImage(imageSource, imageSource.getWidth() / 10, imageSource.getHeight() / 10);
+        BufferedImage resizedImage = resizeImage(image, image.getWidth() / 10, image.getHeight() / 10);
 
-		return resizedImage;
-	}
+        return resizedImage;
+    }
 
-	public BufferedImage resizeImage(BufferedImage image, int width, int height) {
-		int type = 0;
-		type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
-		BufferedImage resizedImage = new BufferedImage(width, height, type);
-		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(image, 0, 0, width, height, null);
-		g.dispose();
-		return resizedImage;
-	}
+    public BufferedImage reduceImageQuility(BufferedImage imageSource) throws ImageReadException, IOException {
+        BufferedImage resizedImage = resizeImage(imageSource, imageSource.getWidth() / 10, imageSource.getHeight() / 10);
+        return resizedImage;
+    }
+
+    public BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        int type;
+        type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resizedImage = new BufferedImage(width, height, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        g.dispose();
+        return resizedImage;
+    }
 
 }

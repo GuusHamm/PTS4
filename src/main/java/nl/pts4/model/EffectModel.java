@@ -15,44 +15,37 @@ public class EffectModel {
         this.description = description;
         this.price = price;
     }
-//region getters and setters
-    public int getId()
-    {
+
+    //region getters and setters
+    public int getId() {
         return id;
     }
 
-    public int getPrice()
-    {
-        return price;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setPrice(int price)
-    {
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public void setType(String type)
-    {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
         this.type = type;
     }
 

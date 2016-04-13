@@ -19,8 +19,7 @@ public class AccountRestModel {
         boolean correct = AccountController.checkPassword(accountModel, password);
         if (!correct) {
             message = messageSource.getMessage("error.authentication", null, locale);
-        }
-        else {
+        } else {
             message = messageSource.getMessage("login.success", null, locale);
             success = true;
         }

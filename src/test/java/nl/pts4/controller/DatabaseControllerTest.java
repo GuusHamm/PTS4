@@ -11,6 +11,7 @@ public class DatabaseControllerTest {
 	@Before
 	public void setup(){
 		DatabaseController.getTestInstance().createTables();
+		databaseController = DatabaseController.getTestInstance();
 	}
 
 	@Test

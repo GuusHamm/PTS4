@@ -1,10 +1,11 @@
 <div class="col-lg-6">
-    <div class="list-group-item">
-        <div class="row">
+
+    <div class="list-group-item clearfix">
+        <div class="row ">
             <div class="col-lg-4 list-group-item-heading">
                 <a href="/photos?id=$photo.uuid"><img class="img-responsive img img-rounded"
                                                       src="$photo.filePath"
-                                                      alt="Card image cap" si></a>
+                                                      alt="Card image cap"></a>
             </div>
             <div class="col-lg-7 col">
                 <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
@@ -19,4 +20,5 @@
 
         </div>
     </div>
+
 </div>

@@ -26,6 +26,10 @@
             <!-- Links -->
             <ul class="nav navbar-nav">
                 <li class="nav-item">
+                    <a class="nav-link" href="/photos">#springMessageText(
+                        "main.photos", "View Photo's")</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/order-overview">#springMessageText("orders", "Orders")</a>
                 </li>
             </ul>
@@ -49,9 +53,10 @@
                                     "header.cart.checkout", "Checkout")</a>
                             </div>
                             #foreach ($item in $cart)
-                                <li class="list-group-item"><img class="thumbnail list-group-item-heading"
-                                                                 src="$item.filePath"
-                                                                 alt="Card image cap">
+                                <li class="list-group-item"><img
+                                        class="thumbnail list-group-item-heading img-responsive img img-rounded"
+                                        src="$item.filePath"
+                                        alt="Card image cap">
                                     <p class="list-group-item-text">€$item.price</p>
                                 </li>
                             #end
@@ -67,14 +72,14 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">
-                        #if (!$user)
+                        #if (!$account)
                             Account
                         #else
-                            $user.name
+                            $account.name
                         #end
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        #if (!$user)
+                        #if (!$account)
                             <li><a href="/login">#springMessageText("login", "Login")</a></li>
                             <li><a href="/register">#springMessageText("register", "Register")</a></li>
                         #else
@@ -86,7 +91,6 @@
             </ul>
         </div>
     </nav>
-
     #if($error)
         <div class="alert alert-dismissible alert-danger">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
