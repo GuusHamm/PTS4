@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public class AccountModel {
 
-    public static String DefaultTheme = "bootstrap.simplex.min.css";
+    public static String DefaultTheme = "bootstrap.yeti.min.css";
 
     private UUID uuid;
     private String oAuthKey;

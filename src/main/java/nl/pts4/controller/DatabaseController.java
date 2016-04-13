@@ -916,4 +916,12 @@ public class DatabaseController {
         return template.update("UPDATE account SET theme = ? WHERE id = ?", theme, ac.getUUID()) == 1;
 
     }
+
+    public void updatePhotoPrice(UUID photoId, double price) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        int newPrice = (int) (price * 100);
+
+        template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
+    }
 }

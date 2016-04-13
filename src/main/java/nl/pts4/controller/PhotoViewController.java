@@ -9,7 +9,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,6 +70,17 @@ public class PhotoViewController {
         response.sendRedirect("/photos");
     }
 
+    @RequestMapping(value = "changephoto", params = {"id"})
+    public String changePhoto(Model m, @RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+            return null;
+        }
+
+        MainController.addDefaultAttributesToModel(m, "Change photo", request, response);
+        m.addAttribute("photo", DatabaseController.getInstance().getPhotoByUUID(id));
+        return "change_photo";
+    }
+
     @RequestMapping(value = "deletephoto", params = {"id"})
     public void deletePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (id != null) {
@@ -110,6 +123,25 @@ public class PhotoViewController {
         g.drawImage(image, 0, 0, width, height, null);
         g.dispose();
         return resizedImage;
+    }
+
+    @RequestMapping(value = "changephoto", method = RequestMethod.POST)
+    public String changePhoto(
+            @RequestParam(value = "photoId") UUID id,
+            @RequestParam(value = "price") double price,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
+
+        if (price <= 0) {
+            model.addAttribute(MainController.ERROR_ATTRIBUTE, messageSource.getMessage("change.photoError", null, request.getLocale()) + String.valueOf(price));
+            return "change_photo";
+        }
+        DatabaseController.getInstance().updatePhotoPrice(id, price);
+
+
+        return "photos";
     }
 
 }
