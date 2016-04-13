@@ -8,7 +8,7 @@
     #if ($account && $account.theme != "" && $account.theme != "null")
         <link rel="stylesheet" href="/css/${account.theme}">
     #else
-        <link rel="stylesheet" href="/css/bootstrap.simplex.min.css">
+        <link rel="stylesheet" href="/css/bootstrap.yeti.min.css">
     #end
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
