@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.paper.min.css">
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
 
