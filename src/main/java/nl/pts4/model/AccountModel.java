@@ -7,6 +7,8 @@ import java.util.UUID;
  */
 public class AccountModel {
 
+    public static String DefaultTheme = "bootstrap.simplex.min.css";
+
     private UUID uuid;
     private String oAuthKey;
     private OAuthProviderEnum oAuhtProvider;
@@ -15,6 +17,7 @@ public class AccountModel {
     private String hash;
     private boolean active;
     private AccountTypeEnum accountTypeEnum;
+    private String theme;
 
     public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
         this.uuid = uuid;
@@ -25,6 +28,19 @@ public class AccountModel {
         this.hash = hash;
         this.active = active;
         this.accountTypeEnum = accountTypeEnum;
+        this.theme = DefaultTheme;
+    }
+
+    public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum, String theme) {
+        this.uuid = uuid;
+        this.oAuthKey = oAuthKey;
+        this.oAuhtProvider = oAuthProvider;
+        this.name = name;
+        this.email = email;
+        this.hash = hash;
+        this.active = active;
+        this.accountTypeEnum = accountTypeEnum;
+        this.theme = theme;
     }
 
     public AccountModel(UUID uuid, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
@@ -36,6 +52,7 @@ public class AccountModel {
         this.hash = hash;
         this.active = active;
         this.accountTypeEnum = accountTypeEnum;
+        this.theme = DefaultTheme;
     }
 
     public UUID getUUID() {
@@ -92,6 +109,14 @@ public class AccountModel {
 
     public void setoAuhtProvider(OAuthProviderEnum oAuhtProvider) {
         this.oAuhtProvider = oAuhtProvider;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public enum AccountTypeEnum {

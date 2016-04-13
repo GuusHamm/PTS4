@@ -154,7 +154,7 @@ public class DatabaseController {
     public HashMap<UUID, AccountModel> getAllAccounts() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         HashMap<UUID, AccountModel> accountModels = new HashMap<>();
-        List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type FROM account");
+        List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type, theme FROM account");
 
         for (Map<String, Object> row : rows) {
             UUID uuid = (UUID) row.get("id");
@@ -164,11 +164,12 @@ public class DatabaseController {
 
             String type = (String) row.get("type");
             String email = (String) row.get("email");
+            String theme = (String) row.get("theme");
             AccountModel.AccountTypeEnum accountTypeEnum = null;
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-            accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum));
+            accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum, theme));
 
         }
         return accountModels;
@@ -185,7 +186,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type FROM account WHERE id = ?",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme FROM account WHERE id = ?",
                             new Object[]{uuid}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -201,7 +202,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type FROM account WHERE type = 'customer' LIMIT 1",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'customer' LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -234,7 +235,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type FROM account WHERE type = 'photographer' LIMIT 1",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'photographer' LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -290,7 +291,7 @@ public class DatabaseController {
         AccountModel am;
         try {
             am = select.
-                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type FROM account WHERE email = ?",
+                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type,theme FROM account WHERE email = ?",
                             new Object[]{email},
                             (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -596,7 +597,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
+            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type,theme FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
                 @Override
                 public AccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
                     return getAccountFromResultSet(resultSet);
@@ -672,6 +673,7 @@ public class DatabaseController {
 
             String type = resultSet.getString("type");
             String email = resultSet.getString("email");
+            String theme = resultSet.getString("theme");
             AccountModel.AccountTypeEnum accountTypeEnum = null;
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
@@ -844,5 +846,12 @@ public class DatabaseController {
         } catch (EmptyResultDataAccessException e) {
             return false;
         }
+    }
+
+    public boolean setAccountTheme(AccountModel ac, String theme) {
+        ac.setTheme(theme);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("UPDATE account SET theme = ? WHERE id = ?", theme, ac.getUUID()) == 1;
+
     }
 }

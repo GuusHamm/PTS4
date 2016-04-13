@@ -17,7 +17,7 @@
                 <input type="password" id="inputPassword" name="password" class="form-control"
                        placeholder=#springMessageText("password", "Password")
                                required="">
-                #if (!$referrer)
+                #if (!$referrer || $referrer == "" || $referrer == "null")
                     <input type="hidden" id="referrer" name="referrer" value="/">
                 #else
                     <input type="hidden" id="referrer" name="referrer" value="${referrer}">

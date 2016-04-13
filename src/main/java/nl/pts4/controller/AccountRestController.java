@@ -59,6 +59,7 @@ public class AccountRestController {
                                           @RequestParam(value = "oldPassword") String oldPassword,
                                           @RequestParam(value = "newPassword") String newPassword,
                                           @RequestParam(value = "newPasswordRepeat") String newPasswordRepeat,
+                                          @RequestParam(value = "theme") String theme,
                                           HttpServletRequest request) {
         AccountModel ac = MainController.getCurrentUser(request);
         boolean hitChange = false, passwordInvalid = false;
@@ -94,6 +95,12 @@ public class AccountRestController {
                 hitChange = true;
                 message = "Email changed successfully from " + ac.getEmail() + " to " + email;
                 DatabaseController.getInstance().setAccountEmail(ac, email);
+            }
+
+            if (!Objects.equals(theme, "") && !Objects.equals(ac.getTheme(), theme)) {
+                hitChange = true;
+                message = "Theme changes from " + ac.getTheme() + " to " + theme;
+                DatabaseController.getInstance().setAccountTheme(ac, theme);
             }
         }
 
