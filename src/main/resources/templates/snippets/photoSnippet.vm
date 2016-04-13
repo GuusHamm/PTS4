@@ -16,6 +16,9 @@
             </div>
             #if($privileged)
                 <a href="/deletephoto?id=$photo.uuid" class="btn btn-danger btn-sm">X</a>
+                <div class="col-lg-6">
+                    <a href="/changephoto?id=$photo.uuid" class="btn btn-danger btn-sm">Change</a>
+                </div>
             #end
 
         </div>

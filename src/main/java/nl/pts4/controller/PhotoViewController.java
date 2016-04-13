@@ -68,6 +68,11 @@ public class PhotoViewController {
         response.sendRedirect("/photos");
     }
 
+    @RequestMapping(value = "changephoto", params = {"id"})
+    public String changePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) {
+        return "change_photo";
+    }
+
     @RequestMapping(value = "deletephoto", params = {"id"})
     public void deletePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (id != null) {
