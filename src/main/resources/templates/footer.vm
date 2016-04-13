@@ -3,7 +3,7 @@
         <div class="panel">
             <div class="panel-body">
                 <form class="form">
-                    <fieldset class="form-group col-lg-4">
+                    <fieldset class="form-group col-lg-2">
                         <select class="form-control">
                             <option value="dutch">Nederlands</option>
                             <option value="english">English</option>
@@ -50,10 +50,8 @@
                     </fieldset>
                 </form>
                 <span class="text-muted bottomOfPage">#springMessageText("footer.text", "Footer text")</span>
-
             </div>
         </div>
-
     </div>
 </footer>
 <script src="/js/bootstrap.min.js"></script>
