@@ -1,37 +1,42 @@
 #parse("header.vm")
 <div class="container">
     <div class="list-group">
+        <form method="post" action="order">
+            <div class="list-group-item">
+                #foreach ($photo in $cart)
+                    <div class="row priceItem" id="priceItem">
+                        <div class="col-lg-2">
+                            <img class="img-responsive img img-rounded" value="$photo.getUuid()" src="$photo.filePath"
+                                 id="photoSelect" alt="Card image cap" si>
+                        </div>
+                        <input name="photo" value="$photo.getUuid()" hidden="hidden">
+                        <div class="col-lg-2">
+                            <Label class="h6">Filter</Label>
+                            <select class="form-control" id="effectSelect" name="effect">
+                                #foreach ($effect in $effects)
+                                    <option value="$effect.getId()">$effect.type</option>
+                                #end
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <Label class="h6">Item</Label>
+                            <select class="form-control" id="itemSelect" name="item">
+                                #foreach ($item in $items)
+                                    <option value="$item.getId()">$item.type</option>
+                                #end
+                            </select>
+                        </div>
 
-        <div class="list-group-item">
-            #foreach ($photo in $cart)
-                <div class="row priceItem" id="priceItem">
-                    <div class="col-lg-2">
-                        <img class="img-responsive img img-rounded" value="$photo.getUuid()" src="$photo.filePath"
-                             id="photoSelect" alt="Card image cap" si>
+                        <div class="col-lg-5">
+                            <Label class="h5" id="itemPrice">Price: &#8364;</Label>
+                        </div>
                     </div>
-                    <div class="col-lg-2">
-                        <Label class="h6">Filter</Label>
-                        <select class="form-control" id="effectSelect">
-                            #foreach ($effect in $effects)
-                                <option value="$effect.getId()">$effect.type</option>
-                            #end
-                        </select>
-                    </div>
-                    <div class="col-lg-2">
-                        <Label class="h6">Item</Label>
-                        <select class="form-control" id="itemSelect">
-                            #foreach ($item in $items)
-                                <option value="$item.getId()">$item.type</option>
-                            #end
-                        </select>
-                    </div>
-
-                    <div class="col-lg-5">
-                        <Label class="h5" id="itemPrice">Price: &#8364;</Label>
-                    </div>
-                </div>
+                #end
+            </div>
+            #if($cart)
+                <button class="btn btn-primary" type="submit">Buy</button>
             #end
-        </div>
+        </form>
     </div>
 </div>
 <script src="/js/price.js"></script>

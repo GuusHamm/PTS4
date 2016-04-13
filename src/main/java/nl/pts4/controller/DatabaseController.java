@@ -402,6 +402,43 @@ public class DatabaseController {
         return orderlineModels;
     }
 
+    public List<Integer> createPhotoConfigurations(UUID[] uuids, int[] effects, int[] items) {
+        List<PhotoConfigurationModel> photoConfigurationModels = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        for (int i = 0; i < uuids.length; i++) {
+            ids.add(jdbcTemplate.queryForObject("INSERT INTO photoconfiguration(effectid,itemid,photoid) VALUES (?,?,?) RETURNING id", new Object[]{effects[i], items[i], uuids[i]}, Integer.TYPE));
+        }
+
+        return ids;
+    }
+
+    public boolean createOrderModel(UUID[] uuids, int[] effects, int[] items, UUID accountUUID) {
+        OrderModel orderModel = null;
+
+        List<Integer> configurationIDS = new ArrayList<>();
+        configurationIDS = createPhotoConfigurations(uuids, effects, items);
+        if (configurationIDS.isEmpty()) {
+            return false;
+        }
+
+        JdbcTemplate insertModel = new JdbcTemplate(dataSource);
+
+        int orderID = insertModel.queryForObject("INSERT INTO order_(accountid,orderdate) VALUES (?,?) RETURNING id", new Object[]{accountUUID, new Date()}, Integer.TYPE);
+
+        boolean success = true;
+
+        for (int i = 0; i < configurationIDS.size(); i++) {
+            if (!(insertModel.update("INSERT INTO orderline (orderid,photoconfigurationid) VALUES (?,?)", orderID, configurationIDS.get(i)) == 1)) {
+                success = false;
+            }
+        }
+
+        return success;
+    }
+
     /**
      * Get all the photos
      *
@@ -411,6 +448,31 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p ORDER BY capturedate");
+        List<PhotoModel> photoModels = new ArrayList<>(rows.size());
+        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
+        for (Map<String, Object> row : rows) {
+            UUID uuid = (UUID) row.get("id");
+            UUID photographerid = (UUID) row.get("photographerid");
+            UUID childid = (UUID) row.get("childid");
+            //// TODO: 4-4-16 fix this
+//			int schoolid = (int) row.get("schoolid");
+            int price = Integer.parseInt(String.valueOf(row.get("price")));
+            Date captureDate = (Date) row.get("capturedate");
+            String path = String.valueOf(row.get("pathtophoto"));
+            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
+        }
+        return photoModels;
+    }
+
+    /**
+     * Get all the photos
+     *
+     * @return a list of all the photoModels
+     */
+    public List<PhotoModel> getPhotosByUUID(UUID[] uuids) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids});
         List<PhotoModel> photoModels = new ArrayList<>(rows.size());
         HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         for (Map<String, Object> row : rows) {
