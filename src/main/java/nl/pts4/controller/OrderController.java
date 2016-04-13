@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -39,6 +40,7 @@ public class OrderController {
 
     @RequestMapping(value = "/order")
     public String order(Model m, HttpServletRequest request, HttpServletResponse response) {
+        MainController.assertUserIsPrivileged(request, response, true);
         m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
 
         m.addAttribute("effects", DatabaseController.getInstance().getEffects());
@@ -48,15 +50,19 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/order", method = RequestMethod.POST)
-    public String placeOrder(@RequestParam UUID[] photo, @RequestParam int[] effect, @RequestParam int[] item, Model m, HttpServletRequest request, HttpServletResponse response) {
+    public String placeOrder(@RequestParam UUID[] photo, @RequestParam int[] effect, @RequestParam int[] item, Model m, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        MainController.assertUserIsPrivileged(request, response, true);
         m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
 
         if (!(photo.length == item.length) && !(item.length == effect.length)) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, "Well congrats, you like breaking things don't you");
+            return "order";
         }
 
 
-        DatabaseController.getInstance().createOrderModel(photo, effect, item, MainController.getCurrentUser(request).getUUID());
-        return "order";
+        int id = DatabaseController.getInstance().createOrderModel(photo, effect, item, MainController.getCurrentUser(request).getUUID());
+        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
+        response.sendRedirect("/");
+        return null;
     }
 }

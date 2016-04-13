@@ -415,13 +415,13 @@ public class DatabaseController {
         return ids;
     }
 
-    public boolean createOrderModel(UUID[] uuids, int[] effects, int[] items, UUID accountUUID) {
+    public int createOrderModel(UUID[] uuids, int[] effects, int[] items, UUID accountUUID) {
         OrderModel orderModel = null;
 
         List<Integer> configurationIDS = new ArrayList<>();
         configurationIDS = createPhotoConfigurations(uuids, effects, items);
         if (configurationIDS.isEmpty()) {
-            return false;
+            return 0;
         }
 
         JdbcTemplate insertModel = new JdbcTemplate(dataSource);
@@ -436,7 +436,11 @@ public class DatabaseController {
             }
         }
 
-        return success;
+        if (!success) {
+            return 0;
+        } else {
+            return orderID;
+        }
     }
 
     /**
