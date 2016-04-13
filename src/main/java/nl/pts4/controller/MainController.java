@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Created by Teun on 20-3-2016.
@@ -22,6 +21,8 @@ public class MainController {
     public static final String PRIVILEGED_ATTRIBUTE = "privileged";
     public static final String ACCOUNT_ATTRIBUTE = "account";
     public static final String CART_ATTRIBUTE = "cart";
+    // We are better than HTTP designers because we can spell :D
+    public static final String REFERRER_ATTRIBUTE = "referrer";
 
 
     public static boolean assertUserIsPrivileged(HttpServletRequest request, HttpServletResponse response, boolean redirect) {
@@ -78,8 +79,9 @@ public class MainController {
         // TODO Internationalisation
         request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "You are not allowed to do that");
         try {
+            request.getSession().setAttribute(REFERRER_ATTRIBUTE, request.getServletPath());
             response.sendRedirect("/login");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

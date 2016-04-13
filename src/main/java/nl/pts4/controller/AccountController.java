@@ -132,6 +132,11 @@ public class AccountController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model m, HttpServletRequest request, HttpServletResponse response) {
+        Object o = request.getSession().getAttribute(MainController.REFERRER_ATTRIBUTE);
+        String referrer = String.valueOf(o);
+        request.getSession().setAttribute(MainController.REFERRER_ATTRIBUTE, null);
+
+        m.addAttribute("referrer", referrer);
         m = MainController.addDefaultAttributesToModel(m, "Login", request, response);
 
         return "login";
