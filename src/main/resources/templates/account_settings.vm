@@ -10,10 +10,12 @@
     <form class="form-signin" id="settingsForm" method="post">
         <fieldset class="form-group">
             <label for="inputName">#springMessageText("newName", "New name")</label>
-            <input type="text" class="form-control" id="inputName" value="${user.name}" placeholder="#springMessageText("name", "Name")">
+            <input type="text" class="form-control" id="inputName" value="${account.name}"
+                   placeholder="#springMessageText("name", "Name")">
 
             <label for="inputEmail">#springMessageText("newEmail", "New email")</label>
-            <input type="email" class="form-control" id="inputEmail" value="${user.email}" placeholder="#springMessageText("email", "Email")">
+            <input type="email" class="form-control" id="inputEmail" value="${account.email}"
+                   placeholder="#springMessageText("email", "Email")">
         </fieldset>
         <fieldset class="form-group">
             <h2 class="form-signin-heading">#springMessageText("changePassword", "Change password")</h2>
@@ -31,8 +33,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
             var inputEmail = $("#inputEmail");
             var originalEmail = inputEmail.val();
+
+            $("#inputTheme").val('${account.theme}');
 
             $("#inputNewPassword").on('input', function() {
                checkPasswordMatch();
