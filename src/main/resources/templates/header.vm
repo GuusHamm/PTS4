@@ -12,6 +12,7 @@
     #end
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
+    <script src="/js/jquery.min.js"></script>
 
     #if ($title == "" || !$title)
         <title>Whoops! No title, we forgot :(</title>

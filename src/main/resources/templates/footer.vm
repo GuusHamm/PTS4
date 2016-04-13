@@ -1,7 +1,59 @@
 <footer class="bottomOfPage">
     <div class="container">
-        <span class="text-muted bottomOfPage">#springMessageText("footer.text", "Footer text")</span>
+        <div class="panel">
+            <div class="panel-body">
+                <form class="form">
+                    <fieldset class="form-group col-lg-4">
+                        <select class="form-control">
+                            <option value="dutch">Nederlands</option>
+                            <option value="english">English</option>
+                        </select>
+                        #if ($account && $account.theme)
+                            <select class="form-control" id="inputThemeFooter">
+                                <option value="bootstrap.yeti.min.css">Default</option>
+                                <option value="bootstrap.cerulean.min.css">Cerulean</option>
+                                <option value="bootstrap.cosmo.min.css">Cosmo</option>
+                                <option value="bootstrap.cyborg.min.css">Cyborg</option>
+                                <option value="bootstrap.darkly.min.css">Darkly</option>
+                                <option value="bootstrap.flatly.min.css">Flatly</option>
+                                <option value="bootstrap.journal.min.css">Journal</option>
+                                <option value="bootstrap.lumen.min.css">Lumen</option>
+                                <option value="bootstrap.paper.min.css">Paper</option>
+                                <option value="bootstrap.readable.min.css">Readable</option>
+                                <option value="bootstrap.sandstone.min.css">Sandstone</option>
+                                <option value="bootstrap.simplex.min.css">Simplex</option>
+                                <option value="bootstrap.slate.min.css">Slate</option>
+                                <option value="bootstrap.spacelab.min.css">Spacelab</option>
+                                <option value="bootstrap.superhero.min.css">Superhero</option>
+                                <option value="bootstrap.united.min.css">United</option>
+                            </select>
+                            <script type="text/javascript">
+                                $(document).ready(function () {
+                                    $("#inputThemeFooter").val('${account.theme}');
+                                    $(document).ready(function () {
+                                        $("#inputThemeFooter").change(function () {
+                                            var inputTheme = $("#inputThemeFooter").val();
+                                            $.ajax({
+                                                "url": "/settings-rest",
+                                                "method": "POST",
+                                                "data": {
+                                                    "theme": inputTheme
+                                                }
+                                            }).done(function (data) {
+                                                location.reload();
+                                            });
+                                        });
+                                    });
+                                })
+                            </script>
+                        #end
+                    </fieldset>
+                </form>
+                <span class="text-muted bottomOfPage">#springMessageText("footer.text", "Footer text")</span>
+
+            </div>
+        </div>
+
     </div>
 </footer>
-</body>
 <script src="/js/bootstrap.min.js"></script>

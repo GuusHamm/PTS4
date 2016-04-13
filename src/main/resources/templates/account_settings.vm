@@ -28,27 +28,6 @@
             <label for="inputNewPassword_repeat">#springMessageText("newPasswordRepeat", "Repeat new password")</label>
             <input type="password" class="form-control" id="inputNewPassword_repeat" placeholder="#springMessageText("newPasswordRepeat", "Repeat new password")" autocomplete="off">
         </fieldset>
-        <fieldset class="form-group">
-            <h2 class="form-signin-heading">#springMessageText("chooseTheme", "Choose theme")</h2>
-            <select class="form-control" id="inputTheme">
-                <option value="bootstrap.yeti.min.css">Default</option>
-                <option value="bootstrap.cerulean.min.css">Cerulean</option>
-                <option value="bootstrap.cosmo.min.css">Cosmo</option>
-                <option value="bootstrap.cyborg.min.css">Cyborg</option>
-                <option value="bootstrap.darkly.min.css">Darkly</option>
-                <option value="bootstrap.flatly.min.css">Flatly</option>
-                <option value="bootstrap.journal.min.css">Journal</option>
-                <option value="bootstrap.lumen.min.css">Lumen</option>
-                <option value="bootstrap.paper.min.css">Paper</option>
-                <option value="bootstrap.readable.min.css">Readable</option>
-                <option value="bootstrap.sandstone.min.css">Sandstone</option>
-                <option value="bootstrap.simplex.min.css">Simplex</option>
-                <option value="bootstrap.slate.min.css">Slate</option>
-                <option value="bootstrap.spacelab.min.css">Spacelab</option>
-                <option value="bootstrap.superhero.min.css">Superhero</option>
-                <option value="bootstrap.united.min.css">United</option>
-            </select>
-        </fieldset>
         <button type="submit" class="btn btn-warning" id="submitButton">#springMessageText("submit", "Submit")</button>
     </form>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
@@ -57,7 +36,6 @@
 
             var inputEmail = $("#inputEmail");
             var originalEmail = inputEmail.val();
-            var theme = $("#inputTheme").val();
 
             $("#inputTheme").val('${account.theme}');
 
@@ -133,15 +111,13 @@
                 var oldPassword = $("#inputOldPassword").val();
                 var newPassword = $("#inputNewPassword").val();
                 var newPasswordRepeat = $("#inputNewPassword_repeat").val();
-                var theme = $("#inputTheme").val();
 
                 var data = {
                     "name": name,
                     "email": email,
                     "oldPassword": oldPassword,
                     "newPassword": newPassword,
-                    "newPasswordRepeat": newPasswordRepeat,
-                    "theme": theme
+                    "newPasswordRepeat": newPasswordRepeat
                 };
 
                 $.ajax({
