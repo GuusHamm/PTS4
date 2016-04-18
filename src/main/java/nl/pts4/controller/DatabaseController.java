@@ -701,6 +701,12 @@ public class DatabaseController {
         return template.update("DELETE FROM photo WHERE id=?", uuid) == 1;
     }
 
+	/**
+     * Checks if the user is privileged i.e. the user is either an administrator or a photographer if so it returns true
+     *
+     * @param uuid
+     * @return true if the user is privileged
+     */
     public boolean checkPriviledgedUser(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
