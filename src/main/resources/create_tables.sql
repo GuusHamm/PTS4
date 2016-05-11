@@ -139,15 +139,15 @@ INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', 
 
 -- ITEM MOCK DATA
 INSERT INTO item (price, type, description, thumbnailpath)
-VALUES (5, 'mug', 'A mug that can hold liquids', '/mug');
+VALUES (500, 'mug', 'A mug that can hold liquids', '/mug');
 INSERT INTO item (price, type, description, thumbnailpath)
-VALUES (10, 'mousemat', 'A mousemat', '/mousemat');
+VALUES (1000, 'mousemat', 'A mousemat', '/mousemat');
 
 INSERT INTO public.school (id, name, location, country)
 VALUES (1, 'Basisschool Bert', 'Eindhoven', 'Netherlands');
 
 INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, schoolid)
-VALUES ('b34e0301-cf1a-4145-8b78-9e13a8633657', 5, '2016-03-2 14:50:34.372000', '/photo1',
+VALUES ('b34e0301-cf1a-4145-8b78-9e13a8633657', 500, '2016-03-2 14:50:34.372000', '/photo1',
         'c525a7c3-717f-4e6e-8e4d-9c31e09f03ad', '1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', 1);
 
 INSERT INTO public.photoconfiguration (effectid, itemid, photoid)
