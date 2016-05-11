@@ -26,7 +26,7 @@
         </div>
 
         <div class="panel-footer">
-            <a type="submit" class="btn btn-primary btn-lg btn-block">Upload</a>
+            <Button type="submit" class="btn btn-primary btn-lg btn-block">Upload</Button>
         </div>
     </div>
     </form>

@@ -7,9 +7,9 @@ public class EffectModel {
     private int id;
     private String type;
     private String description;
-    private int price;
+    private double price;
 
-    public EffectModel(int id, String type, String description, int price) {
+    public EffectModel(int id, String type, String description, double price) {
         this.id = id;
         this.type = type;
         this.description = description;
@@ -25,7 +25,7 @@ public class EffectModel {
         this.id = id;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

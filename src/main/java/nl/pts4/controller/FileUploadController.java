@@ -138,7 +138,7 @@ public class FileUploadController {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
-            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 1, 1);
+            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 640, 480);
             //not sure if this will work
             ImageIO.write(bufferedImage, "jpg", bufferedOutputStream);
 
