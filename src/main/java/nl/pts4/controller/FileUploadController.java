@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,7 +67,8 @@ public class FileUploadController {
                     continue;
                 }
                 if (allowedFileTypes.contains(multipartFile.getContentType())) {
-                    String fileName = writeFile(multipartFile, uuid);
+//                    String fileName = writeFile(multipartFile, uuid);
+                    String fileName = writeBufferedImage(multipartFile, uuid);
                     if (fileName.isEmpty()) {
                         m.addAttribute("error", "Something went wrong on the server, try again later");
                         return "multiupload";
@@ -126,6 +129,30 @@ public class FileUploadController {
         return filename;
     }
 
+    private String writeBufferedImage(MultipartFile multiPartFile, UUID uuid) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, multiPartFile.getContentType().substring(multiPartFile.getContentType().indexOf("/") + 1));
+
+        try {
+            File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), filename));
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+
+            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 640, 480);
+            //not sure if this will work
+            ImageIO.write(bufferedImage, "jpg", bufferedOutputStream);
+
+            bufferedOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return filename;
+    }
+
     @Deprecated
     private boolean convertFileToJpg(String filePath) {
         try {
@@ -142,6 +169,40 @@ public class FileUploadController {
             return false;
         }
         return true;
+    }
+
+    private File convertMultipartFile(MultipartFile multipartFile) {
+        FileOutputStream fos = null;
+        File convFile = new File(multipartFile.getOriginalFilename());
+        try {
+            convFile.createNewFile();
+            fos = new FileOutputStream(convFile);
+            fos.write(multipartFile.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return convFile;
+    }
+
+
+    public BufferedImage resizeImageFromFile(File file, int width, int height) {
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int type;
+        type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resizedImage = new BufferedImage(width, height, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        g.dispose();
+        return resizedImage;
     }
 
 }

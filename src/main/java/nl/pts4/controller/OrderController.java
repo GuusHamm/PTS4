@@ -1,6 +1,5 @@
 package nl.pts4.controller;
 
-import nl.pts4.model.OrderModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -30,10 +28,7 @@ public class OrderController {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }
-        ArrayList<OrderModel> orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
-
         m = MainController.addDefaultAttributesToModel(m, "Orders", request, response);
-        m.addAttribute("allOrders", orders);
 
         return "order-overview";
     }

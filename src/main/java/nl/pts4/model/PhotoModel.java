@@ -11,11 +11,11 @@ public class PhotoModel {
     private AccountModel photographer;
     private AccountModel child;
     private SchoolModel school;
-    private int price;
+    private double price;
     private Date captureDate;
     private String filePath;
 
-    public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, int price, Date captureDate, String filePath) {
+    public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath) {
         this.uuid = uuid;
         this.photographer = photographer;
         this.child = child;
@@ -25,7 +25,7 @@ public class PhotoModel {
         this.filePath = filePath;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

@@ -15,8 +15,11 @@ public class AccountRestModel {
     private String message = "No message specified";
 
     public AccountRestModel(String email, String password, Locale locale, MessageSource messageSource) {
-        AccountModel accountModel = DatabaseController.getInstance().getAccount(email);
-        boolean correct = AccountController.checkPassword(accountModel, password);
+        this(DatabaseController.getInstance().getAccount(email), password, locale, messageSource);
+    }
+
+    public AccountRestModel(AccountModel ac, String password, Locale locale, MessageSource messageSource) {
+        boolean correct = AccountController.checkPassword(ac, password);
         if (!correct) {
             message = messageSource.getMessage("error.authentication", null, locale);
         } else {
