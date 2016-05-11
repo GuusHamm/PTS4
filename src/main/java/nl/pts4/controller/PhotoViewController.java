@@ -66,7 +66,31 @@ public class PhotoViewController {
         // TODO Add translation
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully added to your cart");
 
-        response.sendRedirect("/photos");
+        response.sendRedirect(request.getHeader("referer"));
+    }
+
+    @RequestMapping(value = "/remove_photos", params = {"id"})
+    public void photosRemoveFromCart(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LinkedList<PhotoModel> cart;
+        if (request.getSession().getAttribute(MainController.CART_ATTRIBUTE) == null) {
+            cart = new LinkedList<>();
+        } else {
+            cart = (LinkedList<PhotoModel>) request.getSession().getAttribute(MainController.CART_ATTRIBUTE);
+        }
+        if (id != null) {
+            for(PhotoModel item: cart) {
+
+                if (item.getUuid().equals(id)){
+                    cart.remove(item);
+                    break;
+                }
+            }
+            request.getSession().setAttribute(MainController.CART_ATTRIBUTE, cart);
+        }
+        // TODO Add translation
+        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo succesfully removed from your cart");
+
+        response.sendRedirect(request.getHeader("referer"));
     }
 
     @RequestMapping(value = "changephoto", params = {"id"})

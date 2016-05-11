@@ -18,7 +18,7 @@
                                 #end
                             </select>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <Label class="h6">Item</Label>
                             <select class="form-control" id="itemSelect" name="item">
                                 #foreach ($item in $items)
@@ -27,10 +27,16 @@
                             </select>
                         </div>
 
-                        <div class="col-lg-5">
+                        <div class="col-lg-2">
                             <Label class="h5" id="itemPrice">Price: &#8364;</Label>
                         </div>
+
+                        <div class="pull-right col-lg-2">
+                            <a class="btn btn-primary" href="/photos?id=$photo.uuid"><i class="material-icons">add</i></a>
+                            <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i class="material-icons">clear</i></a>
+                        </div>
                     </div>
+                    <br>
                 #end
             </div>
             #if($cart)
