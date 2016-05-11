@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.servlet.http.Cookie;
 import javax.sql.DataSource;
 import java.io.File;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -460,7 +461,7 @@ public class DatabaseController {
             UUID childid = (UUID) row.get("childid");
             //// TODO: 4-4-16 fix this
 //			int schoolid = (int) row.get("schoolid");
-            int price = Integer.parseInt(String.valueOf(row.get("price")));
+            double price = Integer.parseInt(String.valueOf(row.get("price"))) / 100;
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
@@ -502,7 +503,7 @@ public class DatabaseController {
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
                 UUID childid = UUID.fromString(resultSet.getString("childid"));
                 int schoolid = resultSet.getInt("schoolid");
-                int price = resultSet.getInt("price");
+                double price = resultSet.getInt("price") / 100;
                 Date captureDate = resultSet.getDate("capturedate");
                 String path = resultSet.getString("pathtophoto");
                 //TODO create a get school
@@ -530,7 +531,7 @@ public class DatabaseController {
             int id = (int) row.get("id");
             String type = (String) row.get("type");
             String description = (String) row.get("description");
-            int price = (int) row.get("price");
+            double price = (int) row.get("price") / 100;
 
             effectModels.add(new EffectModel(id, type, description, price));
         }
@@ -564,7 +565,8 @@ public class DatabaseController {
                 do {
                     int id = resultSet.getInt("id");
                     UUID photoid = UUID.fromString(resultSet.getString("photoid"));
-                    int price = resultSet.getInt("price");
+                    double price = resultSet.getInt("price") / 100;
+                    price = roundDouble(price, 2);
                     Date capturedate = resultSet.getDate("capturedate");
                     String pathtophoto = resultSet.getString("pathtophoto");
                     UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
@@ -580,11 +582,13 @@ public class DatabaseController {
                     int effectid = resultSet.getInt("effectid");
                     String type = resultSet.getString("type");
                     String description = resultSet.getString("description");
-                    int effectprice = resultSet.getInt("effectprice");
+                    double effectprice = resultSet.getInt("effectprice") / 100;
+                    effectprice = roundDouble(effectprice, 2);
 
                     //Item data
                     int itemid = resultSet.getInt("itemid");
-                    int itemprice = resultSet.getInt("itemprice");
+                    double itemprice = resultSet.getInt("itemprice") / 100;
+                    itemprice = roundDouble(itemprice, 2);
                     String itemdescription = resultSet.getString("itemdescription");
                     String itemType = resultSet.getString("itemdescription");
                     String thumbnailpath = resultSet.getString("thumbnailpath");
@@ -609,8 +613,16 @@ public class DatabaseController {
         return photoConfigurationModels.get(0);
     }
 
+    private double roundDouble(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
+    }
+
     public boolean createPhoto(UUID uuid, String path, UUID photographer, UUID child) {
-        int price = 5;
+        int price = 500;
         Date captureDate = new Date();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -817,7 +829,7 @@ public class DatabaseController {
 
         for (Map<String, Object> row : rows) {
             int id = (Integer) row.get("id");
-            int price = (Integer) row.get("price");
+            double price = (Integer) row.get("price") / 100;
             String type = (String) row.get("type");
             String description = (String) row.get("description");
             String thumbnailPath = (String) row.get("thumbnailPath");
@@ -837,7 +849,7 @@ public class DatabaseController {
     private ItemModel getItemFromResultSet(ResultSet resultSet) {
         try {
             int id = resultSet.getInt("id");
-            int price = resultSet.getInt("price");
+            double price = resultSet.getInt("price") / 100;
             String type = resultSet.getString("type");
             String description = resultSet.getString("description");
             String thumbnailPath = resultSet.getString("thumbnailpath");

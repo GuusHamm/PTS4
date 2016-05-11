@@ -1,5 +1,6 @@
 package nl.pts4.model;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,14 +66,19 @@ public class OrderModel {
     }
 
 
-    public int getTotalPrice() {
-        int totalPrice = 0;
+    public double getTotalPrice() {
+        double totalPrice = 0;
+
         if (orderLineModels == null) return 0;
         for (OrderLineModel olm : orderLineModels) {
             if (olm.getPhotoConfiguration() == null) continue;
             totalPrice += olm.getPhotoConfiguration().getTotalPrice();
         }
-        return totalPrice;
+
+
+        BigDecimal bd = new BigDecimal(totalPrice);
+        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
     }
 
     public String getOrderDateTemplate() {
