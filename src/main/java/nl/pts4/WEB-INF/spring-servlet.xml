@@ -28,13 +28,6 @@
     <!-- the mvc resources tag does the magic -->
     <mvc:resources mapping="/static/**" location="/testmap" />
 
-
-
-    <bean id="localeResolver"
-          class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-        <property name="defaultLocale" value="nl"/>
-    </bean>
-
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**" />
@@ -44,4 +37,12 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
+    <!--<bean id="localeResolver"-->
+          <!--class="org.springframework.web.servlet.i18n.SessionLocaleResolver">-->
+        <!--<property name="defaultLocale" value="nl"/>-->
+    <!--</bean>-->
+
+
+
+    <!--<mvc:resources mapping="/static/**" location="/testmap/" />-->
 </beans>

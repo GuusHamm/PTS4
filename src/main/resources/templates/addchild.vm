@@ -1,0 +1,20 @@
+#parse("header.vm")
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="well bs-component" >
+        <form class="form-group" id="Form" action="addchild" method="POST" enctype="multipart/form-data" >
+            <fieldset>
+                <div class="form-group" >
+                    <h2 class="form-signin-heading">#springMessageText("add.child", "Add your child to your account")</h2>
+                    <br/>
+                    <label class="form-signin-heading">#springMessageText("add.child.description", "Please  enter the unique code for your child.")</label>
+                    <input  type="text" name="inputCode" name="type" class="form-control"
+                            placeholder=#springMessageText("unique.code", "Unique code") required=""
+                            autofocus="">
+                    <br>
+                    <button id="btnAddChild" class="btn btn-lg btn-primary btn-block" type="submit" value="makeitem">#springMessageText("add.child.button", "Add child")</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+#parse("footer.vm")

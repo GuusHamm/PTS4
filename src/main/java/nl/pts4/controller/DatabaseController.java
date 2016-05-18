@@ -3,6 +3,7 @@ package nl.pts4.controller;
 import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.*;
 import nl.pts4.security.HashConstants;
+import org.postgresql.jdbc4.Jdbc4ResultSet;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -753,7 +754,7 @@ public class DatabaseController {
         return template.update("DELETE FROM photo WHERE id=?", uuid) == 1;
     }
 
-	/**
+    /**
      * Checks if the user is privileged i.e. the user is either an administrator or a photographer if so it returns true
      *
      * @param uuid
@@ -985,5 +986,74 @@ public class DatabaseController {
         int newPrice = (int) (price * 100);
 
         template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
+    }
+
+    public boolean addChildToUser(AccountModel currentUser, String childCode) {
+        ChildModel child = getChildByCode(childCode);
+
+        if (child == null) return false;
+
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template.update("INSERT INTO childaccount_account(account_id, childaccount_id) VALUES (?,?);", currentUser.getUUID(), child.getUuid()) == 1;
+    }
+
+    private ChildModel getChildByCode(String childCode) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        try {
+            ChildModel cm = template.queryForObject("SELECT * FROM childaccount c WHERE c.uniquecode= ?", new Object[]{childCode}, new RowMapper<ChildModel>() {
+                @Override
+                public ChildModel mapRow(ResultSet resultSet, int i) throws SQLException {
+                    try {
+                        UUID uuid = UUID.fromString(resultSet.getString("id"));
+
+                        return new ChildModel(uuid, childCode);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            });
+            return cm;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public List<AccountModel> getParentFromChild(ChildModel childModel) {
+
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = select.queryForList(
+                "SELECT a.* from account a, childaccount_account cha where a.id = cha.account_id and cha = ?",childModel.getUuid()
+        );
+
+        List<AccountModel> parents = new ArrayList<>(rows.size());
+
+        for (Map<String, Object> row : rows) {
+
+                UUID uuid = UUID.fromString(row.get("id").toString());
+                String oauthkey = (String)row.get("oauthkey");
+                String oauthprovider = (String) row.get("oauthprovider");
+
+                AccountModel.OAuthProviderEnum oAuthProvider = null;
+                if (oauthprovider != null)
+                    oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
+
+                String name = (String) row.get("name");
+                String hash = (String) row.get("hash");
+                boolean active = (boolean)row.get("active");
+
+                String type = (String) row.get("type");
+                String email = (String)row.get("email");
+                String theme = (String) row.get("theme");
+                AccountModel.AccountTypeEnum accountTypeEnum = null;
+                if (type != null)
+                    accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
+
+                parents.add(new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum));
+
+        }
+        return parents;
     }
 }

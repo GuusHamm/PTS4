@@ -1,5 +1,8 @@
 package nl.pts4.model;
 
+import nl.pts4.controller.DatabaseController;
+
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -7,20 +10,25 @@ import java.util.UUID;
  */
 public class ChildModel {
     private UUID uuid;
-    private int identifierNumber;
     private String uniqueCode;
     private SchoolModel school;
-    private AccountModel parent;
+    List<AccountModel> parents;
 
-    public ChildModel(UUID uuid, int identifierNumber, String uniqueCode, AccountModel parent) {
+    public ChildModel(UUID uuid, String uniqueCode) {
         this.uuid = uuid;
-        this.identifierNumber = identifierNumber;
         this.uniqueCode = uniqueCode;
-        this.parent = parent;
     }
 
-    public void setParent(AccountModel parent) {
-        this.parent = parent;
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public List<AccountModel> getParents() {
+        if(parents == null) {
+            parents = DatabaseController.getInstance().getParentFromChild(this);
+        }
+        return parents;
+
     }
 }
 
