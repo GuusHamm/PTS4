@@ -32,6 +32,8 @@ public class AccountRestModelTest {
     @Before
     public void before() {
         arm = new AccountRestModel("test@email.com", "testpassword", Locale.ENGLISH, ms);
+
+        DatabaseController.getTestInstance().createTables();
     }
 
     @Test

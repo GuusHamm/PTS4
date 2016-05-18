@@ -20,7 +20,8 @@ CREATE TABLE account (
   email         TEXT UNIQUE NOT NULL,
   hash          TEXT,
   active        BOOLEAN          DEFAULT TRUE,
-  type          TEXT             DEFAULT 'customer'
+  type          TEXT             DEFAULT 'customer',
+  theme         TEXT DEFAULT 'bootstrap.min.css'
     CHECK (hash IS NOT NULL OR account.oauthkey IS NOT NULL )
 );
 
