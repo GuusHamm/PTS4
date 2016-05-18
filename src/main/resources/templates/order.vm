@@ -1,49 +1,58 @@
 #parse("header.vm")
 <div class="container">
-    <div class="list-group">
-        <form method="post" action="order">
-            <div class="list-group-item">
-                #foreach ($photo in $cart)
-                    <div class="row priceItem" id="priceItem">
-                        <div class="col-lg-2">
-                            <img class="img-responsive img img-rounded" value="$photo.getUuid()" src="$photo.filePath"
-                                 id="photoSelect" alt="Card image cap" si>
-                        </div>
-                        <input name="photo" value="$photo.getUuid()" hidden="hidden">
-                        <div class="col-lg-2">
-                            <Label class="h6">Filter</Label>
-                            <select class="form-control" id="effectSelect" name="effect">
-                                #foreach ($effect in $effects)
-                                    <option value="$effect.getId()">$effect.type</option>
-                                #end
-                            </select>
-                        </div>
-                        <div class="col-lg-3">
-                            <Label class="h6">Item</Label>
-                            <select class="form-control" id="itemSelect" name="item">
-                                #foreach ($item in $items)
-                                    <option value="$item.getId()">$item.type</option>
-                                #end
-                            </select>
-                        </div>
+    #if (!$cart)
+        <div class="jumbotron text-center text-uppercase">
+            <h1>Your cart is empty</h1>
+        </div>
+    #else
+        <div class="list-group">
+            <form method="post" action="order">
+                <div class="list-group-item">
+                    #foreach ($photo in $cart)
+                        <div class="row priceItem" id="priceItem">
+                            <div class="col-lg-2">
+                                <img class="img-responsive img img-rounded" value="$photo.getUuid()"
+                                     src="$photo.filePath"
+                                     id="photoSelect" alt="Card image cap" si>
+                            </div>
+                            <input name="photo" value="$photo.getUuid()" hidden="hidden">
+                            <div class="col-lg-2">
+                                <Label class="h6">Filter</Label>
+                                <select class="form-control" id="effectSelect" name="effect">
+                                    #foreach ($effect in $effects)
+                                        <option value="$effect.getId()">$effect.type</option>
+                                    #end
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <Label class="h6">Item</Label>
+                                <select class="form-control" id="itemSelect" name="item">
+                                    #foreach ($item in $items)
+                                        <option value="$item.getId()">$item.type</option>
+                                    #end
+                                </select>
+                            </div>
 
-                        <div class="col-lg-2">
-                            <Label class="h5" id="itemPrice">Price: &#8364;</Label>
-                        </div>
+                            <div class="col-lg-2">
+                                <Label class="h5" id="itemPrice">Price: &#8364;</Label>
+                            </div>
 
-                        <div class="pull-right col-lg-2">
-                            <a class="btn btn-primary" href="/photos?id=$photo.uuid"><i class="material-icons">add</i></a>
-                            <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i class="material-icons">clear</i></a>
+                            <div class="pull-right col-lg-2">
+                                <a class="btn btn-primary" href="/photos?id=$photo.uuid"><i
+                                        class="material-icons">add</i></a>
+                                <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i
+                                        class="material-icons">clear</i></a>
+                            </div>
                         </div>
-                    </div>
-                    <br>
+                        <br>
+                    #end
+                </div>
+                #if($cart)
+                    <button class="btn btn-primary" type="submit">Buy</button>
                 #end
-            </div>
-            #if($cart)
-                <button class="btn btn-primary" type="submit">Buy</button>
-            #end
-        </form>
-    </div>
+            </form>
+        </div>
+    #end
 </div>
 <script src="/js/price.js"></script>
 #parse("footer.vm")
