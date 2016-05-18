@@ -329,6 +329,42 @@ public class DatabaseController {
 //        return orderModels;
 //    }
 
+
+    /**
+     * Get all the orders of a account from the database
+     *
+     * @return a list of order models from the database
+     */
+    public List<OrderModel> getAllAccountOrders(UUID uuid) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o WHERE accountid = ?",new Object[]{uuid});
+        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
+        List<OrderModel> orderModels = new ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            UUID account = (UUID) row.get("accountid");
+            Date orderDate = (Date) row.get("orderdate");
+
+            orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
+        }
+
+        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            int orderid = (int) row.get("orderid");
+            int photoConfigurationId = (int) row.get("photoconfigurationid");
+            OrderLineModel olm = new OrderLineModel(id, orderid, photoConfigurationId);
+
+            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findFirst();
+            if (o.isPresent()) {
+                o.get().getOrderLineModels().add(olm);
+            }
+        }
+
+        return orderModels;
+    }
+
     /**
      * Get all the orders from the database
      *
@@ -631,7 +667,7 @@ public class DatabaseController {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         try {
-            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, FileUploadController.StaticLocation + path, photographer, child, pathToLowResPhoto) == 1;
+            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, "images/" + path, photographer, child, "images/" + pathToLowResPhoto) == 1;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

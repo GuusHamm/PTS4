@@ -7,22 +7,30 @@
                                                       src="$photo.filePathLowRes"
                                                       alt="Card image cap"></a>
             </div>
-            <div class="col-lg-7 col">
-                <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
-                #set($priceRound = $photo.price - .01)
-                <a class="btn btn-primary" href="/photos?id=$photo.uuid">#springMessageText(
-                    "photos.buy", "Buy this photo for
+            #if($privileged)
+            <div class="col-lg-5 col">
+            #else
+            <div class="col-lg-8 col">
+            #end
+            <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
+            #set($priceRound = $photo.price - .01)
+            <a class="btn btn-primary" href="/photos?id=$photo.uuid">#springMessageText(
+                "photos.buy", "Buy this photo for
                                 only") $priceRound</a>
-            </div>
+        </div>
             <!-- Checked your privileges bro? You pc bro? -->
             #if($privileged)
-                <a href="/deletephoto?id=$photo.uuid" class="btn btn-danger btn-sm">X</a>
-                <div class="col-lg-6">
-                    <a href="/changephoto?id=$photo.uuid" class="btn btn-danger btn-sm">Change</a>
+
+                <div class="pull-right col-lg-2">
+                    <a href="/changephoto?id=$photo.uuid" class="btn btn-warning btn-sm"><i class="material-icons">euro_symbol</i></a>
+                    <a href="/deletephoto?id=$photo.uuid" class="btn btn-danger btn-sm"><i
+                            class="material-icons">clear</i></a>
                 </div>
+
             #end
 
         </div>
-    </div>
+        </div>
 
-</div>
+
+    </div>

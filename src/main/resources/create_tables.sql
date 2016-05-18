@@ -154,6 +154,6 @@ VALUES ('b34e0301-cf1a-4145-8b78-9e13a8633657', 500, '2016-03-2 14:50:34.372000'
 INSERT INTO public.photoconfiguration (effectid, itemid, photoid)
 VALUES (NULL, 1, 'b34e0301-cf1a-4145-8b78-9e13a8633657');
 
-INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);
-INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (1, 1);
-INSERT INTO public.orderline (orderid, photoconfigurationid) VALUES (3, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid, amount) VALUES (1, 1, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid, amount) VALUES (1, 1, 1);
+INSERT INTO public.orderline (orderid, photoconfigurationid, amount) VALUES (3, 1, 1);
