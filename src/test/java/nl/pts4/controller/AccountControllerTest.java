@@ -17,6 +17,7 @@ public class AccountControllerTest {
     @Before
     public void before() throws Exception {
         databaseController = DatabaseController.getTestInstance();
+        databaseController.createTables();
     }
 
     @Test

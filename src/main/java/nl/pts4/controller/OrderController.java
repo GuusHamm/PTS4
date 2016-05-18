@@ -57,6 +57,11 @@ public class OrderController {
 
         int id = DatabaseController.getInstance().createOrderModel(photo, effect, item, MainController.getCurrentUser(request).getUUID());
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
+
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
+
+        m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
+
         response.sendRedirect("/");
         return null;
     }
