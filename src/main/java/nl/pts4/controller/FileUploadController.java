@@ -1,5 +1,8 @@
 package nl.pts4.controller;
 
+import net.coobird.thumbnailator.filters.Caption;
+import net.coobird.thumbnailator.geometry.Position;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -140,8 +143,20 @@ public class FileUploadController {
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
             BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 640, 480);
-            //not sure if this will work
-            ImageIO.write(bufferedImage, "jpg", bufferedOutputStream);
+
+            // Set up the caption properties
+            String caption = "PhotoShop";
+            Font font = new Font("Monospaced", Font.PLAIN, 42);
+            Color c = Color.black;
+            Position position = Positions.CENTER;
+            int insetPixels = 0;
+            // Apply caption to the image
+            Caption filter = new Caption(caption, font, c, position, insetPixels);
+            BufferedImage captionedImage = filter.apply(bufferedImage);
+
+
+
+            ImageIO.write(captionedImage, "jpg", bufferedOutputStream);
 
             bufferedOutputStream.close();
         } catch (FileNotFoundException e) {
