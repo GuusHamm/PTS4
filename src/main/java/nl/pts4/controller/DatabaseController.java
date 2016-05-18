@@ -667,7 +667,7 @@ public class DatabaseController {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         try {
-            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, FileUploadController.StaticLocation + path, photographer, child, pathToLowResPhoto) == 1;
+            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, "images/" + path, photographer, child, "images/" + pathToLowResPhoto) == 1;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
