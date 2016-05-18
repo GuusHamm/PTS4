@@ -67,9 +67,9 @@ public class FileUploadController {
                     continue;
                 }
                 if (allowedFileTypes.contains(multipartFile.getContentType())) {
-//                    String fileName = writeFile(multipartFile, uuid);
-                    String fileName = writeBufferedImage(multipartFile, uuid);
-                    if (fileName.isEmpty()) {
+                    String fileName = writeFile(multipartFile, uuid);
+                    String fileNameLowRes = writeBufferedImage(multipartFile, uuid);
+                    if (fileName.isEmpty() || fileNameLowRes.isEmpty()) {
                         m.addAttribute("error", "Something went wrong on the server, try again later");
                         return "multiupload";
                     }
@@ -131,8 +131,9 @@ public class FileUploadController {
 
     private String writeBufferedImage(MultipartFile multiPartFile, UUID uuid) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid, multiPartFile.getContentType().substring(multiPartFile.getContentType().indexOf("/") + 1));
-
+        String filename = String.format("%s_%s.%s", simpleDateFormat.format(new Date()), uuid + "LowRes", multiPartFile.getContentType().substring(multiPartFile.getContentType().indexOf("/") + 1));
+        System.out.println(filename);
+        System.out.println();
         try {
             File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), filename));
             FileOutputStream fileOutputStream = new FileOutputStream(file);
