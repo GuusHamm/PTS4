@@ -4,7 +4,7 @@
         <div class="row ">
             <div class="col-lg-4 list-group-item-heading">
                 <a href="/photos?id=$photo.uuid"><img class="img-responsive img img-rounded"
-                                                      src="$photo.filePath"
+                                                      src="$photo.filePathLowRes"
                                                       alt="Card image cap"></a>
             </div>
             <div class="col-lg-7 col">

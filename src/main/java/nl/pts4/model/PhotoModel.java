@@ -14,6 +14,7 @@ public class PhotoModel {
     private double price;
     private Date captureDate;
     private String filePath;
+    private String filePathLowRes;
 
     public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath) {
         this.uuid = uuid;
@@ -23,6 +24,18 @@ public class PhotoModel {
         this.price = price;
         this.captureDate = captureDate;
         this.filePath = filePath;
+        this.filePathLowRes = "";
+    }
+
+    public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath, String lowResPath) {
+        this.uuid = uuid;
+        this.photographer = photographer;
+        this.child = child;
+        this.school = school;
+        this.price = price;
+        this.captureDate = captureDate;
+        this.filePath = filePath;
+        this.filePathLowRes = lowResPath;
     }
 
     public double getPrice() {

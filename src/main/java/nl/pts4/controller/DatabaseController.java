@@ -452,7 +452,7 @@ public class DatabaseController {
     public List<PhotoModel> getPhotos() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p ORDER BY capturedate");
+        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p ORDER BY capturedate");
         List<PhotoModel> photoModels = new ArrayList<>(rows.size());
         HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         for (Map<String, Object> row : rows) {
@@ -464,7 +464,8 @@ public class DatabaseController {
             double price = Integer.parseInt(String.valueOf(row.get("price"))) / 100;
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
-            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
+            String pathToLowRes = String.valueOf(row.get("pathtolowresphoto"));
+            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path, pathToLowRes));
         }
         return photoModels;
     }
@@ -621,13 +622,13 @@ public class DatabaseController {
         return bd.doubleValue();
     }
 
-    public boolean createPhoto(UUID uuid, String path, UUID photographer, UUID child) {
+    public boolean createPhoto(UUID uuid, String path, UUID photographer, UUID child, String pathToLowResPhoto) {
         int price = 500;
         Date captureDate = new Date();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         try {
-            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid) VALUES (?, ?, ?, ?, ?, ?);", uuid, price, captureDate, FileUploadController.StaticLocation + path, photographer, child) == 1;
+            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, FileUploadController.StaticLocation + path, photographer, child, pathToLowResPhoto) == 1;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

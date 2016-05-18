@@ -75,7 +75,7 @@ public class FileUploadController {
                     }
                     message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
                     // TODO Check last parameter
-                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(), DatabaseController.getInstance().getRandomChildUUID());
+                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(), DatabaseController.getInstance().getRandomChildUUID(), fileNameLowRes);
                 } else {
                     warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                 }
