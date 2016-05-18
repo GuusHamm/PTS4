@@ -16,16 +16,16 @@ public class PhotoModel {
     private String filePath;
     private String filePathLowRes;
 
-    public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath) {
-        this.uuid = uuid;
-        this.photographer = photographer;
-        this.child = child;
-        this.school = school;
-        this.price = price;
-        this.captureDate = captureDate;
-        this.filePath = filePath;
-        this.filePathLowRes = "";
-    }
+//    public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath) {
+//        this.uuid = uuid;
+//        this.photographer = photographer;
+//        this.child = child;
+//        this.school = school;
+//        this.price = price;
+//        this.captureDate = captureDate;
+//        this.filePath = filePath;
+//        this.filePathLowRes = "";
+//    }
 
     public PhotoModel(UUID uuid, AccountModel photographer, AccountModel child, SchoolModel school, double price, Date captureDate, String filePath, String lowResPath) {
         this.uuid = uuid;
@@ -65,6 +65,8 @@ public class PhotoModel {
     public String getFilePath() {
         return filePath;
     }
+
+    public String getFilePathLowRes() {return filePathLowRes; }
 
     public double getRoundedPrice() {
         return (double) price - .01;

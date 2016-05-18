@@ -478,7 +478,7 @@ public class DatabaseController {
     public List<PhotoModel> getPhotosByUUID(UUID[] uuids) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids});
+        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids});
         List<PhotoModel> photoModels = new ArrayList<>(rows.size());
         HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         for (Map<String, Object> row : rows) {
@@ -490,7 +490,8 @@ public class DatabaseController {
             int price = Integer.parseInt(String.valueOf(row.get("price")));
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
-            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path));
+            String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
+            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path, pathLowRes));
         }
         return photoModels;
     }
@@ -498,7 +499,7 @@ public class DatabaseController {
     public PhotoModel getPhotoByUUID(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        PhotoModel photoModel = template.queryForObject("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto FROM photo p WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
+        PhotoModel photoModel = template.queryForObject("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
             try {
                 UUID id = UUID.fromString(resultSet.getString("id"));
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
@@ -507,8 +508,9 @@ public class DatabaseController {
                 double price = resultSet.getInt("price") / 100;
                 Date captureDate = resultSet.getDate("capturedate");
                 String path = resultSet.getString("pathtophoto");
+                String pathLowRes = resultSet.getString("pathtolowresphoto");
                 //TODO create a get school
-                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path);
+                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -550,7 +552,7 @@ public class DatabaseController {
         JdbcTemplate select = new JdbcTemplate(dataSource);
         ArrayList<PhotoConfigurationModel> photoConfigurationModels = null;
         try {
-            photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.photographerid, p.childid, p.schoolid, s.name, s.location, s.country, e.type, e.description, e.price as effectprice, i.price as itemprice, i.description as itemdescription, i.thumbnailpath " + "FROM photoconfiguration pc, photo p, school s, effect e, item i " +
+            photoConfigurationModels = select.queryForObject("SELECT pc.id, pc.effectid,pc.itemid, p.id as photoid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto , p.photographerid, p.childid, p.schoolid, s.name, s.location, s.country, e.type, e.description, e.price as effectprice, i.price as itemprice, i.description as itemdescription, i.thumbnailpath " + "FROM photoconfiguration pc, photo p, school s, effect e, item i " +
                     "WHERE p.id = pc.photoid " +
                     "AND s.id = p.schoolid " +
                     "AND pc.effectid = e.id " +
@@ -570,6 +572,7 @@ public class DatabaseController {
                     price = roundDouble(price, 2);
                     Date capturedate = resultSet.getDate("capturedate");
                     String pathtophoto = resultSet.getString("pathtophoto");
+                    String pathLowRes = resultSet.getString("pathtolowresphoto");
                     UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
                     UUID childid = UUID.fromString(resultSet.getString("childid"));
 
@@ -600,7 +603,7 @@ public class DatabaseController {
                     ItemModel itemModel = new ItemModel(itemid, itemprice, itemType, itemdescription, thumbnailpath);
 
                     File photoFile = new File(pathtophoto);
-                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto);
+                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto, pathLowRes);
                     photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
 
                 }
