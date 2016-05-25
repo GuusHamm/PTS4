@@ -139,7 +139,7 @@ public class FileUploadController {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
-            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 640, 480);
+            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 320, 240);
             BufferedImage imageWithMark = putWatermarkOnImage(bufferedImage);
 
             ImageIO.write(imageWithMark, "jpg", bufferedOutputStream);
