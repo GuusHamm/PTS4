@@ -1,6 +1,7 @@
 package nl.pts4.controller;
 
 import net.coobird.thumbnailator.filters.Caption;
+import net.coobird.thumbnailator.filters.Watermark;
 import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,9 +103,6 @@ public class FileUploadController {
 
         if (file != null && !file.isEmpty() && allowedFileTypes.contains(file.getContentType())) {
             fileName = writeFile(file, uuid);
-            if (fileName.length() > 0) {
-                fileName = StaticLocation + fileName;
-            }
         }
         return fileName;
 
@@ -142,21 +139,10 @@ public class FileUploadController {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
-            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 640, 480);
+            BufferedImage bufferedImage = resizeImageFromFile(convertMultipartFile(multiPartFile), 320, 240);
+            BufferedImage imageWithMark = putWatermarkOnImage(bufferedImage);
 
-            // Set up the caption properties
-            String caption = "PhotoShop";
-            Font font = new Font("Monospaced", Font.PLAIN, 42);
-            Color c = Color.black;
-            Position position = Positions.CENTER;
-            int insetPixels = 0;
-            // Apply caption to the image
-            Caption filter = new Caption(caption, font, c, position, insetPixels);
-            BufferedImage captionedImage = filter.apply(bufferedImage);
-
-
-
-            ImageIO.write(captionedImage, "jpg", bufferedOutputStream);
+            ImageIO.write(imageWithMark, "jpg", bufferedOutputStream);
 
             bufferedOutputStream.close();
         } catch (FileNotFoundException e) {
@@ -167,6 +153,31 @@ public class FileUploadController {
             return "";
         }
         return filename;
+    }
+
+    private BufferedImage putWatermarkOnImage(BufferedImage originalImage) {
+        File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "watermerk.png"));
+
+        BufferedImage watermerk = null;
+        try {
+            watermerk = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (watermerk != null) {
+            Watermark filter = new Watermark(Positions.CENTER, watermerk, 0.5f);
+            return filter.apply(originalImage);
+        } else {
+            String caption = "PhotoShop";
+            Font font = new Font("Monospaced", Font.PLAIN, 42);
+            Color c = Color.black;
+            Position position = Positions.CENTER;
+            int insetPixels = 0;
+            // Apply caption to the image
+            Caption filter = new Caption(caption, font, c, position, insetPixels);
+            return filter.apply(originalImage);
+        }
     }
 
     @Deprecated

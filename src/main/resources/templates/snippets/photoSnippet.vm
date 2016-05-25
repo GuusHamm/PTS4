@@ -4,7 +4,7 @@
         <div class="row ">
             <div class="col-lg-4 list-group-item-heading">
                 <a href="/photos?id=$photo.uuid"><img class="img-responsive img img-rounded"
-                                                      src="$photo.filePathLowRes"
+                                                      src="http://pts4.guushamm.tech/resources/$photo.filePathLowRes"
                                                       alt="Card image cap"></a>
             </div>
             #if($privileged)

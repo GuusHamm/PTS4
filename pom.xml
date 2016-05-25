@@ -138,6 +138,9 @@
             </plugin>
         </plugins>
     </build>
+	</dependencies>
+
+
 
     <repositories>
         <repository>

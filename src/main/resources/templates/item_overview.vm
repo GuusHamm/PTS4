@@ -11,7 +11,7 @@
                              style="position:relative;overflow: hidden;padding-bottom: 50%">
                             <a href="/photos?id=$photo.uuid"><img style="position: absolute;"
                                                                   class="img-responsive img img-rounded full-width"
-                                                                  src="$item.getThumbnailPath()"
+                                                                  src=http://pts4.guushamm.tech/resources/$item.getThumbnailPath()"
                                                                   alt="Card image cap" si></a>
                         </div>
                         <div class="col-lg-8 col">

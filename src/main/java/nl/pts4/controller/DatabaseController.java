@@ -3,7 +3,6 @@ package nl.pts4.controller;
 import com.lambdaworks.crypto.SCryptUtil;
 import nl.pts4.model.*;
 import nl.pts4.security.HashConstants;
-import org.postgresql.jdbc4.Jdbc4ResultSet;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -668,7 +667,7 @@ public class DatabaseController {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         try {
-            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, "images/" + path, photographer, child, "images/" + pathToLowResPhoto) == 1;
+            return jdbcTemplate.update("INSERT INTO public.photo (id, price, capturedate, pathtophoto, photographerid, childid, pathtolowresphoto) VALUES (?, ?, ?, ?, ?, ?, ?);", uuid, price, captureDate, path, photographer, child, pathToLowResPhoto) == 1;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
