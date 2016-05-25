@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,9 +102,6 @@ public class FileUploadController {
 
         if (file != null && !file.isEmpty() && allowedFileTypes.contains(file.getContentType())) {
             fileName = writeFile(file, uuid);
-            if (fileName.length() > 0) {
-                fileName = StaticLocation + fileName;
-            }
         }
         return fileName;
 

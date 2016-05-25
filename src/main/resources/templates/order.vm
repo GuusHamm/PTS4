@@ -12,7 +12,7 @@
                         <div class="row priceItem" id="priceItem">
                             <div class="col-lg-2">
                                 <img class="img-responsive img img-rounded" value="$photo.getUuid()"
-                                     src="$photo.filePath"
+                                     src=http://pts4.guushamm.tech/resources/$photo.filePath"
                                      id="photoSelect" alt="Card image cap" si>
                             </div>
                             <input name="photo" value="$photo.getUuid()" hidden="hidden">
