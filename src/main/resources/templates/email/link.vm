@@ -1,9 +1,0 @@
-<html>
-<body>
-<h3>Hi ${username}, welkom bij de PTS4 Fotowinkel!</h3>
-Betaal ons of je foto's gaan eraan!
-<div>
-    Your email address is <a href="mailto:${email}">${email}</a>.
-</div>
-</body>
-</html>

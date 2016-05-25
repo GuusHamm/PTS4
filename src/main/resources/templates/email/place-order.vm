@@ -1,0 +1,17 @@
+#* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
+#* @vtlvariable name="order" type="nl.pts4.model.OrderModel" *#
+#* @vtlvariable name="photo" type="nl.pts4.model.PhotoModel" *#
+#* @vtlvariable name="effect" type="nl.pts4.model.EffectModel" *#
+<html>
+<body>
+<h3>Very hello there ${user.getName()}!</h3><br/>
+<div>
+    You successfully placed your order for such photo..<br/>
+    <a href="pts4.guushamm.tech/order-overview">View your wows</a>
+    <p><p>
+    Much wow, such bye!<br/>
+    Photoshop
+    <img src="http://cdn.nlgamecen-banjar.savviihq.com/wp-content/uploads/2015/10/18360-doge-doge-simple.jpg">
+</div>
+</body>
+</html>
