@@ -11,6 +11,11 @@
 	<name>fotowinkel-spring</name>
 	<description>PTS4 project</description>
 
+	<properties>
+		<!-- The main class to start by executing java -jar -->
+		<start-class>target/fotowinkel-spring-0.0.1-SNAPSHOT.jar</start-class>
+	</properties>
+
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
