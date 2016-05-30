@@ -1,14 +1,23 @@
 #parse("header.vm")
-<div class="container">
+<div class="container" xmlns="http://www.w3.org/1999/html">
+
     #if (!$cart)
         <div class="jumbotron text-center text-uppercase">
             <h1>Your cart is empty</h1>
         </div>
     #else
         <div class="list-group">
-            <form method="post" action="order">
+            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+
                 <div class="list-group-item">
+                    <input type="hidden" name="cmd" value="_cart">
+                    <input type="hidden" name="upload" value="1">
+                    <input type="hidden" name="business" value="seller@dezignerfotos.com">
                     #foreach ($photo in $cart)
+                        <input type="hidden" name="item_name_$foreach.count" value="Item Name $foreach.count">
+                        <input type="hidden" name="amount_$foreach.count" value="1.00">
+                        <input type="hidden" name="shipping_$foreach.count" value="0.00">
+
                         <div class="row priceItem" id="priceItem">
                             <div class="col-lg-2">
                                 <img class="img-responsive img img-rounded" value="$photo.getUuid()"
@@ -47,10 +56,11 @@
                         <br>
                     #end
                 </div>
-                #if($cart)
-                    <button class="btn btn-primary" type="submit">Buy</button>
-                #end
+                <div class=" pull-right">
+                    <input type="submit" value="PayPal" class="btn btn-primary">
+                </div>
             </form>
+
         </div>
     #end
 </div>

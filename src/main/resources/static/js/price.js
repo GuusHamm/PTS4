@@ -19,6 +19,8 @@ function refreshPrices(prices) {
         var photoPrice = prices.photoModels[index].price;
         var priceInt = parseInt(effectPrice) + parseInt(itemPrice) + parseInt(photoPrice);
         priceLabel.text("Price: €" + priceInt);
+        document.getElementsByName("amount_"+index).value = priceInt;
+        //document.getElementById("ppvalue"+index).value = priceInt;
         console.log(priceInt);
         console.log("%s effect, %s item", effect, item);
     });

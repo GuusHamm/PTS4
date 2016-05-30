@@ -4,10 +4,31 @@
             <div class="panel-body">
                 <form class="form">
                     <fieldset class="form-group col-lg-2">
-                        <select class="form-control">
-                            <option value="dutch">Nederlands</option>
-                            <option value="english">English</option>
+                        <select class="form-control" id="inputLangFooter">
+                            <option value="en_GB">English</option>
+                            <option value="nl">Nederlands</option>
                         </select>
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                $(document).ready(function () {
+                                    $("#inputLangFooter").change(function () {
+                                        var lang = $("#inputLangFooter").val();
+                                        $.ajax({
+                                            "url": "/settings-rest",
+                                            "method": "POST",
+                                            "data": {
+                                                "lang": lang
+                                            }
+                                        }).done(function (data) {
+                                            location.reload();
+                                        });
+                                    });
+                                });
+                            })
+                        </script>
+
+
+
                         #if ($account && $account.theme)
                             <select class="form-control" id="inputThemeFooter">
                                 <option value="bootstrap.yeti.min.css">Default</option>
