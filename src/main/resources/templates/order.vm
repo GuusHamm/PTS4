@@ -12,7 +12,15 @@
                 <div class="list-group-item">
                     <input type="hidden" name="cmd" value="_cart">
                     <input type="hidden" name="upload" value="1">
-                    <input type="hidden" name="business" value="seller@dezignerfotos.com">
+                    <input type="hidden" name="business" value="woutie012006@hotmail.nl">
+##                    <input type="hidden" name="callback_url" value="http://localhost:8080/">
+##                    <input type="hidden" name="callback_timeout" value="3">
+##                    <input type="hidden" name="callback_version" value="61"><!--Required! -->
+##
+##                    <input type="hidden" name="fallback_shipping_option_name_0" value="Option 1">
+##                    <input type="hidden" name="fallback_shipping_option_amount_0" value="0">
+##                    <input type="hidden" name="fallback_shipping_option_is_default_0" value="1">
+
                     #foreach ($photo in $cart)
                         <input type="hidden" name="item_name_$foreach.count" value="Item Name $foreach.count">
                         <input type="hidden" name="amount_$foreach.count" value="1.00">

@@ -19,8 +19,15 @@ function refreshPrices(prices) {
         var photoPrice = prices.photoModels[index].price;
         var priceInt = parseInt(effectPrice) + parseInt(itemPrice) + parseInt(photoPrice);
         priceLabel.text("Price: €" + priceInt);
-        document.getElementsByName("amount_"+index).value = priceInt;
-        //document.getElementById("ppvalue"+index).value = priceInt;
+
+        var a = 'item_name_' + (index+1)
+        var b = $('#itemSelect option:selected').text() +' with ' + $('#effectSelect option:selected').text() + ' Effect'
+        $("input[name=" + a + "]").val(b);
+
+        var a = 'amount_' + (index+1)
+        $("input[name=" + a + "]").val(priceInt);
+
+
         console.log(priceInt);
         console.log("%s effect, %s item", effect, item);
     });
@@ -35,7 +42,4 @@ $(document).ready(function () {
             refreshPrices(data);
         })
     });
-
-
-
 });
