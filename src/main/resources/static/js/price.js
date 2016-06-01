@@ -1,6 +1,5 @@
 function refreshPrices(prices) {
     $(".priceItem").each(function (index) {
-        console.log($(this));
         var effect = $(this).find("#effectSelect").val();
         var item = $(this).find("#itemSelect").val();
         var priceLabel = $(this).find("#itemprice");
@@ -17,25 +16,18 @@ function refreshPrices(prices) {
             }
         });
         var photoPrice = prices.photoModels[index].price;
-        var priceInt = parseInt(effectPrice) + parseInt(itemPrice) + parseInt(photoPrice);
+        var priceInt = parseFloat(effectPrice) + parseFloat(itemPrice) + parseFloat(photoPrice);
         priceLabel.text("Price: €" + priceInt);
         document.getElementsByName("amount_"+index).value = priceInt;
-        //document.getElementById("ppvalue"+index).value = priceInt;
-        console.log(priceInt);
-        console.log("%s effect, %s item", effect, item);
     });
 }
 
 $(document).ready(function () {
-
     $.get("/order/price", function (data) {
         refreshPrices(data);
 
         $("select").change( function(){ // any select that changes.
             refreshPrices(data);
-        })
+        });
     });
-
-
-
 });

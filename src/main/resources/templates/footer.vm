@@ -76,3 +76,4 @@
     </div>
 </footer>
 <script src="/js/bootstrap.min.js"></script>
+<script src="/js/analytics.js"></script>
