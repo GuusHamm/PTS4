@@ -987,6 +987,16 @@ public class DatabaseController {
         template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
     }
 
+    public ChildModel createChild(UUID uuid,String uniqueCode){
+        ChildModel childModel = new ChildModel(uuid,uniqueCode);
+
+        JdbcTemplate insert = new JdbcTemplate(dataSource);
+
+        insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)",new Object[]{childModel.getUuid(),childModel.getUniqueCode()});
+
+        return childModel;
+    }
+
     public boolean addChildToUser(AccountModel currentUser, String childCode) {
         ChildModel child = getChildByCode(childCode);
 
@@ -996,7 +1006,7 @@ public class DatabaseController {
         return template.update("INSERT INTO childaccount_account(account_id, childaccount_id) VALUES (?,?);", currentUser.getUUID(), child.getUuid()) == 1;
     }
 
-    private ChildModel getChildByCode(String childCode) {
+    public ChildModel getChildByCode(String childCode) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {

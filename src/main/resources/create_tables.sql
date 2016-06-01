@@ -26,12 +26,10 @@ CREATE TABLE account (
 
 CREATE TABLE childaccount (
   id               UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
-  uniquecode       TEXT    NOT NULL UNIQUE,
-  parentid         UUID REFERENCES account (id)
+  uniquecode       TEXT    NOT NULL UNIQUE
 );
 
 CREATE TABLE childaccount_account(
-
   childaccount_ID UUID references childaccount(id),
   account_ID UUID references account(id)
 );
@@ -129,12 +127,12 @@ VALUES
    '$s0$e0801$GiLRxbgkcOf64oe0J60eww==$kg5gx7gGyoIU9BvO6HD3zzYhhDdugn6p8O/X5TLLrTs=');
 
 -- CHILD ACCOUNT MOCK DATA
-INSERT INTO childaccount (id, parentid, identifiernumber, uniquecode)
-VALUES ('48e7b3ae-c2bc-46b2-a845-1a0d9ad156b4', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '3541437', '3541437563728116');
-INSERT INTO childaccount (id, parentid, identifiernumber, uniquecode)
-VALUES ('9e7b523f-bbf1-4050-aea3-07ba87473568', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '374288', '374288485129711');
-INSERT INTO childaccount (id, parentid, identifiernumber, uniquecode)
-VALUES ('1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', '602a4264-cf81-4ad3-aa6e-13cf8578320f', '30259182', '30259188914242');
+INSERT INTO childaccount (id, uniquecode)
+VALUES ('48e7b3ae-c2bc-46b2-a845-1a0d9ad156b4', '3541437563728116');
+INSERT INTO childaccount (id, uniquecode)
+VALUES ('9e7b523f-bbf1-4050-aea3-07ba87473568', '374288485129711');
+INSERT INTO childaccount (id, uniquecode)
+VALUES ('1dd56a99-ac84-4f56-b091-ec07bdbc4ad1', '30259188914242');
 
 -- ORDER MOCK DATA
 INSERT INTO order_ (orderdate, accountid) VALUES ('2016-03-16 14:50:34.372000', '602a4264-cf81-4ad3-aa6e-13cf8578320f');
