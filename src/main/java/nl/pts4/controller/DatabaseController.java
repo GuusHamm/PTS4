@@ -514,9 +514,23 @@ public class DatabaseController {
     public List<PhotoModel> getPhotosByUUID(UUID[] uuids) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids});
+        return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids}));
+    }
+
+    public List<PhotoModel> getPhotosOfAccount(UUID accountUuid){
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        return getPhotosFromMap(template.queryForList("SELECT p.* FROM photo p JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? ORDER BY capturedate", new Object[]{accountUuid}));
+    }
+
+    public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid){
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        return getPhotosFromMap(template.queryForList("SELECT p.* FROM photo p WHERE p.photographerid = ? ORDER BY capturedate", new Object[]{accountUuid}));
+    }
+
+    private List<PhotoModel> getPhotosFromMap(List<Map<String, Object>> rows){
         List<PhotoModel> photoModels = new ArrayList<>(rows.size());
-        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         for (Map<String, Object> row : rows) {
             UUID uuid = (UUID) row.get("id");
             UUID photographerid = (UUID) row.get("photographerid");
@@ -527,7 +541,7 @@ public class DatabaseController {
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
-            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path, pathLowRes));
+            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes));
         }
         return photoModels;
     }
@@ -987,6 +1001,25 @@ public class DatabaseController {
         template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
     }
 
+    public ChildModel createChild(UUID uuid,String uniqueCode){
+        ChildModel childModel = new ChildModel(uuid,uniqueCode);
+
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+
+        int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?",new Object[]{childModel.getUniqueCode()},Integer.TYPE);
+
+        if (i > 0){
+            return null;
+        }else {
+            JdbcTemplate insert = new JdbcTemplate(dataSource);
+
+            insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)",new Object[]{childModel.getUuid(),childModel.getUniqueCode()});
+
+            return childModel;
+        }
+
+    }
+
     public boolean addChildToUser(AccountModel currentUser, String childCode) {
         ChildModel child = getChildByCode(childCode);
 
@@ -996,7 +1029,7 @@ public class DatabaseController {
         return template.update("INSERT INTO childaccount_account(account_id, childaccount_id) VALUES (?,?);", currentUser.getUUID(), child.getUuid()) == 1;
     }
 
-    private ChildModel getChildByCode(String childCode) {
+    public ChildModel getChildByCode(String childCode) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
