@@ -3,7 +3,7 @@
     $(document).ready(function () {
         $('#addField').click(function () {
             $('#extraFields').append($('#defaultInput').html());
-        })
+        });
     });
 </script>
 <div class="container">
@@ -14,12 +14,14 @@
         <div class="panel-body">
             <form method="post" enctype="multipart/form-data" action="multiupload">
                 <div class="form-group row" id="defaultInput">
-                ##                    <div class="col-lg-6">
-                ##                        <input type="text" class="form-control" name="code" placeholder="#">
-                ##                    </div>
                     <div class="col-lg-6">
                         <input class="form-control" type="file" name="file">
                     </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" type="text" name="uniquecode">
+                        <div id="livesearch"></div>
+                    </div>
+
                 </div>
                 <div id="extraFields"></div>
                 <div class="btn btn-default btn-block" id="addField">+</div>

@@ -4,6 +4,7 @@ import net.coobird.thumbnailator.filters.Caption;
 import net.coobird.thumbnailator.filters.Watermark;
 import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
+import nl.pts4.model.ChildModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,9 +53,15 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, @RequestParam("uniquecode") String uniqueCode, HttpServletRequest request, HttpServletResponse response, Model m) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
+        }
+
+        ChildModel childModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
+        if (childModel == null){
+            m.addAttribute("error", "That uniquecode does not seem to exist.");
+            return "multiupload";
         }
 
         m = MainController.addDefaultAttributesToModel(m, "Upload a file", request, response);
@@ -78,7 +85,7 @@ public class FileUploadController {
                     }
                     message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
                     // TODO Check last parameter
-                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(), DatabaseController.getInstance().getRandomChildUUID(), fileNameLowRes);
+                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(),childModel.getUuid(), fileNameLowRes);
                 } else {
                     warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                 }

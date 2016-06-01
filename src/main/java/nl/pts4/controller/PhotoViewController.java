@@ -39,8 +39,35 @@ public class PhotoViewController {
      */
     @RequestMapping("/photos")
     public String photosGet(Model m, HttpServletRequest request, HttpServletResponse response) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+            return null;
+        }
+
         AccountModel accountModel = MainController.getCurrentUser(request);
-        List<PhotoModel> photos = DatabaseController.getInstance().getPhotos();
+        List<PhotoModel> photos = DatabaseController.getInstance().getPhotosOfAccount(accountModel.getUUID());
+
+        m = MainController.addDefaultAttributesToModel(m, "Photos", request, response);
+        m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
+
+
+
+        return "photoview";
+    }
+
+    /**
+     * Show all the photos
+     *
+     * @param m       : The model / template
+     * @return photoview to get the correct template
+     */
+    @RequestMapping("/photographer/photos")
+    public String photograherPhotosGet(Model m, HttpServletRequest request, HttpServletResponse response) {
+        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+            return null;
+        }
+
+        AccountModel accountModel = MainController.getCurrentUser(request);
+        List<PhotoModel> photos = DatabaseController.getInstance().getPhotosOfPhotographer(accountModel.getUUID());
 
         m = MainController.addDefaultAttributesToModel(m, "Photos", request, response);
         m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));

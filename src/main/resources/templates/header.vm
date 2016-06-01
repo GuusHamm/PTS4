@@ -62,7 +62,7 @@
                             #foreach ($item in $cart)
                                 <li class="list-group-item"><img
                                         class="thumbnail list-group-item-heading img-responsive img img-rounded"
-                                        src=http://pts4.guushamm.tech/resources/$item.filePath"
+                                        src="http://pts4.guushamm.tech/resources/$item.filePathLowRes"
                                         alt="Card image cap">
                                     <p class="list-group-item-text">€$item.price</p>
                                 </li>

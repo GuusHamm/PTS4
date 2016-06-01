@@ -23,6 +23,10 @@ public class ChildModel {
         return uuid;
     }
 
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
     public List<AccountModel> getParents() {
         if(parents == null) {
             parents = DatabaseController.getInstance().getParentFromChild(this);
