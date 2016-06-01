@@ -1,0 +1,15 @@
+#* @vtlvariable name="templates" type="nl.pts4.admin.advertisement.AdTemplate[]" *#
+#parse("header.vm")
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="well bs-component">
+        #foreach ($advertisement in $templates)
+            <div class="panel">
+                <div class="panel-body">
+                    $advertisement.getProcessedTemplate()
+                </div>
+                <a class="btn btn-default" onclick="$.get(' /advertisement/send?to=all&template=$advertisement.path')">Send this template</a>
+            </div>
+        #end
+    </div>
+</div>
+#parse("footer.vm")

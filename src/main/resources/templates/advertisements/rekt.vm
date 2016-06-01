@@ -1,0 +1,13 @@
+#* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
+<html>
+<body>
+<h3>Hello there ${user.getName()}!</h3><br/>
+<div>
+    You have been carefully rekt by 1337 skillzzz<br/>
+    Surrender now or I will 420 noscope u
+    <p><p>
+    Much wow, such bye!<br/>
+    Photoshop
+</div>
+</body>
+</html>

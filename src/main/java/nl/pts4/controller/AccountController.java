@@ -220,6 +220,7 @@ public class AccountController {
                               HttpServletResponse response) throws IOException {
         request.getSession().setAttribute(MainController.ACCOUNT_ATTRIBUTE, null);
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, messageSource.getMessage("logout.success", null, request.getLocale()));
+        request.getSession().invalidate();
         response.sendRedirect("/");
     }
 }
