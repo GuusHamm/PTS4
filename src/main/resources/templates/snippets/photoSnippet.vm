@@ -14,9 +14,14 @@
             #end
             <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
             #set($priceRound = $photo.price - .01)
-            <a class="btn btn-primary" href="/photos?id=$photo.uuid">#springMessageText(
-                "photos.buy", "Buy this photo for
+            #if($privileged)
+                <h5 class="btn btn-primary btn-sm">price =  $priceRound</h5>
+                <h5 class="btn btn-primary btn-sm">rating = $photo.rating</h5>
+            #else
+                <a class="btn btn-primary" href="/photos?id=$photo.uuid">#springMessageText(
+                    "photos.buy", "Buy this photo for
                                 only") $priceRound</a>
+            #end
         </div>
             <!-- Checked your privileges bro? You pc bro? -->
             #if($privileged)
@@ -26,8 +31,16 @@
                     <a href="/deletephoto?id=$photo.uuid" class="btn btn-danger btn-sm"><i
                             class="material-icons">clear</i></a>
                 </div>
-
+            #else
+                <div class="pull-right col-lg-2">
+                    <a href="/ratephoto?id=$photo.uuid&rating=1" class="btn btn-primary btn-sm"><i
+                            class="material-icons">thumb_up</i></a>
+                    <a href="/ratephoto?id=$photo.uuid&rating=-1" class="btn btn-default btn-sm"><i
+                            class="material-icons">thumb_down</i></a>
+                </div>
             #end
+
+
 
         </div>
         </div>

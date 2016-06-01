@@ -39,7 +39,7 @@ public class PhotoViewController {
      */
     @RequestMapping("/photos")
     public String photosGet(Model m, HttpServletRequest request, HttpServletResponse response) {
-        if (!MainController.assertUserIsPrivileged(request, response, true)) {
+        if (!MainController.assertUserIsSignedIn(request,response)){
             return null;
         }
 
@@ -130,6 +130,36 @@ public class PhotoViewController {
         m.addAttribute("photo", DatabaseController.getInstance().getPhotoByUUID(id));
         return "change_photo";
     }
+
+    @RequestMapping(value = "ratephoto", params = {"id","rating"})
+    public String addRating(Model m, @RequestParam(value = "id") UUID id, @RequestParam(value = "rating") int rating, HttpServletRequest request, HttpServletResponse response) {
+		if (!MainController.assertUserIsSignedIn(request, response)) {
+			return null;
+		}
+
+        MainController.addDefaultAttributesToModel(m, "Rate photo", request, response);
+
+        if (rating != 1 && rating != -1){
+            m.addAttribute(MainController.ERROR_ATTRIBUTE,"Whoops that's not a valid rating");
+            return "photo";
+        }
+
+        if (DatabaseController.getInstance().insertRating(MainController.getCurrentUser(request).getUUID(),id,rating)) {
+            // TODO Add translation
+			request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Rated");
+		} else {
+			// TODO Add translation
+			request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
+		}
+
+		try {
+			response.sendRedirect("/photos");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
     @RequestMapping(value = "deletephoto", params = {"id"})
     public void deletePhoto(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {

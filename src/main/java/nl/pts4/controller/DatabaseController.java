@@ -488,22 +488,7 @@ public class DatabaseController {
     public List<PhotoModel> getPhotos() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        List<Map<String, Object>> rows = template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p ORDER BY capturedate");
-        List<PhotoModel> photoModels = new ArrayList<>(rows.size());
-        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
-        for (Map<String, Object> row : rows) {
-            UUID uuid = (UUID) row.get("id");
-            UUID photographerid = (UUID) row.get("photographerid");
-            UUID childid = (UUID) row.get("childid");
-            //// TODO: 4-4-16 fix this
-//			int schoolid = (int) row.get("schoolid");
-            double price = Integer.parseInt(String.valueOf(row.get("price"))) / 100;
-            Date captureDate = (Date) row.get("capturedate");
-            String path = String.valueOf(row.get("pathtophoto"));
-            String pathToLowRes = String.valueOf(row.get("pathtolowresphoto"));
-            photoModels.add(new PhotoModel(uuid, accountModels.get(photographerid), accountModels.get(childid), null, price, captureDate, path, pathToLowRes));
-        }
-        return photoModels;
+		return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid GROUP BY p.id ORDER BY capturedate"));
     }
 
     /**
@@ -514,13 +499,12 @@ public class DatabaseController {
     public List<PhotoModel> getPhotosByUUID(UUID[] uuids) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE p.id in (?) ORDER BY capturedate", new Object[]{uuids}));
+        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id in (?) GROUP BY p.id ORDER BY capturedate", new Object[]{uuids}));
     }
 
     public List<PhotoModel> getPhotosOfAccount(UUID accountUuid){
         JdbcTemplate template = new JdbcTemplate(dataSource);
-
-        return getPhotosFromMap(template.queryForList("SELECT p.* FROM photo p JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? ORDER BY capturedate", new Object[]{accountUuid}));
+		return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? GROUP BY p.id ORDER BY capturedate", new Object[]{accountUuid}));
     }
 
     public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid){
@@ -541,7 +525,11 @@ public class DatabaseController {
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
-            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes));
+			Long points = 0l;
+			if (row.get("points") != null) {
+				points = (Long) row.get("points");
+			}
+            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes,points.intValue()));
         }
         return photoModels;
     }
@@ -560,7 +548,11 @@ public class DatabaseController {
                 String path = resultSet.getString("pathtophoto");
                 String pathLowRes = resultSet.getString("pathtolowresphoto");
                 //TODO create a get school
-                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes);
+				int points = 0;
+				if (resultSet.getObject("points") != null) {
+					points = resultSet.getInt("points");
+				}
+                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes,points);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -653,7 +645,8 @@ public class DatabaseController {
                     ItemModel itemModel = new ItemModel(itemid, itemprice, itemType, itemdescription, thumbnailpath);
 
                     File photoFile = new File(pathtophoto);
-                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto, pathLowRes);
+					//TODO incase shit get's fucked actually get the points of the photomodel
+                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto, pathLowRes,0);
                     photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
 
                 }
@@ -695,14 +688,16 @@ public class DatabaseController {
      * @param photoId   : The photo that is being rated
      * @param points    : Between 1 to 5, 5 being highest and 1 lowest
      */
-    public void insertRating(UUID accountId, UUID photoId, int points) {
+    public boolean insertRating(UUID accountId, UUID photoId, int points) {
         JdbcTemplate insert = new JdbcTemplate(dataSource);
         //Make sure points is in range.
-        if (points < 1 || points > 5) {
-            return;
+        if (points != 1 && points != -1) {
+            return false;
         }
 
         insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
+
+        return true;
     }
 
 
