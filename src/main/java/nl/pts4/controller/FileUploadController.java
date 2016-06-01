@@ -166,14 +166,16 @@ public class FileUploadController {
         File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "datBoi.png"));
 
         BufferedImage watermerk = null;
-        try {
-            watermerk = ImageIO.read(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            watermerk = ImageIO.read(file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        watermerk = resizeImageFromFile(file, 100, 128);
 
         if (watermerk != null) {
-            Watermark filter = new Watermark(Positions.CENTER, watermerk, 0.5f);
+            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.5f);
             return filter.apply(originalImage);
         } else {
             String caption = "PhotoShop";
