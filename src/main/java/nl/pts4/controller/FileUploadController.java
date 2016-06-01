@@ -172,10 +172,10 @@ public class FileUploadController {
 //            e.printStackTrace();
 //        }
 
-        watermerk = resizeImageFromFile(file, 100, 128);
+        watermerk = resizeImageFromFile(file, 112, 195);
 
         if (watermerk != null) {
-            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.5f);
+            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.2f);
             return filter.apply(originalImage);
         } else {
             String caption = "PhotoShop";
