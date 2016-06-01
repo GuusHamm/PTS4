@@ -1004,11 +1004,20 @@ public class DatabaseController {
     public ChildModel createChild(UUID uuid,String uniqueCode){
         ChildModel childModel = new ChildModel(uuid,uniqueCode);
 
-        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)",new Object[]{childModel.getUuid(),childModel.getUniqueCode()});
+        int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?",new Object[]{childModel.getUniqueCode()},Integer.TYPE);
 
-        return childModel;
+        if (i > 0){
+            return null;
+        }else {
+            JdbcTemplate insert = new JdbcTemplate(dataSource);
+
+            insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)",new Object[]{childModel.getUuid(),childModel.getUniqueCode()});
+
+            return childModel;
+        }
+
     }
 
     public boolean addChildToUser(AccountModel currentUser, String childCode) {
