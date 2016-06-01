@@ -15,7 +15,6 @@ import java.util.Locale;
 public class FotowinkelSpringApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(FotowinkelSpringApplication.class, args);
         SocketIORegistration.start();
     }
