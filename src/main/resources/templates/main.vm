@@ -77,6 +77,10 @@
                             <a href="/makeitem" class="btn btn-primary btn-block btn-lg">#springMessageText(
                         "main.create.items", "Create Item")</a>
                         </div>
+                        <div class="list-group-item col-lg-4">
+                            <a href="/photographer/photos" class="btn btn-primary btn-block btn-lg">#springMessageText(
+                        "main.photographer.photos", "View Photo's")</a>
+                        </div>
                     #end
 
                     <div class="list-group-item col-lg-4">
