@@ -2,18 +2,6 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-//        $("select[id^='effectSelect']").each(function(index) {
-//            var effectSelecter = $(this);
-//            effectSelecter.change(function () {
-//                var value = effectSelecter.val();
-//                if (value == 5) {
-//                    $('#photoSelect').addClass("grayscale");
-//                } else {
-//                    $('#photoSelect').removeClass("grayscale");
-//                }
-//            });
-//        })
-
         $("div[id^='priceItem']").each(function(index) {
             var item = $(this);
             var effectSelecter = item.find("#effectSelect");
