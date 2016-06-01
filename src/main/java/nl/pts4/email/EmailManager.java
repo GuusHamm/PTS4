@@ -1,8 +1,9 @@
 package nl.pts4.email;
 
+import nl.pts4.admin.advertisement.VelocityEngineConfiguration;
+import nl.pts4.controller.DatabaseController;
+import nl.pts4.model.AccountModel;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import javax.mail.Message;
@@ -10,8 +11,10 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Created by Teun on 25-5-2016.
@@ -49,12 +52,20 @@ public class EmailManager {
     }
 
     public void sendMessage(String template, Map<String, Object> parameters, String recepient, String subject) {
-        VelocityEngine engine = new VelocityEngine();
-        engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        VelocityEngine engine = VelocityEngineConfiguration.getConfiguredEngine();
 
         String text = VelocityEngineUtils.mergeTemplateIntoString(engine, "/templates/email/" + template, "UTF-8", parameters);
         sendMessage(text, recepient, subject);
+    }
+
+    public void sendAdvertisementTemplate(String template, Map<String, Object> parameters, String subject) {
+        VelocityEngine engine = VelocityEngineConfiguration.getConfiguredEngine();
+
+        String text = VelocityEngineUtils.mergeTemplateIntoString(engine, "/templates/advertisements/" + template, "UTF-8", parameters);
+        HashMap<UUID, AccountModel> accountModels = DatabaseController.getInstance().getAllAccounts();
+        for (AccountModel am : accountModels.values()) {
+            sendMessage(text, am.getEmail(), subject);
+        }
     }
 
 }

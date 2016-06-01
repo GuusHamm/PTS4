@@ -37,9 +37,12 @@ public class ChildAccountController {
                            HttpServletResponse response,
                            Model model){
 
-		String uniqueCode = UUID.randomUUID().toString();
-		uniqueCode = uniqueCode.substring(uniqueCode.length()-9,uniqueCode.length()-1);
-		ChildModel childModel = DatabaseController.getInstance().createChild(UUID.randomUUID(),uniqueCode);
+		ChildModel  childModel = null;
+		while(childModel == null){
+			String uniqueCode = UUID.randomUUID().toString();
+			uniqueCode = uniqueCode.substring(uniqueCode.length()-9,uniqueCode.length()-1);
+			childModel = DatabaseController.getInstance().createChild(UUID.randomUUID(),uniqueCode);
+		}
 
 		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, String.format("Added a new child with the code %s",childModel.getUniqueCode()));
 
