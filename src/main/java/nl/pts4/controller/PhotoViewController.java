@@ -146,7 +146,11 @@ public class PhotoViewController {
 
         if (DatabaseController.getInstance().insertRating(MainController.getCurrentUser(request).getUUID(),id,rating)) {
             // TODO Add translation
-			request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Succesfully Rated");
+            if (rating == 1){
+                request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Upvoted Succesfully");
+            }else if (rating == -1){
+                request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Photo Downvoted Succesfully");
+            }
 		} else {
 			// TODO Add translation
 			request.getSession().setAttribute(MainController.ERROR_ATTRIBUTE, "Oops something went wrong");
