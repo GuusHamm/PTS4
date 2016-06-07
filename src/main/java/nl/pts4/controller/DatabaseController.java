@@ -525,9 +525,9 @@ public class DatabaseController {
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
-			Long points = 0l;
+			Integer points = 0;
 			if (row.get("points") != null) {
-				points = (Long) row.get("points");
+				points = (Integer) row.get("points");
 			}
             photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes,points.intValue()));
         }
@@ -537,7 +537,7 @@ public class DatabaseController {
     public PhotoModel getPhotoByUUID(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        PhotoModel photoModel = template.queryForObject("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
+        PhotoModel photoModel = template.queryForObject("SELECT p.* FROM photo p WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
             try {
                 UUID id = UUID.fromString(resultSet.getString("id"));
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
@@ -697,6 +697,16 @@ public class DatabaseController {
 
         insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
 
+        return true;
+    }
+
+    public boolean hasRatedPhoto(UUID accountid, UUID photoid){
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;",new Object[]{photoid,accountid},Integer.TYPE);
+        if (count > 0 ){
+//            template.update()
+        }
         return true;
     }
 

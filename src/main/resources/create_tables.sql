@@ -44,7 +44,7 @@ CREATE TABLE photo (
   photographerid    UUID REFERENCES account (id),
   childid           UUID REFERENCES childaccount (id),
   schoolid          INTEGER REFERENCES school (id),
-  points            INTEGER
+  points            INTEGER DEFAULT 0
 );
 
 CREATE TABLE rating (
