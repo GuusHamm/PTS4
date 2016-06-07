@@ -1,4 +1,4 @@
-DROP TABLE user_cookie, account, childaccount,childaccount_account, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
+DROP TABLE user_cookie, account, childaccount, childaccount_account, effect, item, order_, orderline, rating, photoconfiguration, photo, school, userright CASCADE;
 
 CREATE TABLE user_cookie (
   id      UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
@@ -20,28 +20,30 @@ CREATE TABLE account (
   email         TEXT UNIQUE NOT NULL,
   hash          TEXT,
   active        BOOLEAN          DEFAULT TRUE,
-  type          TEXT             DEFAULT 'customer'
+  type          TEXT             DEFAULT 'customer',
+  theme         TEXT
     CHECK (hash IS NOT NULL OR account.oauthkey IS NOT NULL )
 );
 
 CREATE TABLE childaccount (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
-  uniquecode       TEXT    NOT NULL UNIQUE
+  id         UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
+  uniquecode TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE childaccount_account(
-  childaccount_ID UUID references childaccount(id),
-  account_ID UUID references account(id)
+CREATE TABLE childaccount_account (
+  childaccount_ID UUID REFERENCES childaccount (id),
+  account_ID      UUID REFERENCES account (id)
 );
 
 CREATE TABLE photo (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
-  price          INTEGER NOT NULL,
-  capturedate    DATE    NOT NULL,
-  pathtophoto    TEXT    NOT NULL,
-  photographerid UUID REFERENCES account (id),
-  childid        UUID REFERENCES childaccount (id),
-  schoolid       INTEGER REFERENCES school (id)
+  id                UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
+  price             INTEGER NOT NULL,
+  capturedate       DATE    NOT NULL,
+  pathtophoto       TEXT    NOT NULL,
+  pathtolowresphoto TEXT,
+  photographerid    UUID REFERENCES account (id),
+  childid           UUID REFERENCES childaccount (id),
+  schoolid          INTEGER REFERENCES school (id)
 );
 
 CREATE TABLE rating (
