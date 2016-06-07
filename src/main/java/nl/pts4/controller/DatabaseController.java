@@ -468,7 +468,7 @@ public class DatabaseController {
         boolean success = true;
 
         for (int i = 0; i < configurationIDS.size(); i++) {
-            if (!(insertModel.update("INSERT INTO orderline (orderid,photoconfigurationid) VALUES (?,?)", orderID, configurationIDS.get(i)) == 1)) {
+            if (!(insertModel.update("INSERT INTO orderline (orderid,photoconfigurationid,amount) VALUES (?,?,1)", orderID, configurationIDS.get(i)) == 1)) {
                 success = false;
             }
         }
@@ -549,9 +549,9 @@ public class DatabaseController {
                 String pathLowRes = resultSet.getString("pathtolowresphoto");
                 //TODO create a get school
 				int points = 0;
-				if (resultSet.getObject("points") != null) {
-					points = resultSet.getInt("points");
-				}
+//				if (resultSet.getObject("points") != null) {
+//					points = resultSet.getInt("points");
+//				}
                 return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes,points);
             } catch (Exception e) {
                 e.printStackTrace();

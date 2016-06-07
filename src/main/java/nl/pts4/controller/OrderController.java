@@ -8,12 +8,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -53,13 +56,16 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/order", method = RequestMethod.POST)
-    public String placeOrder(@RequestParam UUID[] photo, @RequestParam int[] effect, @RequestParam int[] item, Model m, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        MainController.assertUserIsPrivileged(request, response, true);
+    public RedirectView placeOrder(@RequestParam UUID[] photo, @RequestParam int[] effect, @RequestParam int[] item, Model m, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, @RequestParam Map<String, String> allRequestParams) throws IOException {
+        if (!MainController.assertUserIsSignedIn(request, response)) {
+            return null;
+        }
         m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
 
         if (!(photo.length == item.length) && !(item.length == effect.length)) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, "Well congrats, you like breaking things don't you");
-            return "order";
+//            return "order";
+            return new RedirectView("order");
         }
 
         AccountModel user = MainController.getCurrentUser(request);
@@ -72,14 +78,33 @@ public class OrderController {
         int id = DatabaseController.getInstance().createOrderModel(photo, effect, item, user.getUUID());
 
         emailManager.sendMessage("place-order.vm", map, user.getEmail(), "Order Confirmation");
+        redirectAttributes.addAttribute("cmd", "_cart");
+        redirectAttributes.addAttribute("upload", "1");
+        redirectAttributes.addAttribute("business", "woutie012006@hotmail.nl");
 
-        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
+        for (Map.Entry<String, String> entry : allRequestParams.entrySet()) {
+            redirectAttributes.addAttribute(entry.getKey(),entry.getValue());
+            System.out.println(entry.getKey()+entry.getValue() );
+        }
 
-        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, null);
+        return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
+//        RedirectView redirect = new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
+//        redirect.setAttributes();
+//        redirect.setExposeModelAttributes(true);
+//        return redirect;
+//        response.sendRedirect("http://www.sandbox.paypal.com/cgi-bin/webscr");
+//        return null;
 
-        m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
+//        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
 
-        response.sendRedirect("/https://www.sandbox.paypal.com/cgi-bin/webscr");
-        return null;
+//        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, null);
+
+//        m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
+
+//        response.sendRedirect("/https://www.sandbox.paypal.com/cgi-bin/webscr");
+//        RedirectView redirect = new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
+//        redirect.setExposeModelAttributes(false);
+//        return redirect;
+//        return null;
     }
 }
