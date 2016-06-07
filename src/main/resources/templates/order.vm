@@ -43,7 +43,8 @@
         </div>
     #else
         <div class="list-group">
-            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+##            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+            <form action="order" method="post">
 
                 <div class="list-group-item">
                     <input type="hidden" name="cmd" value="_cart">

@@ -75,11 +75,11 @@ public class OrderController {
 
         request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
 
-        request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, null);
 
         m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
 
-        response.sendRedirect("/");
+        response.sendRedirect("/https://www.sandbox.paypal.com/cgi-bin/webscr");
         return null;
     }
 }
