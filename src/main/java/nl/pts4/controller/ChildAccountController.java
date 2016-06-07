@@ -59,7 +59,7 @@ public class ChildAccountController {
                            HttpServletResponse response,
                            Model model) {
 
-        if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
+        if (!MainController.assertUserIsSignedIn(request, response)) return null;
         return "addchildtoparent";
     }
 
