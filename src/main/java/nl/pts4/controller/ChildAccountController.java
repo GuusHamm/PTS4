@@ -69,7 +69,7 @@ public class ChildAccountController {
                            @RequestParam("inputCode") String childCode,
                                Model model) {
 
-        if (!MainController.assertUserIsPrivileged(request, response, true)) return null;
+        if (!MainController.assertUserIsSignedIn(request, response)) return null;
         DatabaseController db = DatabaseController.getInstance();
 
 
