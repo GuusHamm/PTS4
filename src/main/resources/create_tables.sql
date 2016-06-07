@@ -43,7 +43,8 @@ CREATE TABLE photo (
   pathtolowresphoto TEXT,
   photographerid    UUID REFERENCES account (id),
   childid           UUID REFERENCES childaccount (id),
-  schoolid          INTEGER REFERENCES school (id)
+  schoolid          INTEGER REFERENCES school (id),
+  points            INTEGER DEFAULT 0
 );
 
 CREATE TABLE rating (

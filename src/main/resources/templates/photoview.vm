@@ -1,10 +1,15 @@
 #parse("header.vm")
 <div class="container">
-    <div class="list-group">
-        #foreach ($photo in $photos)
+    #if(!$cart)
+        <div class="well text-uppercase text-center">
+            <h1>#springMessageText("main.nophotos", "You have no photo's yet")</h1>
+        </div>
+    #else
+        <div class="list-group">
+            #foreach ($photo in $photos)
             #parse("snippets/photoSnippet.vm")
         #end
-    </div>
-
+        </div>
+    #end
 </div>
 #parse("footer.vm")

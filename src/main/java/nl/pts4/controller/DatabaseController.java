@@ -510,7 +510,7 @@ public class DatabaseController {
     public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid){
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        return getPhotosFromMap(template.queryForList("SELECT p.* FROM photo p WHERE p.photographerid = ? ORDER BY capturedate", new Object[]{accountUuid}));
+        return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price,p.capturedate,p.pathtophoto,p.pathtolowresphoto, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.photographerid = ? GROUP BY p.id ORDER BY capturedate",new Object[]{ accountUuid }));
     }
 
     private List<PhotoModel> getPhotosFromMap(List<Map<String, Object>> rows){
@@ -525,11 +525,16 @@ public class DatabaseController {
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
-			Long points = 0l;
+			Integer points = 0;
 			if (row.get("points") != null) {
-				points = (Long) row.get("points");
+                try{
+                    Long tempoints = (Long) row.get("points");
+                    points = tempoints.intValue();
+                }catch (Exception e){
+                    points = (Integer) row.get("points");
+                }
 			}
-            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes,points.intValue()));
+            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes,points));
         }
         return photoModels;
     }
@@ -537,7 +542,7 @@ public class DatabaseController {
     public PhotoModel getPhotoByUUID(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        PhotoModel photoModel = template.queryForObject("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price, p.capturedate, p.pathtophoto, p.pathtolowresphoto FROM photo p WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
+        PhotoModel photoModel = template.queryForObject("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id=? GROUP BY p.id", new Object[]{uuid}, ((resultSet, i) -> {
             try {
                 UUID id = UUID.fromString(resultSet.getString("id"));
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
@@ -548,11 +553,13 @@ public class DatabaseController {
                 String path = resultSet.getString("pathtophoto");
                 String pathLowRes = resultSet.getString("pathtolowresphoto");
                 //TODO create a get school
-				int points = 0;
-//				if (resultSet.getObject("points") != null) {
-//					points = resultSet.getInt("points");
-//				}
-                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes,points);
+
+				Long points = 0l;
+				if (resultSet.getObject("points") != null) {
+					points = resultSet.getLong("points");
+				}
+                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes,points.intValue());
+
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -695,9 +702,22 @@ public class DatabaseController {
             return false;
         }
 
+        photoHasBeenRatedByUser(accountId,photoId);
+
         insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
 
         return true;
+    }
+
+    public void photoHasBeenRatedByUser(UUID accountid, UUID photoid){
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;",new Object[]{photoid,accountid},Integer.TYPE);
+        if (count > 0 ){
+            JdbcTemplate remove = new JdbcTemplate(dataSource);
+            remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", new Object[]{accountid,photoid});
+
+        }
     }
 
 
