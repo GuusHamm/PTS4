@@ -47,9 +47,10 @@ public class PhotoViewController {
         List<PhotoModel> photos = DatabaseController.getInstance().getPhotosOfAccount(accountModel.getUUID());
 
         m = MainController.addDefaultAttributesToModel(m, "Photos", request, response);
-        m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
 
-
+        if (photos.size() > 0){
+            m.addAttribute("photos", photos.toArray(new PhotoModel[photos.size()]));
+        }
 
         return "photoview";
     }
