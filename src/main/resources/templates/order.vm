@@ -33,6 +33,11 @@
         -webkit-filter:invert(100%);
         filter:progid:DXImageTransform.Microsoft.BasicImage(invert='1');
     }
+
+    img.greyscaleinvert {
+        -webkit-filter: grayscale(50%);
+        -webkit-filter: invert(50%);
+    }
 </style>
 
 <div class="container" xmlns="http://www.w3.org/1999/html">

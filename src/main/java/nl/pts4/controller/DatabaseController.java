@@ -542,7 +542,7 @@ public class DatabaseController {
     public PhotoModel getPhotoByUUID(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        PhotoModel photoModel = template.queryForObject("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE id=?", new Object[]{uuid}, ((resultSet, i) -> {
+        PhotoModel photoModel = template.queryForObject("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id=? GROUP BY p.id", new Object[]{uuid}, ((resultSet, i) -> {
             try {
                 UUID id = UUID.fromString(resultSet.getString("id"));
                 UUID photographerid = UUID.fromString(resultSet.getString("photographerid"));
