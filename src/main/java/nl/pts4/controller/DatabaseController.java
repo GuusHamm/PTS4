@@ -700,19 +700,22 @@ public class DatabaseController {
             return false;
         }
 
+        photoHasBeenRatedByUser(accountId,photoId);
+
         insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
 
         return true;
     }
 
-    public boolean hasRatedPhoto(UUID accountid, UUID photoid){
+    public void photoHasBeenRatedByUser(UUID accountid, UUID photoid){
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;",new Object[]{photoid,accountid},Integer.TYPE);
         if (count > 0 ){
-//            template.update()
+            JdbcTemplate remove = new JdbcTemplate(dataSource);
+            remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", new Object[]{accountid,photoid});
+
         }
-        return true;
     }
 
 
