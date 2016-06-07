@@ -43,7 +43,7 @@ public class OrderController {
 
     @RequestMapping(value = "/order")
     public String order(Model m, HttpServletRequest request, HttpServletResponse response) {
-        MainController.assertUserIsPrivileged(request, response, true);
+        MainController.assertUserIsSignedIn(request, response);
         m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
 
         m.addAttribute("effects", DatabaseController.getInstance().getEffects());
