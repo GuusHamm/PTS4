@@ -76,7 +76,7 @@ public class OrderController {
         map.put("user", user);
 
         int id = DatabaseController.getInstance().createOrderModel(photo, effect, item, user.getUUID());
-
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
         emailManager.sendMessage("place-order.vm", map, user.getEmail(), "Order Confirmation");
         redirectAttributes.addAttribute("cmd", "_cart");
         redirectAttributes.addAttribute("upload", "1");
@@ -88,23 +88,6 @@ public class OrderController {
         }
 
         return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
-//        RedirectView redirect = new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
-//        redirect.setAttributes();
-//        redirect.setExposeModelAttributes(true);
-//        return redirect;
-//        response.sendRedirect("http://www.sandbox.paypal.com/cgi-bin/webscr");
-//        return null;
 
-//        request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, "Succesfully placed order, order number is " + id);
-
-//        request.getSession().setAttribute(MainController.CART_ATTRIBUTE, null);
-
-//        m = MainController.addDefaultAttributesToModel(m, "Order", request, response);
-
-//        response.sendRedirect("/https://www.sandbox.paypal.com/cgi-bin/webscr");
-//        RedirectView redirect = new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
-//        redirect.setExposeModelAttributes(false);
-//        return redirect;
-//        return null;
     }
 }

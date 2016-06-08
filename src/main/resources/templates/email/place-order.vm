@@ -9,6 +9,12 @@
     You successfully placed your order for such photo..<br/>
     <a href="pts4.guushamm.tech/order-overview">View your wows</a>
     <p><p>
+    #if($effect)
+    #foreach ($e in $effect)
+        e
+    #end
+    #end
+
     Much wow, such bye!<br/>
     Photoshop
     <img src="https://thenextweb.com/wp-content/blogs.dir/1/files/2013/12/dogecoin-img.jpg">
