@@ -6,11 +6,15 @@
             var item = $(this);
             var effectSelecter = item.find("#effectSelect");
             effectSelecter.change(function() {
-                var value = effectSelecter.val();
+//                var value = effectSelecter.val();
+                var selectedValue = effectSelecter[0].selectedIndex;
+                var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
-                if (value == 5) {
+                if (text == "Grayscale") {
+                    img.removeClass("invert");
                     img.addClass("grayscale");
-                } else if (value == 2) {
+                } else if (text == "Inverted") {
+                    img.removeClass("grayscale");
                     img.addClass("invert");
                 } else {
                     img.removeClass("grayscale");
@@ -107,6 +111,7 @@
                 </div>
                 <div class=" pull-right">
                     <input id="buyButton"type="submit" value="PayPal" class="btn btn-primary" />
+                    <img value="exampleImage" src="src="data:image/jpg;base64,$test"
                 </div>
             </form>
 
