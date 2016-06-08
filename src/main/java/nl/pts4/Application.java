@@ -3,9 +3,10 @@ package nl.pts4;
 /**
  * Created by wouter on 18-5-2016.
  */
+import nl.pts4.socket.SocketIORegistration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.MimeMappings;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import java.util.Locale;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
+@SpringBootApplication
 public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) {
