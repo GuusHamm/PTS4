@@ -1,0 +1,15 @@
+#parse("header.vm")
+<div class="container">
+    #if(!$photos)
+        <div class="well text-uppercase text-center">
+            <h1>#springMessageText("main.nounclaimedchildren","You have no unclaimed children")</h1>
+        </div>
+    #else
+        <div class="list-group">
+            #foreach ($photo in $photos)
+            #parse("snippets/photoSnippet.vm")
+        #end
+        </div>
+    #end
+</div>
+#parse("footer.vm")
