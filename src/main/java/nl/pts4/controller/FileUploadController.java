@@ -175,7 +175,7 @@ public class FileUploadController {
         watermerk = resizeImageFromFile(file, 112, 195);
 
         if (watermerk != null) {
-            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.2f);
+            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.4f);
             return filter.apply(originalImage);
         } else {
             String caption = "PhotoShop";
