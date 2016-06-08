@@ -21,7 +21,7 @@ import java.util.Map;
 public class QRCodeGenerator {
 
     public static byte[] generate(String content, String extension) {
-        int size = 250;
+        int size = 750;
 
         Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -56,6 +56,7 @@ public class QRCodeGenerator {
             }
         }
 
+        //
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, extension, baos );

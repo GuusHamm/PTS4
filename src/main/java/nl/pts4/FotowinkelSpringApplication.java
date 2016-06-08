@@ -8,6 +8,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import javax.annotation.PreDestroy;
 import java.util.Locale;
 
 
@@ -16,8 +17,14 @@ public class FotowinkelSpringApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(FotowinkelSpringApplication.class, args);
-        SocketIORegistration.start();
+        SocketIORegistration.getInstance();
     }
+
+    @PreDestroy
+    public void shutdownSocketIO() {
+        SocketIORegistration.getInstance().shutdown();
+    }
+
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
