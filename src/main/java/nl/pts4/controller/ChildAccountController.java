@@ -44,7 +44,7 @@ public class ChildAccountController {
 							  HttpServletResponse response,
 							  Model model) {
 
-		if (MainController.assertUserIsPrivileged(request, response, true)) {
+		if (!MainController.assertUserIsPrivileged(request, response, true)) {
 			return null;
 		}
 
