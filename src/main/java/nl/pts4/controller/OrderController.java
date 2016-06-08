@@ -1,14 +1,10 @@
 package nl.pts4.controller;
 
-import com.lambdaworks.codec.Base64;
-import net.coobird.thumbnailator.filters.Caption;
 import net.coobird.thumbnailator.filters.Watermark;
-import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import nl.pts4.email.EmailManager;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.ItemModel;
-import nl.pts4.model.OrderModel;
 import nl.pts4.model.PhotoModel;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -23,16 +19,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 /**

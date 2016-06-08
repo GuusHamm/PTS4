@@ -338,7 +338,39 @@ public class DatabaseController {
     public List<OrderModel> getAllAccountOrders(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
+        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
+        List<OrderModel> orderModels = new ArrayList<>();
+
         List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o WHERE accountid = ?", uuid);
+
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            UUID account = (UUID) row.get("accountid");
+            Date orderDate = (Date) row.get("orderdate");
+
+            orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
+        }
+
+        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            int orderid = (int) row.get("orderid");
+            int photoConfigurationId = (int) row.get("photoconfigurationid");
+            OrderLineModel olm = new OrderLineModel(id, orderid, photoConfigurationId);
+
+            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findFirst();
+            if (o.isPresent()) {
+                o.get().getOrderLineModels().add(olm);
+            }
+        }
+
+        return orderModels;
+    }
+
+    public List<OrderModel> getAllPhotographerOrders(UUID uuid) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT o.* FROM order_ o JOIN orderline ol ON o.id = ol.orderid JOIN photoconfiguration pc ON ol.photoconfigurationid = pc.id JOIN photo p ON pc.photoid = p.id WHERE p.photographerid = ?;", uuid);
         HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         List<OrderModel> orderModels = new ArrayList<>(rows.size());
         for (Map<String, Object> row : rows) {
@@ -349,7 +381,7 @@ public class DatabaseController {
             orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
         }
 
-        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        rows = template.queryForList("SELECT o.* FROM orderline o JOIN photoconfiguration pc ON o.photoconfigurationid = pc.id JOIN photo p ON pc.photoid = p.id WHERE p.photographerid = ?", uuid);
         for (Map<String, Object> row : rows) {
             int id = (int) row.get("id");
             int orderid = (int) row.get("orderid");
