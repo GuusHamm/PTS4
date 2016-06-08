@@ -32,7 +32,7 @@ public class ChildAccountController {
 						   HttpServletResponse response,
 						   Model model) {
 		MainController.addDefaultAttributesToModel(model, "Add Child", request, response);
-		if (MainController.assertUserIsPrivileged(request, response, true)) {
+		if (!MainController.assertUserIsPrivileged(request, response, true)) {
 			return null;
 		}
 
