@@ -22,11 +22,17 @@
                 #else
                     <input type="hidden" id="referrer" name="referrer" value="${referrer}">
                 #end
-                <button id="btnLogin" class="btn btn-primary" type="submit">#springMessageText(
+                <div class="list-group">
+                    <div class="list-group-item-danger">
+                        <button id="btnLogin" class="btn btn-primary btn-block" type="submit">#springMessageText(
                     "login", "Login")</button>
-                <p/>
-                <a href="/register" class="btn btn-info">#springMessageText(
+                    </div>
+                    <div class="list-group-item-danger">
+                        <a href="/register" class="btn btn-info btn-block">#springMessageText(
                         "register", "Register")</a>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>

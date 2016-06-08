@@ -3,7 +3,7 @@
     <div class="jumbotron text-center">
         <h1>#springMessageText("main.welcome", "Welcome to the photostore")</h1>
     </div>
-    <div class="panel panel-default">
+    <div class="panel">
         <div class="panel-heading col-lg-8 col-lg-offset-2">
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
@@ -48,66 +48,84 @@
                 </a>
             </div>
         </div>
-
+        <br/>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <a href="/photos" class="btn btn-default btn-block btn-lg">#springMessageText(
+            #if($account)
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <a href="/photos" class="btn btn-default btn-block btn-lg">#springMessageText(
                         "main.photos", "View Photo's")</a>
+                    </div>
                 </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="list-group">
-                    #if($privileged)
-                        <div class="list-group-item col-lg-4">
-                            <a href="/multiupload" class="btn btn-info btn-block btn-lg">#springMessageText(
+                <br/>
+                <div class="row">
+                    <div class="list-group">
+                        #if($privileged)
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/multiupload" class="btn btn-info btn-block btn-lg">#springMessageText(
                         "main.upload", "Upload a photo")</a>
-                        </div>
-                        <div class="list-group-item col-lg-4">
-                            <a href="/makeitem" class="btn btn-info btn-block btn-lg">#springMessageText(
+                            </div>
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/makeitem" class="btn btn-info btn-block btn-lg">#springMessageText(
                         "main.create.items", "Create Item")</a>
-                        </div>
-                        <div class="list-group-item col-lg-4">
-                            <a href="/addchild" class="btn btn-info btn-block btn-lg">#springMessageText(
+                            </div>
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/addchild" class="btn btn-info btn-block btn-lg">#springMessageText(
                         "main.child", "Create a Child Account")</a>
-                        </div>
-                        <div class="list-group-item col-lg-4">
-                            <a href="/order-overview"
-                               class="btn btn-success btn-block btn-lg">#springMessageText(
+                            </div>
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/order-overview"
+                                   class="btn btn-success btn-block btn-lg">#springMessageText(
                         "main.orders", "View Orders")</a>
-                        </div>
-                        <div class="list-group-item col-lg-4">
-                            <a href="/items" class="btn btn-success btn-block btn-lg">#springMessageText(
+                            </div>
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/items" class="btn btn-success btn-block btn-lg">#springMessageText(
                         "main.items", "View Items")</a>
-                        </div>
+                            </div>
 
-                        <div class="list-group-item col-lg-4">
-                            <a href="/photographer/photos" class="btn btn-success btn-block btn-lg">#springMessageText(
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/photographer/photos"
+                                   class="btn btn-success btn-block btn-lg">#springMessageText(
                         "main.photographer.photos", "View Photo's")</a>
-                        </div>
-                    #end
+                            </div>
+                        #end
 
-                    <div class="list-group-item col-lg-4">
-                        <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
-                    </div>
-                    <div class="list-group-item col-lg-4">
-                        <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
-                    </div>
-                    #if($account)
-                        <div class="list-group-item col-lg-4">
-                            <a href="/account/settings"
-                               class="btn btn-warning btn-block btn-lg">#springMessageText(
+                        <div class="list-group-item-primary
+                         col-lg-4">
+                            <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                        </div>
+                        <div class="list-group-item-primary
+                         col-lg-4">
+                            <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
+                        </div>
+                        #if($account)
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/account/settings"
+                                   class="btn btn-warning btn-block btn-lg">#springMessageText(
                                 "main.settings", "Settings")</a>
-                        </div>
-                    #else
-                        <div class="list-group-item col-lg-4">
-                            <a href="/login" class="btn btn-info btn-block btn-lg">#springMessageText(
+                            </div>
+                        #else
+                            <div class="list-group-item-primary
+                             col-lg-4">
+                                <a href="/login" class="btn btn-info btn-block btn-lg">#springMessageText(
                                 "login", "Login")</a>
-                        </div>
-                    #end
+                            </div>
+                        #end
+                    </div>
                 </div>
-            </div>
+            #else
+                <div class="col-lg-8 col-lg-offset-2">
+                    <a href="/login" class="btn btn-warning btn-block btn-lg">#springMessageText(
+                                "login.please", "Please login to use the photostore")</a>
+                </div>
+            #end
         </div>
     </div>
 </div>
