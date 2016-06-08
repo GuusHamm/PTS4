@@ -107,10 +107,13 @@ public class OrderController {
 
     }
 
-    @RequestMapping(value = "/order/preview", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-    private @ResponseBody byte[] convertImageToByteArray() {
-        ItemModel item = DatabaseController.getInstance().getItemByID(4);
-        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString("604773a5-b0c4-40ea-9483-00afc77841f9"));
+    @RequestMapping(value = "/order/preview", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"itemID", "photoUUID"})
+    private @ResponseBody byte[] convertImageToByteArray(@RequestParam(value = "itemID") int itemID, @RequestParam(value = "photoUUID") String uuidString) {
+
+        //http://pts4.guushamm.tech/order/preview?id=604773a5-b0c4-40ea-9483-00afc77841f9&rating=1
+
+        ItemModel item = DatabaseController.getInstance().getItemByID(itemID);
+        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(uuidString));
 
         BufferedImage itemImage = null;
         BufferedImage overlayImage = null;
@@ -156,7 +159,7 @@ public class OrderController {
         if (originalImage == null || itemImage == null) {
             return null;
         }
-        Watermark filter = new Watermark(Positions.CENTER, originalImage, 1f);
+        Watermark filter = new Watermark(Positions.CENTER, originalImage, 0.8f);
         return filter.apply(itemImage);
     }
 
