@@ -1,6 +1,6 @@
 #parse("header.vm")
 <div class="container">
-    #if(!$cart)
+    #if(!$photos)
         <div class="well text-uppercase text-center">
             <h1>#springMessageText("main.nophotos", "You have no photo's yet")</h1>
         </div>
