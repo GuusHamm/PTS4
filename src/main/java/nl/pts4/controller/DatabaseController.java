@@ -338,7 +338,39 @@ public class DatabaseController {
     public List<OrderModel> getAllAccountOrders(UUID uuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o WHERE accountid = ?",new Object[]{uuid});
+        HashMap<UUID, AccountModel> accountModels = getAllAccounts();
+        List<OrderModel> orderModels = new ArrayList<>();
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT o.id, o.accountid, o.orderdate FROM order_ o WHERE accountid = ?", uuid);
+
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            UUID account = (UUID) row.get("accountid");
+            Date orderDate = (Date) row.get("orderdate");
+
+            orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
+        }
+
+        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        for (Map<String, Object> row : rows) {
+            int id = (int) row.get("id");
+            int orderid = (int) row.get("orderid");
+            int photoConfigurationId = (int) row.get("photoconfigurationid");
+            OrderLineModel olm = new OrderLineModel(id, orderid, photoConfigurationId);
+
+            Optional<OrderModel> o = orderModels.stream().filter(a -> a.getId() == orderid).findFirst();
+            if (o.isPresent()) {
+                o.get().getOrderLineModels().add(olm);
+            }
+        }
+
+        return orderModels;
+    }
+
+    public List<OrderModel> getAllPhotographerOrders(UUID uuid) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<Map<String, Object>> rows = template.queryForList("SELECT o.* FROM order_ o JOIN orderline ol ON o.id = ol.orderid JOIN photoconfiguration pc ON ol.photoconfigurationid = pc.id JOIN photo p ON pc.photoid = p.id WHERE p.photographerid = ?;", uuid);
         HashMap<UUID, AccountModel> accountModels = getAllAccounts();
         List<OrderModel> orderModels = new ArrayList<>(rows.size());
         for (Map<String, Object> row : rows) {
@@ -349,7 +381,7 @@ public class DatabaseController {
             orderModels.add(new OrderModel(id, orderDate, accountModels.get(account)));
         }
 
-        rows = template.queryForList("SELECT o.id, o.orderid, o.photoconfigurationid FROM orderline o");
+        rows = template.queryForList("SELECT o.* FROM orderline o JOIN photoconfiguration pc ON o.photoconfigurationid = pc.id JOIN photo p ON pc.photoid = p.id WHERE p.photographerid = ?", uuid);
         for (Map<String, Object> row : rows) {
             int id = (int) row.get("id");
             int orderid = (int) row.get("orderid");
@@ -502,15 +534,20 @@ public class DatabaseController {
         return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id in (?) GROUP BY p.id ORDER BY capturedate", new Object[]{uuids}));
     }
 
+    public List<PhotoModel> getPhotosofChildAccount(UUID childAccountID) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.childid = ? GROUP BY p.id ORDER BY capturedate", childAccountID));
+    }
+
     public List<PhotoModel> getPhotosOfAccount(UUID accountUuid){
         JdbcTemplate template = new JdbcTemplate(dataSource);
-		return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? GROUP BY p.id ORDER BY capturedate", new Object[]{accountUuid}));
+        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? GROUP BY p.id ORDER BY capturedate", accountUuid));
     }
 
     public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid){
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price,p.capturedate,p.pathtophoto,p.pathtolowresphoto, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.photographerid = ? GROUP BY p.id ORDER BY capturedate",new Object[]{ accountUuid }));
+        return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price,p.capturedate,p.pathtophoto,p.pathtolowresphoto, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.photographerid = ? GROUP BY p.id ORDER BY capturedate", accountUuid));
     }
 
     private List<PhotoModel> getPhotosFromMap(List<Map<String, Object>> rows){
@@ -589,6 +626,18 @@ public class DatabaseController {
         }
 
         return effectModels;
+    }
+
+    public List<ChildAccountModel> getUnclaimedChildren(UUID photographerID) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+
+        List<ChildAccountModel> childAccountModels = new ArrayList<>();
+
+        for (Map<String, Object> row : template.queryForList("SELECT DISTINCT c.* FROM childaccount c JOIN photo p ON c.id = p.childid WHERE c.id NOT IN (SELECT c1.id FROM childaccount c1 JOIN childaccount_account ca ON c1.id = ca.childaccount_id) AND p.photographerid = ?;", new Object[]{photographerID})) {
+            childAccountModels.add(new ChildAccountModel((UUID) row.get("id"), (String) row.get("uniquecode")));
+        }
+
+        return childAccountModels;
     }
 
     /**
@@ -715,7 +764,7 @@ public class DatabaseController {
         int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;",new Object[]{photoid,accountid},Integer.TYPE);
         if (count > 0 ){
             JdbcTemplate remove = new JdbcTemplate(dataSource);
-            remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", new Object[]{accountid,photoid});
+            remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", accountid, photoid);
 
         }
     }
@@ -1016,27 +1065,27 @@ public class DatabaseController {
         template.update("UPDATE photo SET price=? WHERE id=?", newPrice, photoId);
     }
 
-    public ChildModel createChild(UUID uuid,String uniqueCode){
-        ChildModel childModel = new ChildModel(uuid,uniqueCode);
+    public ChildAccountModel createChild(UUID uuid, String uniqueCode) {
+        ChildAccountModel childAccountModel = new ChildAccountModel(uuid, uniqueCode);
 
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?",new Object[]{childModel.getUniqueCode()},Integer.TYPE);
+        int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?", new Object[]{childAccountModel.getUniqueCode()}, Integer.TYPE);
 
         if (i > 0){
             return null;
         }else {
             JdbcTemplate insert = new JdbcTemplate(dataSource);
 
-            insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)",new Object[]{childModel.getUuid(),childModel.getUniqueCode()});
+            insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)", childAccountModel.getUuid(), childAccountModel.getUniqueCode());
 
-            return childModel;
+            return childAccountModel;
         }
 
     }
 
     public boolean addChildToUser(AccountModel currentUser, String childCode) {
-        ChildModel child = getChildByCode(childCode);
+        ChildAccountModel child = getChildByCode(childCode);
 
         if (child == null) return false;
 
@@ -1044,17 +1093,17 @@ public class DatabaseController {
         return template.update("INSERT INTO childaccount_account(account_id, childaccount_id) VALUES (?,?);", currentUser.getUUID(), child.getUuid()) == 1;
     }
 
-    public ChildModel getChildByCode(String childCode) {
+    public ChildAccountModel getChildByCode(String childCode) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            ChildModel cm = template.queryForObject("SELECT * FROM childaccount c WHERE c.uniquecode= ?", new Object[]{childCode}, new RowMapper<ChildModel>() {
+            ChildAccountModel cm = template.queryForObject("SELECT * FROM childaccount c WHERE c.uniquecode= ?", new Object[]{childCode}, new RowMapper<ChildAccountModel>() {
                 @Override
-                public ChildModel mapRow(ResultSet resultSet, int i) throws SQLException {
+                public ChildAccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
                     try {
                         UUID uuid = UUID.fromString(resultSet.getString("id"));
 
-                        return new ChildModel(uuid, childCode);
+                        return new ChildAccountModel(uuid, childCode);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return null;
@@ -1067,12 +1116,12 @@ public class DatabaseController {
         }
     }
 
-    public List<AccountModel> getParentFromChild(ChildModel childModel) {
+    public List<AccountModel> getParentFromChild(ChildAccountModel childAccountModel) {
 
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
         List<Map<String, Object>> rows = select.queryForList(
-                "SELECT a.* from account a, childaccount_account cha where a.id = cha.account_id and cha = ?",childModel.getUuid()
+                "SELECT a.* from account a, childaccount_account cha where a.id = cha.account_id and cha = ?", childAccountModel.getUuid()
         );
 
         List<AccountModel> parents = new ArrayList<>(rows.size());

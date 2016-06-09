@@ -11,15 +11,22 @@ import nl.pts4.model.AccountModel;
 public class SocketIORegistration {
 
     private static SocketIORegistration socketIORegistration;
+    private SocketIOServer server;
 
     private SocketIORegistration() {
-        SocketIOServer server = new SocketIOServer(getConfiguration());
+        server = new SocketIOServer(getConfiguration());
         addEvents(server);
+        start();
+    }
+
+    public void start() {
         server.start();
     }
 
-    public static void start() {
+    public static SocketIORegistration getInstance() {
         if (socketIORegistration == null) socketIORegistration = new SocketIORegistration();
+
+        return socketIORegistration;
     }
 
     private void addEvents(SocketIOServer server) {
@@ -35,5 +42,9 @@ public class SocketIORegistration {
         config.setHostname("localhost");
         config.setPort(8081);
         return config;
+    }
+
+    public void shutdown() {
+        server.stop();
     }
 }

@@ -4,7 +4,7 @@ import net.coobird.thumbnailator.filters.Caption;
 import net.coobird.thumbnailator.filters.Watermark;
 import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
-import nl.pts4.model.ChildModel;
+import nl.pts4.model.ChildAccountModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,8 +58,8 @@ public class FileUploadController {
             return null;
         }
 
-        ChildModel childModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
-        if (childModel == null){
+        ChildAccountModel childAccountModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
+        if (childAccountModel == null) {
             m.addAttribute("error", "That uniquecode does not seem to exist.");
             return "multiupload";
         }
@@ -85,7 +85,7 @@ public class FileUploadController {
                     }
                     message.append(String.format("File: %s succesfully uploaded\n", multipartFile.getOriginalFilename()));
                     // TODO Check last parameter
-                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(),childModel.getUuid(), fileNameLowRes);
+                    DatabaseController.getInstance().createPhoto(uuid, fileName, MainController.getCurrentUser(request).getUUID(), childAccountModel.getUuid(), fileNameLowRes);
                 } else {
                     warning.append(String.format("File: %s is of a unsupported format\n", multipartFile.getOriginalFilename()));
                 }
@@ -175,7 +175,7 @@ public class FileUploadController {
         watermerk = resizeImageFromFile(file, 112, 195);
 
         if (watermerk != null) {
-            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.2f);
+            Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.4f);
             return filter.apply(originalImage);
         } else {
             String caption = "PhotoShop";

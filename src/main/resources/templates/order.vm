@@ -6,11 +6,15 @@
             var item = $(this);
             var effectSelecter = item.find("#effectSelect");
             effectSelecter.change(function() {
-                var value = effectSelecter.val();
+//                var value = effectSelecter.val();
+                var selectedValue = effectSelecter[0].selectedIndex;
+                var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
-                if (value == 5) {
+                if (text == "Grayscale") {
+                    img.removeClass("invert");
                     img.addClass("grayscale");
-                } else if (value == 2) {
+                } else if (text == "Inverted") {
+                    img.removeClass("grayscale");
                     img.addClass("invert");
                 } else {
                     img.removeClass("grayscale");
@@ -100,6 +104,8 @@
                                         class="material-icons">add</i></a>
                                 <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i
                                         class="material-icons">clear</i></a>
+                                <a class="btn btn-primary" href="/order/preview?itemID=4&photoUUID=$photo.uuid"><i
+                                        class="material-icons">Preview</i></a>
                             </div>
                         </div>
                         <br>

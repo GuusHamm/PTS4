@@ -1,23 +1,36 @@
 package nl.pts4.controller;
 
+import net.coobird.thumbnailator.filters.Watermark;
+import net.coobird.thumbnailator.geometry.Positions;
 import nl.pts4.email.EmailManager;
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderLineDescriptionModel;
 import nl.pts4.model.OrderModel;
 import nl.pts4.model.PhotoModel;
+import nl.pts4.model.ItemModel;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.print.DocFlavor;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by GuusHamm on 16-3-2016.
@@ -110,4 +123,79 @@ public class OrderController {
         return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
 
     }
+
+    @RequestMapping(value = "/order/preview", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"itemID", "photoUUID"})
+    private @ResponseBody byte[] convertImageToByteArray(@RequestParam(value = "itemID") int itemID, @RequestParam(value = "photoUUID") String uuidString) {
+
+        //http://pts4.guushamm.tech/order/preview?id=604773a5-b0c4-40ea-9483-00afc77841f9&rating=1
+
+        ItemModel item = DatabaseController.getInstance().getItemByID(itemID);
+        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(uuidString));
+
+        BufferedImage itemImage = null;
+        BufferedImage overlayImage = null;
+
+
+        String itemImagesource = "http://pts4.guushamm.tech/resources/" + item.getThumbnailPath();
+        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePathLowRes();
+
+        URL itemUrl = null;
+        URL photoURL = null;
+        try {
+            itemUrl = new URL(itemImagesource);
+            photoURL = new URL(photoImageSource);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        if (itemUrl != null && photoURL != null) {
+            try {
+                itemImage = ImageIO.read(itemUrl);
+                overlayImage = ImageIO.read(photoURL);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BufferedImage finalImage = putImageOverItem(overlayImage, itemImage);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try {
+            ImageIO.write(finalImage, "png", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] res = baos.toByteArray();
+        return res;
+    }
+
+    private BufferedImage putImageOverItem(BufferedImage originalImage, BufferedImage itemImage) {
+        if (originalImage == null || itemImage == null) {
+            return null;
+        }
+        Watermark filter = new Watermark(Positions.CENTER, originalImage, 0.8f);
+        return filter.apply(itemImage);
+    }
+
+
+//    public BufferedImage resizeImageFromFile(File file, int width, int height) {
+//        BufferedImage image = null;
+//
+//        try {
+//            image = ImageIO.read(file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        int type;
+//        type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+//        BufferedImage resizedImage = new BufferedImage(width, height, type);
+//        Graphics2D g = resizedImage.createGraphics();
+//        g.drawImage(image, 0, 0, width, height, null);
+//        g.dispose();
+//        return resizedImage;
+//    }
 }
