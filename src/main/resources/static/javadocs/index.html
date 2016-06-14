@@ -10,21 +10,21 @@
         targetPage = targetPage.substring(1);
     if (targetPage.indexOf(":") != -1 || (targetPage != "" && !validURL(targetPage)))
         targetPage = "undefined";
-    function validURL(url) {
+    function validURL(link) {
         try {
-            url = decodeURIComponent(url);
+            link = decodeURIComponent(link);
         }
         catch (error) {
             return false;
         }
-        var pos = url.indexOf(".html");
-        if (pos == -1 || pos != url.length - 5)
+        var pos = link.indexOf(".html");
+        if (pos == -1 || pos != link.length - 5)
             return false;
         var allowNumber = false;
         var allowSep = false;
         var seenDot = false;
-        for (var i = 0; i < url.length - 5; i++) {
-            var ch = url.charAt(i);
+        for (var i = 0; i < link.length - 5; i++) {
+            var ch = link.charAt(i);
             if ('a' <= ch && ch <= 'z' ||
                     'A' <= ch && ch <= 'Z' ||
                     ch == '$' ||

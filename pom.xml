@@ -163,7 +163,7 @@
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <link>https://repo.spring.io/libs-milestone</link>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -172,7 +172,7 @@
         <repository>
             <id>apache.snapshots</id>
             <name>Apache Development Snapshot Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <link>https://repository.apache.org/content/repositories/snapshots/</link>
             <releases>
                 <enabled>false</enabled>
             </releases>
