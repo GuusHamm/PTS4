@@ -3,7 +3,7 @@
         <div class="panel">
             <div class="panel-body">
                 <form class="form">
-                    <fieldset class="form-group col-lg-2">
+                    <div class="col-lg-6">
                         <select class="form-control" id="inputLangFooter">
                             <option value="en_GB">English</option>
                             <option value="nl">Nederlands</option>
@@ -26,10 +26,9 @@
                                 });
                             })
                         </script>
-
-
-
-                        #if ($account && $account.theme)
+                    </div>
+                    #if ($account && $account.theme)
+                        <div class="col-lg-6">
                             <select class="form-control" id="inputThemeFooter">
                                 <option value="bootstrap.yeti.min.css">Default</option>
                                 <option value="bootstrap.cerulean.min.css">Cerulean</option>
@@ -67,10 +66,9 @@
                                     });
                                 })
                             </script>
-                        #end
-                    </fieldset>
+                        </div>
+                    #end
                 </form>
-                <span class="text-muted bottomOfPage">#springMessageText("footer.text", "Footer text")</span>
             </div>
         </div>
     </div>
