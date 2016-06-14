@@ -118,7 +118,7 @@ public class OrderController {
 
         request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
 
-        emailManager.sendMessage("place-order.vm", map, user.getEmail(), "Order Confirmation");
+        emailManager.sendMessage("place-order2.vm", map, user.getEmail(), "Order Confirmation");
 
         return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
 

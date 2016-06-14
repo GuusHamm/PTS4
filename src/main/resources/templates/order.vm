@@ -30,6 +30,7 @@
             $('#paypalForm').submit();
         });
     });
+
 </script>
 
 <style type="text/css">
