@@ -1,23 +1,50 @@
-#* @vtlvariable name="user" type="nl.pts4.model.AccountModel" *#
-#* @vtlvariable name="order" type="nl.pts4.model.OrderModel" *#
-#* @vtlvariable name="photo" type="nl.pts4.model.PhotoModel" *#
-#* @vtlvariable name="effect" type="nl.pts4.model.EffectModel" *#
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
 <body>
-<h3>Very hello there ${user.getName()}!</h3><br/>
-<div>
+<div class="container">
     You successfully placed your order for such photo..<br/>
-    <a href="pts4.guushamm.tech/order-overview">View your wows</a>
-    <p><p>
-    #if($effect)
-    #foreach ($e in $effect)
-        e
-    #end
-    #end
+    <a href="http://pts4.guushamm.tech/order-overview">View your wows</a>
+    <p>
+<p>
+    #if($oldm)
+        #foreach ($item in $oldm)
 
-    Much wow, such bye!<br/>
-    Photoshop
+            <table class="table table-hover" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Download Link (optional)</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                    <td>$item.description</td>
+                    <td>$item.amount</td>
+                    #if($item.shouldGetDigitalDownload)
+                        <td>
+                            <a href="$item.digitalDownloadLink">Download</a>
+                        </td>
+                    #end
+                </tr>
+
+                </tbody>
+
+            </table>
+        #end
+
+    #end
+    Much wow, such bye!<br/><br/>
+    The Photoshop
     <img src="https://thenextweb.com/wp-content/blogs.dir/1/files/2013/12/dogecoin-img.jpg">
 </div>
+<h3>Very hello there ${user.getName()}!</h3><br/>
 </body>
-</html>

@@ -4,8 +4,10 @@ import net.coobird.thumbnailator.filters.Watermark;
 import net.coobird.thumbnailator.geometry.Positions;
 import nl.pts4.email.EmailManager;
 import nl.pts4.model.AccountModel;
-import nl.pts4.model.ItemModel;
+import nl.pts4.model.OrderLineDescriptionModel;
+import nl.pts4.model.OrderModel;
 import nl.pts4.model.PhotoModel;
+import nl.pts4.model.ItemModel;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.print.DocFlavor;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -73,7 +77,6 @@ public class OrderController {
 
         if (!(photo.length == item.length) && !(item.length == effect.length)) {
             m.addAttribute(MainController.ERROR_ATTRIBUTE, "Well congrats, you like breaking things don't you");
-//            return "order";
             return new RedirectView("order");
         }
 
@@ -83,18 +86,39 @@ public class OrderController {
         map.put("effect", effect);
         map.put("item", item);
         map.put("user", user);
+        List<OrderLineDescriptionModel> oldm = new ArrayList<>();
 
-        int id = DatabaseController.getInstance().createOrderModel(photo, effect, item, user.getUUID());
-        request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
-        emailManager.sendMessage("place-order.vm", map, user.getEmail(), "Order Confirmation");
+        DatabaseController.getInstance().createOrderModel(photo, effect, item, user.getUUID());
+
         redirectAttributes.addAttribute("cmd", "_cart");
         redirectAttributes.addAttribute("upload", "1");
+        redirectAttributes.addAttribute("currency_code", "EUR");
         redirectAttributes.addAttribute("business", "woutie012006@hotmail.nl");
+        OrderLineDescriptionModel model = new OrderLineDescriptionModel();
 
+        int counter = 0;
         for (Map.Entry<String, String> entry : allRequestParams.entrySet()) {
             redirectAttributes.addAttribute(entry.getKey(),entry.getValue());
-            System.out.println(entry.getKey()+entry.getValue() );
+
+            if(entry.getKey().contains("item_name") ) {
+                model = new OrderLineDescriptionModel(entry.getValue());
+                if(entry.getValue().toLowerCase().contains("download")) {
+                    PhotoModel pm = DatabaseController.getInstance().getPhotoByUUID(photo[counter]);
+                    model.setShouldGetDigitalDownload(true);
+                    model.setDigitalDownloadLink(pm.getFilePath());
+                }
+                counter ++;
+            }
+            if(entry.getKey().contains("amount_")){
+                model.setAmount(entry.getValue());
+                oldm.add(model);
+            }
         }
+        map.put("oldm", oldm);
+
+        request.getSession().setAttribute(MainController.CART_ATTRIBUTE,null);
+
+        emailManager.sendMessage("place-order.vm", map, user.getEmail(), "Order Confirmation");
 
         return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
 
