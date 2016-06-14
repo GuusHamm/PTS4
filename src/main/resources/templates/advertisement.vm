@@ -1,15 +1,32 @@
 #* @vtlvariable name="templates" type="nl.pts4.admin.advertisement.AdTemplate[]" *#
 #parse("header.vm")
 <div class="container" xmlns="http://www.w3.org/1999/html">
+
+    <div id="info-panel" class="hidden panel panel-info">
+        <div class="panel-heading"><h3 class="panel-title">Oh shit waddup</h3></div>
+        <div class="panel-body">
+            Template <span id="info-panel-template"></span> sent!
+        </div>
+    </div>
     <div class="well bs-component">
         #foreach ($advertisement in $templates)
             <div class="panel">
-                <div class="panel-body">
+                <div class="pane    l-body">
                     $advertisement.getProcessedTemplate()
                 </div>
-                <a class="btn btn-default" onclick="$.get(' /advertisement/send?to=all&template=$advertisement.path')">Send this template</a>
+                <a class="btn btn-default" onclick='sendTemplate(this, "$advertisement.path")'>Send this template</a>
             </div>
         #end
     </div>
 </div>
 #parse("footer.vm")
+<script type="text/javascript">
+    var infoPanel = $("#info-panel");
+    var infoPanelTemplate = $("#info-panel-template");
+    function sendTemplate(button, ad) {
+        $(button).attr("disabled", "disabled");
+        infoPanel.removeClass("hidden");
+        $.get('/advertisement/send?to=all&template=' + ad);
+        infoPanelTemplate.text(ad   );
+    }
+</script>
