@@ -121,7 +121,7 @@
                 };
 
                 $.ajax({
-                    "url": "/settings-rest",
+                    "link": "/settings-rest",
                     "method": "post",
                     "data": data,
                     "success": function (data) {

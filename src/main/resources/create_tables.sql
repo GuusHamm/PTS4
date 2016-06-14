@@ -96,6 +96,15 @@ CREATE TABLE orderline (
   amount               INTEGER NOT NULL
 );
 
+CREATE TABLE public.link
+         (
+         key TEXT PRIMARY KEY NOT NULL,
+         link TEXT NOT NULL,
+         authorizedUser UUID,
+         CONSTRAINT link_authorizedUser_account_fk FOREIGN KEY (authorizedUser) REFERENCES account (id)
+         );
+CREATE UNIQUE INDEX link_key_uindex ON public.link (key);
+
 -- ACCOUNT MOCK DATA
 INSERT INTO account (id, name, email, active, hash)
 VALUES ('602a4264-cf81-4ad3-aa6e-13cf8578320f', 'Norma Jones', 'njones0@amazonaws.com', TRUE,

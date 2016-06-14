@@ -67,7 +67,7 @@
             var password = $("#inputPassword").val();
 
             $.ajax({
-                "url": "login-rest",
+                "link": "login-rest",
                 "method": "post",
                 "data": {
                     "email": email,

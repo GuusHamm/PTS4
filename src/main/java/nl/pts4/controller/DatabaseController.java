@@ -113,6 +113,22 @@ public class DatabaseController {
         return getAccount(accountUUID);
     }
 
+    public LinkModel getLinkModel(String key) {
+        JdbcTemplate retrieve = new JdbcTemplate(dataSource);
+        return retrieve.queryForObject("SELECT key, link, authorizeduser FROM link WHERE key = ?", new Object[]{key}, new RowMapper<LinkModel>() {
+            @Override
+            public LinkModel mapRow(ResultSet resultSet, int i) throws SQLException {
+                return new LinkModel(resultSet.getString("key"), resultSet.getString("link"), getAccount((UUID) resultSet.getObject("authorizeduser")));
+            }
+        });
+    }
+
+    public LinkModel createLinkModel(LinkModel lm) {
+        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        insert.update("INSERT INTO link (key, link, authorizedUser) VALUES (?, ?, ?)", lm.getKey(), lm.getLink(), lm.getAuthorizedUser().getUUID());
+        return lm;
+    }
+
     /**
      * Change the email from an account
      *
@@ -520,7 +536,7 @@ public class DatabaseController {
     public List<PhotoModel> getPhotos() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-		return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid GROUP BY p.id ORDER BY capturedate"));
+        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid GROUP BY p.id ORDER BY capturedate"));
     }
 
     /**
@@ -539,18 +555,18 @@ public class DatabaseController {
         return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.childid = ? GROUP BY p.id ORDER BY capturedate", childAccountID));
     }
 
-    public List<PhotoModel> getPhotosOfAccount(UUID accountUuid){
+    public List<PhotoModel> getPhotosOfAccount(UUID accountUuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid JOIN childaccount_account ca ON p.childid = ca.childaccount_id JOIN account a ON ca.account_id = a.id WHERE a.id = ? GROUP BY p.id ORDER BY capturedate", accountUuid));
     }
 
-    public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid){
+    public List<PhotoModel> getPhotosOfPhotographer(UUID accountUuid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         return getPhotosFromMap(template.queryForList("SELECT p.id, p.photographerid, p.childid, p.schoolid, p.price,p.capturedate,p.pathtophoto,p.pathtolowresphoto, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.photographerid = ? GROUP BY p.id ORDER BY capturedate", accountUuid));
     }
 
-    private List<PhotoModel> getPhotosFromMap(List<Map<String, Object>> rows){
+    private List<PhotoModel> getPhotosFromMap(List<Map<String, Object>> rows) {
         List<PhotoModel> photoModels = new ArrayList<>(rows.size());
         for (Map<String, Object> row : rows) {
             UUID uuid = (UUID) row.get("id");
@@ -562,16 +578,16 @@ public class DatabaseController {
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
-			Integer points = 0;
-			if (row.get("points") != null) {
-                try{
+            Integer points = 0;
+            if (row.get("points") != null) {
+                try {
                     Long tempoints = (Long) row.get("points");
                     points = tempoints.intValue();
-                }catch (Exception e){
+                } catch (Exception e) {
                     points = (Integer) row.get("points");
                 }
-			}
-            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes,points));
+            }
+            photoModels.add(new PhotoModel(uuid, getAccount(photographerid), getAccount(childid), null, price, captureDate, path, pathLowRes, points));
         }
         return photoModels;
     }
@@ -591,11 +607,11 @@ public class DatabaseController {
                 String pathLowRes = resultSet.getString("pathtolowresphoto");
                 //TODO create a get school
 
-				Long points = 0l;
-				if (resultSet.getObject("points") != null) {
-					points = resultSet.getLong("points");
-				}
-                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes,points.intValue());
+                Long points = 0l;
+                if (resultSet.getObject("points") != null) {
+                    points = resultSet.getLong("points");
+                }
+                return new PhotoModel(id, DatabaseController.getInstance().getAccount(photographerid), DatabaseController.getInstance().getAccount(childid), null, price, captureDate, path, pathLowRes, points.intValue());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -701,8 +717,8 @@ public class DatabaseController {
                     ItemModel itemModel = new ItemModel(itemid, itemprice, itemType, itemdescription, thumbnailpath);
 
                     File photoFile = new File(pathtophoto);
-					//TODO incase shit get's fucked actually get the points of the photomodel
-                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto, pathLowRes,0);
+                    //TODO incase shit get's fucked actually get the points of the photomodel
+                    PhotoModel photo = new PhotoModel(photoid, getAccount(photographerid), getAccount(childid), schoolModel, price, capturedate, pathtophoto, pathLowRes, 0);
                     photoConfigurationModels1.add(new PhotoConfigurationModel(id, effectModel, itemModel, photo));
 
                 }
@@ -751,18 +767,18 @@ public class DatabaseController {
             return false;
         }
 
-        photoHasBeenRatedByUser(accountId,photoId);
+        photoHasBeenRatedByUser(accountId, photoId);
 
         insert.update("INSERT INTO rating (accountid, photoid, points) VALUES (?, ?, ?)", accountId, photoId, points);
 
         return true;
     }
 
-    public void photoHasBeenRatedByUser(UUID accountid, UUID photoid){
+    public void photoHasBeenRatedByUser(UUID accountid, UUID photoid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;",new Object[]{photoid,accountid},Integer.TYPE);
-        if (count > 0 ){
+        int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;", new Object[]{photoid, accountid}, Integer.TYPE);
+        if (count > 0) {
             JdbcTemplate remove = new JdbcTemplate(dataSource);
             remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", accountid, photoid);
 
@@ -1072,9 +1088,9 @@ public class DatabaseController {
 
         int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?", new Object[]{childAccountModel.getUniqueCode()}, Integer.TYPE);
 
-        if (i > 0){
+        if (i > 0) {
             return null;
-        }else {
+        } else {
             JdbcTemplate insert = new JdbcTemplate(dataSource);
 
             insert.update("INSERT INTO childaccount(id,uniquecode) VALUES (?,?)", childAccountModel.getUuid(), childAccountModel.getUniqueCode());
@@ -1128,26 +1144,26 @@ public class DatabaseController {
 
         for (Map<String, Object> row : rows) {
 
-                UUID uuid = UUID.fromString(row.get("id").toString());
-                String oauthkey = (String)row.get("oauthkey");
-                String oauthprovider = (String) row.get("oauthprovider");
+            UUID uuid = UUID.fromString(row.get("id").toString());
+            String oauthkey = (String) row.get("oauthkey");
+            String oauthprovider = (String) row.get("oauthprovider");
 
-                AccountModel.OAuthProviderEnum oAuthProvider = null;
-                if (oauthprovider != null)
-                    oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
+            AccountModel.OAuthProviderEnum oAuthProvider = null;
+            if (oauthprovider != null)
+                oAuthProvider = AccountModel.OAuthProviderEnum.valueOf(oauthprovider);
 
-                String name = (String) row.get("name");
-                String hash = (String) row.get("hash");
-                boolean active = (boolean)row.get("active");
+            String name = (String) row.get("name");
+            String hash = (String) row.get("hash");
+            boolean active = (boolean) row.get("active");
 
-                String type = (String) row.get("type");
-                String email = (String)row.get("email");
-                String theme = (String) row.get("theme");
-                AccountModel.AccountTypeEnum accountTypeEnum = null;
-                if (type != null)
-                    accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
+            String type = (String) row.get("type");
+            String email = (String) row.get("email");
+            String theme = (String) row.get("theme");
+            AccountModel.AccountTypeEnum accountTypeEnum = null;
+            if (type != null)
+                accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-                parents.add(new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum));
+            parents.add(new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum));
 
         }
         return parents;

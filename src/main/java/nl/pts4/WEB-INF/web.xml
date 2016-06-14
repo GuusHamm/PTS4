@@ -18,7 +18,7 @@
 
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
-        <url-pattern>*</url-pattern>
+        <link-pattern>*</link-pattern>
     </servlet-mapping>
 
     <context-param>
@@ -35,7 +35,7 @@
 
     <!--<servlet-mapping>-->
         <!--<servlet-name>CXFServlet</servlet-name>-->
-        <!--<url-pattern>/webservices/</url-pattern>-->
+        <!--<link-pattern>/webservices/</link-pattern>-->
     <!--</servlet-mapping>-->
 
 
