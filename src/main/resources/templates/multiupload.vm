@@ -1,5 +1,5 @@
 #parse("header.vm")
-<script type="text/javascript">
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     $(document).ready(function () {
         $('#addField').click(function () {
             $('#extraFields').append($('#defaultInput').html());
@@ -13,15 +13,24 @@
         </div>
         <div class="panel-body">
             <form method="post" enctype="multipart/form-data" action="multiupload">
-                <div class="form-group row" id="defaultInput">
-                    <div class="col-lg-6">
-                        <input class="form-control" type="file" name="file">
-                    </div>
-                    <div class="col-lg-6">
-                        <input class="form-control" type="text" name="uniquecode">
-                        <div id="livesearch"></div>
-                    </div>
+                <div class="form-group">
 
+                    <div class="row" id="defaultInput">
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <input class="form-control" type="file" name="file">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                <input type="checkbox" aria-label="..." name="newchild">New Child</input>
+                              </span>
+                                <input class="form-control" type="text" name="uniquecode" aria-label="..."
+                                       placeholder="Child Number    ">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="extraFields"></div>
                 <div class="btn btn-default btn-block" id="addField">+</div>

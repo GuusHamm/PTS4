@@ -27,6 +27,18 @@ public class ChildAccountController {
 	@Autowired
 	MessageSource messageSource;
 
+	public static ChildAccountModel createNewChild() {
+		ChildAccountModel childAccountModel = null;
+
+		while (childAccountModel == null) {
+			String uniqueCode = UUID.randomUUID().toString();
+			uniqueCode = uniqueCode.substring(uniqueCode.length() - 9, uniqueCode.length() - 1);
+			childAccountModel = DatabaseController.getInstance().createChild(UUID.randomUUID(), uniqueCode);
+		}
+
+		return childAccountModel;
+	}
+
 	@RequestMapping(value = "addchild")
 	public String addChild(HttpServletRequest request,
 						   HttpServletResponse response,
@@ -48,14 +60,10 @@ public class ChildAccountController {
 			return null;
 		}
 
-		ChildAccountModel childAccountModel = null;
-		while (childAccountModel == null) {
-			String uniqueCode = UUID.randomUUID().toString();
-			uniqueCode = uniqueCode.substring(uniqueCode.length() - 9, uniqueCode.length() - 1);
-			childAccountModel = DatabaseController.getInstance().createChild(UUID.randomUUID(), uniqueCode);
-		}
+		ChildAccountModel childAccountModel = createNewChild();
 
-		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, String.format("Added a new child with the code %s", childAccountModel.getUniqueCode()));
+
+		request.getSession().setAttribute(MainController.SUCCESS_ATTRIBUTE, String.format("Added a new child with the code %s\n", childAccountModel.getUniqueCode()));
 
 		try {
 			response.sendRedirect("/addchild");

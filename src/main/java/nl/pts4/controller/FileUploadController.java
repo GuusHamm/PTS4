@@ -53,21 +53,27 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, @RequestParam("uniquecode") String uniqueCode, HttpServletRequest request, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, @RequestParam("uniquecode") String uniqueCode, @RequestParam("newchild") boolean newChild, HttpServletRequest request, HttpServletResponse response, Model m) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
-        }
-
-        ChildAccountModel childAccountModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
-        if (childAccountModel == null) {
-            m.addAttribute("error", "That uniquecode does not seem to exist.");
-            return "multiupload";
         }
 
         m = MainController.addDefaultAttributesToModel(m, "Upload a file", request, response);
 
         StringBuilder message = new StringBuilder();
         StringBuilder warning = new StringBuilder();
+
+        ChildAccountModel childAccountModel;
+        if (newChild) {
+            childAccountModel = ChildAccountController.createNewChild();
+            message.append(String.format("Added a new child with the code %s", childAccountModel.getUniqueCode()));
+        } else {
+            childAccountModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
+            if (childAccountModel == null) {
+                m.addAttribute("error", "That uniquecode does not seem to exist.");
+                return "multiupload";
+            }
+        }
 
         UUID uuid = UUID.randomUUID();
 
