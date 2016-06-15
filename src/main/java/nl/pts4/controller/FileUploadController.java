@@ -178,7 +178,7 @@ public class FileUploadController {
 //            e.printStackTrace();
 //        }
 
-        watermerk = resizeImageFromFile(file, 112, 195);
+        watermerk = resizeImageFromFile(file, 128, 128);
 
         if (watermerk != null) {
             Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.4f);
