@@ -105,8 +105,8 @@
                                         class="material-icons">add</i></a>
                                 <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i
                                         class="material-icons">clear</i></a>
-                                <a class="btn btn-primary" href="/order/preview?itemID=4&photoUUID=$photo.uuid"><i
-                                        class="material-icons">Preview</i></a>
+                                <a class="btn btn-primary" href="/order/preview?itemID=4&photoUUID=$photo.uuid">
+                                    <i class="material-icons">visibility</i></a>
                             </div>
                         </div>
                         <br>
