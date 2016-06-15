@@ -66,7 +66,7 @@ public class FileUploadController {
         ChildAccountModel childAccountModel;
         if (newChild) {
             childAccountModel = ChildAccountController.createNewChild();
-            message.append(String.format("Added a new child with the code %s", childAccountModel.getUniqueCode()));
+            message.append(String.format("Added a new child with the code %s\n", childAccountModel.getUniqueCode()));
         } else {
             childAccountModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
             if (childAccountModel == null) {
