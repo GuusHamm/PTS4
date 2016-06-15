@@ -16,10 +16,10 @@
                 var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
                 if (text == "Grayscale") {
-//                    img.removeClass("invert");
-//                    img.addClass("grayscale");
-                    var pictureURL = "photo/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
-                    img.attr("src", pictureURL);
+                    img.removeClass("invert");
+                    img.addClass("grayscale");
+//                    var pictureURL = "photo/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
+//                    img.attr("src", pictureURL);
                 } else if (text == "Inverted") {
                     img.removeClass("grayscale");
                     img.addClass("invert");
@@ -35,6 +35,7 @@
 
 
                 var newURL = "/order/preview?itemID=" + value + oldURL.substr(oldURL.lastIndexOf('&'));
+                img.attr("src", newURL);
                 previewButton.attr('href', newURL);
 
             })

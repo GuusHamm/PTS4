@@ -916,7 +916,7 @@ public class DatabaseController {
 
         JdbcTemplate insert = new JdbcTemplate(dataSource);
         try {
-            insert.update("INSERT INTO item ( type, price, description, thumbnailpath) VALUES (?,?,?,?)", type, price, description, thumbnailPath);
+            insert.update("INSERT INTO item ( type, price, description, thumbnailpath) VALUES (?,?,?,?)", type, price * 100, description, thumbnailPath);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
