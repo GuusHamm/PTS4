@@ -53,7 +53,7 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/multiupload", method = RequestMethod.POST)
-    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, @RequestParam("uniquecode") String uniqueCode, @RequestParam("newchild") boolean newChild, HttpServletRequest request, HttpServletResponse response, Model m) {
+    public String uploadMultiFile(@RequestParam("file") MultipartFile[] files, @RequestParam("uniquecode") String uniqueCode, @RequestParam(value = "newchild", required = false) boolean newChild, HttpServletRequest request, HttpServletResponse response, Model m) {
         if (!MainController.assertUserIsPrivileged(request, response, true)) {
             return null;
         }

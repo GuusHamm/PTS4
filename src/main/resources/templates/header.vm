@@ -82,7 +82,9 @@
                         #if (!$account)
                             Account
                         #else
-                            $account.name
+                            $account.name #if($privileged)
+                            ( $account.accountTypeEnum.toString().substring(0,1).toUpperCase()$account.accountTypeEnum.toString().substring(1)
+                            ) #end
                         #end
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
