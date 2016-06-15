@@ -26,8 +26,14 @@ public class OrderLineDescriptionModel {
         return digitalDownloadLink;
     }
 
-    public void setDigitalDownloadLink(String digitalDownloadLink) {
-        this.digitalDownloadLink = "http://pts4.guushamm.tech/resources/"+digitalDownloadLink;
+    public void setDigitalDownloadLink(String UUID,String effect) {
+
+            this.digitalDownloadLink = "http://pts4.guushamm.tech/photo/grayscale?photoUUID="+UUID;
+
+    }
+    public void setDigitalDownloadLink(String digitalDownloadLink ) {
+
+            this.digitalDownloadLink = "http://pts4.guushamm.tech/resources/" + digitalDownloadLink;
     }
 
     public OrderLineDescriptionModel() {
