@@ -108,7 +108,12 @@ public class OrderController {
                 if(entry.getValue().toLowerCase().contains("download")) {
                     PhotoModel pm = DatabaseController.getInstance().getPhotoByUUID(photo[counter]);
                     model.setShouldGetDigitalDownload(true);
-                    model.setDigitalDownloadLink(pm.getFilePath());
+                    if(effect[counter]==2) {
+                        model.setDigitalDownloadLink(pm.getUuid().toString(),null);
+                    }else {
+                        model.setDigitalDownloadLink(pm.getFilePath());
+                    }
+
                 }
                 counter ++;
             }

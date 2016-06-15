@@ -5,14 +5,21 @@
         $("div[id^='priceItem']").each(function(index) {
             var item = $(this);
             var effectSelecter = item.find("#effectSelect");
+            var itemSelecter = item.find("#itemSelect");
+
+            var previewButton = item.find("#previewHyperlink");
+            var oldURL = previewButton.attr('href');
+
             effectSelecter.change(function() {
 //                var value = effectSelecter.val();
                 var selectedValue = effectSelecter[0].selectedIndex;
                 var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
                 if (text == "Grayscale") {
-                    img.removeClass("invert");
-                    img.addClass("grayscale");
+//                    img.removeClass("invert");
+//                    img.addClass("grayscale");
+                    var pictureURL = "photo/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
+                    img.attr("src", pictureURL);
                 } else if (text == "Inverted") {
                     img.removeClass("grayscale");
                     img.addClass("invert");
@@ -20,6 +27,15 @@
                     img.removeClass("grayscale");
                     img.removeClass("invert");
                 }
+            })
+
+            itemSelecter.change(function() {
+                var selectedValue = itemSelecter[0].selectedIndex;
+                var value = itemSelecter.val();
+
+
+                var newURL = "/order/preview?itemID=" + value + oldURL.substr(oldURL.lastIndexOf('&'));
+                previewButton.attr('href', newURL);
 
             })
         })
@@ -105,7 +121,7 @@
                                         class="material-icons">add</i></a>
                                 <a class="btn btn-danger" href="/remove_photos?id=$photo.uuid"><i
                                         class="material-icons">clear</i></a>
-                                <a class="btn btn-primary" href="/order/preview?itemID=4&photoUUID=$photo.uuid">
+                                <a class="btn btn-primary" id="previewHyperlink" href="/order/preview?itemID=4&photoUUID=$photo.uuid">
                                     <i class="material-icons">visibility</i></a>
                             </div>
                         </div>

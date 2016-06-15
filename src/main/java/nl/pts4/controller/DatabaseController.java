@@ -574,7 +574,7 @@ public class DatabaseController {
             UUID childid = (UUID) row.get("childid");
             //// TODO: 4-4-16 fix this
 //			int schoolid = (int) row.get("schoolid");
-            int price = Integer.parseInt(String.valueOf(row.get("price")));
+            int price = Integer.parseInt(String.valueOf(row.get("price"))) / 100;
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
