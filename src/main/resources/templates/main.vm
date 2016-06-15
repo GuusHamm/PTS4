@@ -14,6 +14,7 @@
                     <li data-target="#myCarousel" data-slide-to="3"></li>
                     <li data-target="#myCarousel" data-slide-to="4"></li>
                     <li data-target="#myCarousel" data-slide-to="5"></li>
+                    <li data-target="#myCarousel" data-slide-to="6"></li>
                 </ol>
 
                 <!-- Wrapper for slides -->
@@ -43,6 +44,10 @@
                     </div>
                     <div class="item text-center">
                         <img src="images/homepage5.gif" class="img-responsive center-block"
+                             alt="Don't let them fool you" width="500" height="500">
+                    </div>
+                    <div class="item text-center">
+                        <img src="images/homepage6.gif" class="img-responsive center-block"
                              alt="Don't let them fool you" width="500" height="500">
                     </div>
                 </div>
