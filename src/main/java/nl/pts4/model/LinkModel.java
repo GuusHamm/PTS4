@@ -1,5 +1,9 @@
 package nl.pts4.model;
 
+import nl.pts4.controller.DatabaseController;
+
+import java.util.UUID;
+
 public class LinkModel {
 
     private String key;
@@ -26,5 +30,12 @@ public class LinkModel {
 
     public AccountModel getAuthorizedUser() {
         return authorizedUser;
+    }
+
+    public static LinkModel newLinkModel(String redirect, AccountModel authorizedUser) {
+        UUID uuid = UUID.randomUUID();
+        LinkModel lm = new LinkModel(uuid.toString(), redirect, authorizedUser);
+        DatabaseController.getInstance().createLinkModel(lm);
+        return lm;
     }
 }

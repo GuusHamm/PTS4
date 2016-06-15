@@ -23,7 +23,6 @@ public class LinkController {
             }
         }
         response.sendRedirect(lm.getLink());
-        
     }
 
 }
