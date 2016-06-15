@@ -116,9 +116,9 @@
         </tr>
         #if($oldm)
             <tr class="heading">
-                <th>#springMessageText("email.description", "Description")</th>
-                <th>#springMessageText("email.amount", "Amount")</th>
-                <th>#springMessageText("email.downloadlink", "Download Link (optional)")</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Download Link (optional)</th>
             </tr>
             #foreach ($item in $oldm)
                 <tr class="item" style="align:;left;">
