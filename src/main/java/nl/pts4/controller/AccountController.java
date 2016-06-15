@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static nl.pts4.controller.MainController.ERROR_ATTRIBUTE;
@@ -31,12 +26,12 @@ import static nl.pts4.controller.MainController.ERROR_ATTRIBUTE;
 public class AccountController {
 
     public static final String AccountModelKey = "user";
-    public static final String CSRFToken = "CSRF";
-    public static final int CSRFExpiry = 60 * 10; // 10 Minutes
+    private final String CSRFToken = "CSRF";
+
+
     @Autowired
     private MessageSource messageSource;
-    private Map<String, Date> tokens = new HashMap<>();
-    private SecureRandom random = new SecureRandom();
+
 
     /**
      * Checks the password for a account
@@ -60,12 +55,9 @@ public class AccountController {
     public String deleteGet(Model m, HttpServletRequest request, HttpServletResponse response) {
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Delete!");
 
-        String randomToken = new BigInteger(130, random).toString(32);
-        tokens.put(randomToken, new Date());
-
         m = MainController.addDefaultAttributesToModel(m, "Delete", request, response);
 
-        m.addAttribute(CSRFToken, randomToken);
+        m.addAttribute(CSRFController.getInstance().getCSRFToken(), CSRFController.getInstance().generateToken());
         m.addAttribute("cart", request.getSession().getAttribute("Cart"));
         return "delete";
     }
@@ -91,12 +83,8 @@ public class AccountController {
         m = MainController.addDefaultAttributesToModel(m, "Delete", request, response);
 
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account deleted");
-        if (!tokens.containsKey(csrfToken))
+        if (!CSRFController.getInstance().validToken(csrfToken))
             m.addAttribute(ERROR_ATTRIBUTE, "Token not found or expired");
-
-        Date tokenDate = tokens.get(csrfToken);
-        if (isExpired(tokenDate))
-            m.addAttribute(ERROR_ATTRIBUTE, "Token not found expired");
 
         AccountModel accountModel = MainController.getCurrentUser(request);
         if (!checkPassword(accountModel, password))
@@ -107,22 +95,10 @@ public class AccountController {
             response.sendRedirect("/logout");
         }
 
-        tokens.remove(csrfToken);
+        CSRFController.getInstance().voidToken(csrfToken);
         return "delete";
     }
 
-    /**
-     * Checks if date is later than date + CSRFExpiry
-     *
-     * @param date Date to check
-     * @return True if date is earlier than date + CSRFExpiry, false otherwise
-     */
-    private boolean isExpired(Date date) {
-        Date now = new Date();
-        Date expiry = new Date(date.getTime());
-        expiry.setTime(expiry.getTime() + AccountController.CSRFExpiry);
-        return now.before(expiry);
-    }
 
     /**
      * Going to the login page
