@@ -88,6 +88,9 @@ public class AccountController {
                          HttpServletResponse response,
                          @RequestParam("password") String password,
                          @RequestParam(CSRFToken) String csrfToken) throws IllegalArgumentException, IOException {
+        if (!   MainController.assertUserIsSignedIn(request, response)) {
+            return "Not signed in";
+        }
         m = MainController.addDefaultAttributesToModel(m, "Delete", request, response);
 
         m.addAttribute(MainController.TITLE_ATTRIBUTE, "Account deleted");
