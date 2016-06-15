@@ -80,6 +80,9 @@ public class PhotoViewController {
 
     @RequestMapping(value = "/photos", params = {"id"})
     public void photosAddToCart(@RequestParam(value = "id", required = false) UUID id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (!MainController.assertUserIsSignedIn(request, response)) {
+            return;
+        }
         LinkedList<PhotoModel> cart;
         if (request.getSession().getAttribute(MainController.CART_ATTRIBUTE) == null) {
             cart = new LinkedList<>();
