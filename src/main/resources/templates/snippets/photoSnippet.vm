@@ -10,7 +10,7 @@
             #if($privileged)
             <div class="col-lg-5 col">
             #else
-            <div class="col-lg-8 col">
+            <div class="col-lg-6 col">
             #end
             <p class="card-text">Gemaakt door $photo.photographer.name, op $photo.captureDate</p>
             #set($priceRound = $photo.price - .01)
