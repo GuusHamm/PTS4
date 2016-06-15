@@ -124,6 +124,49 @@ public class OrderController {
 
     }
 
+
+    @RequestMapping(value = "/order/partofimage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID", "x", "y", "w", "h"})
+    private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h) {
+        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
+
+        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePath();
+        URL photoURL = null;
+        BufferedImage photoImage = null;
+
+        try {
+            photoURL = new URL(photoImageSource);
+            photoImage = ImageIO.read(photoURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        if (photoImage != null) {
+            //Parameters:
+            //x         get start x start at the right
+            //y         get start y starts at the top
+            //width     how much width
+            //heigth    How much it should go down from the y parameter
+
+            BufferedImage selectedImage = photoImage.getSubimage(x, y, w, h);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            try {
+                ImageIO.write(selectedImage, "png", baos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            byte[] res = baos.toByteArray();
+            return res;
+        } else {
+            return null;
+        }
+    }
+
     @RequestMapping(value = "/order/preview", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"itemID", "photoUUID"})
     private @ResponseBody byte[] convertImageToByteArray(@RequestParam(value = "itemID") int itemID, @RequestParam(value = "photoUUID") String uuidString) {
 
