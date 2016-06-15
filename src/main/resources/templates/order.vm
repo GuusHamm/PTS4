@@ -5,21 +5,14 @@
         $("div[id^='priceItem']").each(function(index) {
             var item = $(this);
             var effectSelecter = item.find("#effectSelect");
-            var itemSelecter = item.find("#itemSelect");
-
-            var previewButton = item.find("#previewHyperlink");
-            var oldURL = previewButton.attr('href');
-
             effectSelecter.change(function() {
 //                var value = effectSelecter.val();
                 var selectedValue = effectSelecter[0].selectedIndex;
                 var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
                 if (text == "Grayscale") {
-//                    img.removeClass("invert");
-//                    img.addClass("grayscale");
-                    var pictureURL = "photo/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
-                    img.attr("src", pictureURL);
+                    img.removeClass("invert");
+                    img.addClass("grayscale");
                 } else if (text == "Inverted") {
                     img.removeClass("grayscale");
                     img.addClass("invert");
@@ -29,14 +22,19 @@
                 }
             })
 
+            var itemSelecter = item.find("#itemSelect");
+
             itemSelecter.change(function() {
                 var selectedValue = itemSelecter[0].selectedIndex;
                 var value = itemSelecter.val();
 
+                var previewButton = item.find("#previewHyperlink");
+                var oldURL = previewButton.attr('href');
 
                 var newURL = "/order/preview?itemID=" + value + oldURL.substr(oldURL.lastIndexOf('&'));
+                var img = item.find("img");
+                img.attr("src", newURL);
                 previewButton.attr('href', newURL);
-
             })
         })
     });
