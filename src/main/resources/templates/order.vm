@@ -18,8 +18,8 @@
                 if (text == "Grayscale") {
 //                    img.removeClass("invert");
 //                    img.addClass("grayscale");
-                    var pictureURL = "/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
-                    img.attr('src', pictureURL);
+                    var pictureURL = "photo/grayscale?" + oldURL.substr(oldURL.lastIndexOf('&') + 1);
+                    img.attr("src", pictureURL);
                 } else if (text == "Inverted") {
                     img.removeClass("grayscale");
                     img.addClass("invert");
