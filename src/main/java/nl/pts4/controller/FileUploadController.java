@@ -169,7 +169,7 @@ public class FileUploadController {
     }
 
     private BufferedImage putWatermarkOnImage(BufferedImage originalImage) {
-        File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "datBoi.png"));
+        File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "watermerk.png"));
 
         BufferedImage watermerk = null;
 //        try {
