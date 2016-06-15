@@ -22,6 +22,8 @@ import javax.print.DocFlavor;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -123,7 +126,49 @@ public class OrderController {
         return new RedirectView("https://www.sandbox.paypal.com/cgi-bin/webscr");
 
     }
+    @RequestMapping(value = "/photo/grayscale", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID"})
+    private @ResponseBody byte[] toGrayScale(@RequestParam(value = "photoUUID") String photoUUID) {
+        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
 
+        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePath();
+        URL photoURL = null;
+        BufferedImage photoImage = null;
+
+        try {
+            photoURL = new URL(photoImageSource);
+            photoImage = ImageIO.read(photoURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BufferedImage image = null;
+        if (photoImage != null) {
+            image = new BufferedImage(photoImage.getWidth(), photoImage.getHeight(),
+                    BufferedImage.TYPE_BYTE_GRAY);
+            Graphics g = image.getGraphics();
+            g.drawImage(photoImage, 0, 0, null);
+            g.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            try {
+                if (image != null) {
+                    ImageIO.write(image, "png", baos);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            byte[] res = baos.toByteArray();
+            return res;
+        } else {
+            return null;
+        }
+
+
+    }
 
     @RequestMapping(value = "/order/partofimage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID", "x", "y", "w", "h"})
     private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h) {
