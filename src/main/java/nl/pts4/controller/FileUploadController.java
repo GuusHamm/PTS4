@@ -66,7 +66,7 @@ public class FileUploadController {
         ChildAccountModel childAccountModel;
         if (newChild) {
             childAccountModel = ChildAccountController.createNewChild();
-            message.append(String.format("Added a new child with the code %s", childAccountModel.getUniqueCode()));
+            message.append(String.format("Added a new child with the code %s\n", childAccountModel.getUniqueCode()));
         } else {
             childAccountModel = DatabaseController.getInstance().getChildByCode(uniqueCode);
             if (childAccountModel == null) {
@@ -169,7 +169,7 @@ public class FileUploadController {
     }
 
     private BufferedImage putWatermarkOnImage(BufferedImage originalImage) {
-        File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "datBoi.png"));
+        File file = new File(String.format("%s/src/main/resources/static/images/%s", System.getProperty("user.dir"), "watermerk.png"));
 
         BufferedImage watermerk = null;
 //        try {
@@ -178,7 +178,7 @@ public class FileUploadController {
 //            e.printStackTrace();
 //        }
 
-        watermerk = resizeImageFromFile(file, 112, 195);
+        watermerk = resizeImageFromFile(file, 128, 128);
 
         if (watermerk != null) {
             Watermark filter = new Watermark(Positions.BOTTOM_LEFT, watermerk, 0.4f);

@@ -14,7 +14,7 @@ import java.util.UUID;
  * Created by GuusHamm on 16-3-2016.
  */
 public class UtilConsole {
-    public static void util(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         System.out.println("Various quick tools for testing");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -48,7 +48,7 @@ public class UtilConsole {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(uuid.toString()), null);
         } else {
             System.out.println("oops that's not a valid option");
-            util(args);
+            main(args);
         }
 
 

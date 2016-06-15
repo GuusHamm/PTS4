@@ -12,6 +12,8 @@
                     <li data-target="#myCarousel" data-slide-to="1"></li>
                     <li data-target="#myCarousel" data-slide-to="2"></li>
                     <li data-target="#myCarousel" data-slide-to="3"></li>
+                    <li data-target="#myCarousel" data-slide-to="4"></li>
+                    <li data-target="#myCarousel" data-slide-to="5"></li>
                 </ol>
 
                 <!-- Wrapper for slides -->
@@ -33,6 +35,14 @@
 
                     <div class="item text-center">
                         <img src="images/homepage4.jpg" class="img-responsive center-block"
+                             alt="Don't let them fool you" width="500" height="500">
+                    </div>
+                    <div class="item text-center">
+                        <img src="images/homepage4.gif" class="img-responsive center-block"
+                             alt="Don't let them fool you" width="500" height="500">
+                    </div>
+                    <div class="item text-center">
+                        <img src="images/homepage5.gif" class="img-responsive center-block"
                              alt="Don't let them fool you" width="500" height="500">
                     </div>
                 </div>
@@ -96,19 +106,18 @@
                             </div>
                         #end
 
-                        <div class="list-group-item-primary
-                         col-lg-4">
-                            <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
-                        </div>
-                        <div class="list-group-item-primary
-                         col-lg-4">
-                            <a href="#" class="btn btn-primary btn-block btn-lg">Dummy Button</a>
-                        </div>
+
                         #if($account)
                             <div class="list-group-item-primary
                              col-lg-4">
+                                <a href="/addchildtoparent"
+                                   class="btn btn-primary btn-block btn-lg">#springMessageText(
+                                "main.addchild","Add a Child to your Account")</a>
+                            </div>
+                            <div class="list-group-item-primary
+                             col-lg-4">
                                 <a href="/account/settings"
-                                   class="btn btn-warning btn-block btn-lg">#springMessageText(
+                                   class="btn btn-info btn-block btn-lg">#springMessageText(
                                 "main.settings", "Settings")</a>
                             </div>
                         #else

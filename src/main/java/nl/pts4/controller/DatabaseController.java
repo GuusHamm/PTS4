@@ -203,7 +203,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme FROM account WHERE id = ?",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme FROM account WHERE id = ? AND active = true",
                             new Object[]{uuid}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -219,7 +219,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'customer' LIMIT 1",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'customer' AND active = true LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -308,7 +308,7 @@ public class DatabaseController {
         AccountModel am;
         try {
             am = select.
-                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type,theme FROM account WHERE email = ?",
+                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type,theme FROM account WHERE email = ? AND active = true",
                             new Object[]{email},
                             (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -574,7 +574,7 @@ public class DatabaseController {
             UUID childid = (UUID) row.get("childid");
             //// TODO: 4-4-16 fix this
 //			int schoolid = (int) row.get("schoolid");
-            int price = Integer.parseInt(String.valueOf(row.get("price")));
+            int price = Integer.parseInt(String.valueOf(row.get("price"))) / 100;
             Date captureDate = (Date) row.get("capturedate");
             String path = String.valueOf(row.get("pathtophoto"));
             String pathLowRes = String.valueOf(row.get("pathtolowresphoto"));
@@ -809,7 +809,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type,theme FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ?", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
+            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type,theme FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ? AND a.active = true", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
                 @Override
                 public AccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
                     return getAccountFromResultSet(resultSet);
@@ -834,7 +834,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            template.update("DELETE FROM account a WHERE a.id = ?", uuid);
+            template.update("UPDATE account a SET active = false WHERE a.id = ?", uuid);
             return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
