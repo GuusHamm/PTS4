@@ -149,6 +149,9 @@ public class OrderController {
             //y         get start y starts at the top
             //width     how much width
             //heigth    How much it should go down from the y parameter
+            if (photoImage.getWidth() <  x + w || photoImage.getHeight() < y + h) {
+                return null;
+            }
 
             BufferedImage selectedImage = photoImage.getSubimage(x, y, w, h);
 
