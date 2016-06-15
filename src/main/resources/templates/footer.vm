@@ -14,7 +14,7 @@
                                     $("#inputLangFooter").change(function () {
                                         var lang = $("#inputLangFooter").val();
                                         $.ajax({
-                                            "link": "/settings-rest",
+                                            "url": "/settings-rest",
                                             "method": "POST",
                                             "data": {
                                                 "lang": lang
@@ -54,7 +54,7 @@
                                         $("#inputThemeFooter").change(function () {
                                             var inputTheme = $("#inputThemeFooter").val();
                                             $.ajax({
-                                                "link": "/settings-rest",
+                                                "url": "/settings-rest",
                                                 "method": "POST",
                                                 "data": {
                                                     "theme": inputTheme
