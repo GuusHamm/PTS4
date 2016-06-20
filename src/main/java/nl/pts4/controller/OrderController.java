@@ -278,7 +278,7 @@ public class OrderController {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            if (item.getType().toLowerCase().matches("digitale download") || item.getType().toLowerCase().matches("foto")) {
+            if (item.getType().toLowerCase().matches("digital download") || item.getType().toLowerCase().matches("photo")) {
                 ImageIO.write(overlayImage, "png", baos);
             } else {
                 ImageIO.write(finalImage, "png", baos);
