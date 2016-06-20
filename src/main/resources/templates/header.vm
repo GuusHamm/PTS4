@@ -12,6 +12,11 @@
     #end
     <link rel="stylesheet" href="/css/_login.css"/>
     <link rel="stylesheet" href="/css/_footer.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="css/imgareaselect-default.css" />
+    <script type="text/javascript" src="js/imgarea//jquery.min.js"></script>
+    <script type="text/javascript" src="js/imgarea/jquery.imgareaselect.pack.js"></script>
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
     <script src="/js/jquery.min.js"></script>
