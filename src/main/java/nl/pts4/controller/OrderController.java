@@ -1,5 +1,6 @@
 package nl.pts4.controller;
 
+import net.coobird.thumbnailator.filters.ImageFilter;
 import net.coobird.thumbnailator.filters.Watermark;
 import net.coobird.thumbnailator.geometry.Positions;
 import nl.pts4.email.EmailManager;
@@ -277,7 +278,11 @@ public class OrderController {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            ImageIO.write(finalImage, "png", baos);
+            if (item.getType().toLowerCase().matches("digitale download") || item.getType().toLowerCase().matches("foto")) {
+                ImageIO.write(overlayImage, "png", baos);
+            } else {
+                ImageIO.write(finalImage, "png", baos);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
