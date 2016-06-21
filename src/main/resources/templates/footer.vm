@@ -5,28 +5,30 @@
             <div class="panel-body">
                 <form class="form">
                     <div class="col-lg-6">
-                        <select class="form-control" id="inputLangFooter">
-                            <option value="en_GB">English</option>
-                            <option value="nl">Nederlands</option>
-                        </select>
-                        <script type="text/javascript">
-                            $(document).ready(function () {
-                                $(document).ready(function () {
-                                    $("#inputLangFooter").change(function () {
-                                        var lang = $("#inputLangFooter").val();
-                                        $.ajax({
-                                            "url": "/settings-rest",
-                                            "method": "POST",
-                                            "data": {
-                                                "lang": lang
-                                            }
-                                        }).done(function (data) {
-                                            location.reload();
-                                        });
-                                    });
-                                });
-                            })
-                        </script>
+##                        <select class="form-control" id="inputLangFooter">
+##                            <option value="en_GB">English</option>
+##                            <option value="nl">Nederlands</option>
+##                        </select>
+##                        <script type="text/javascript">
+##                            $(document).ready(function () {
+##                                $(document).ready(function () {
+##                                    $("#inputLangFooter").change(function () {
+##                                        var lang = $("#inputLangFooter").val();
+##                                        $.ajax({
+##                                            "url": "/settings-rest",
+##                                            "method": "POST",
+##                                            "data": {
+##                                                "lang": lang
+##                                            }
+##                                        }).done(function (data) {
+##                                            location.reload();
+##                                        });
+##                                    });
+##                                });
+##                            })
+##                        </script>
+                        <a href=".?lang=en_GB"><img src="http://dickbutt.nl/en.png" width="50px" height="50px"/></a>
+                        <a href=".?lang=nl"><img src="http://dickbutt.nl/nl.png" width="50px" height="50px"/></a>
                     </div>
                     #if ($account && $account.theme)
                         <div class="col-lg-6">
