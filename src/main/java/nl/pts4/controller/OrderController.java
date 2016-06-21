@@ -176,6 +176,47 @@ public class OrderController {
 
     }
 
+    @RequestMapping(value = "/photo/inverted", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID"})
+    private @ResponseBody byte[] toInverted(@RequestParam(value = "photoUUID") String photoUUID) {
+        PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
+
+        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePath();
+        URL photoURL = null;
+        BufferedImage photoImage = null;
+
+        try {
+            photoURL = new URL(photoImageSource);
+            photoImage = ImageIO.read(photoURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (int x = 0; x < photoImage.getWidth(); x++) {
+            for (int y = 0; y < photoImage.getHeight(); y++) {
+                int rgba = photoImage.getRGB(x, y);
+                Color col = new Color(rgba, true);
+                col = new Color(255 - col.getRed(),
+                        255 - col.getGreen(),
+                        255 - col.getBlue());
+                photoImage.setRGB(x, y, col.getRGB());
+            }
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try {
+            ImageIO.write(photoImage, "png", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] res = baos.toByteArray();
+        return res;
+    }
+
+
     @RequestMapping(value = "/order/partofimage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID", "x", "y", "w", "h"})
     private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h) {
         PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
