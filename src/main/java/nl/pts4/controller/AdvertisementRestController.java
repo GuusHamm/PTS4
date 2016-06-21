@@ -53,7 +53,9 @@ public class AdvertisementRestController {
                                   @RequestParam(name = "to") String to,
                                   @RequestParam(name = "template") String template) throws IOException {
         EmailManager em = new EmailManager();
-        em.sendAdvertisementTemplate(template + ".vm", new HashMap<>(), "template mail");
+        HashMap<String, Object> hm = new HashMap<>();
+        hm.put("percent", 5);
+        em.sendAdvertisementTemplate(template + ".vm", hm, "template mail");
         response.sendRedirect("/");
     }
 }
