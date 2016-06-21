@@ -39,7 +39,7 @@
                 previewButton.attr('href', newURL);
 
                 if (text == "Cropped image") {
-                    selectEnable(img);
+                    selectEnable(img, item);
                 } else {
                     selectDisable(img);
                 }
@@ -53,11 +53,24 @@
         });
     });
 
-    function selectEnable(img) {
+    function selectEnable(img, item) {
         img.imgAreaSelect({
             handles: true,
             onSelectEnd: function (img, selection) {
                 alert('width: ' + selection.width + '; height: ' + selection.height);
+                var previewButton = item.find("#previewHyperlink");
+
+                var oldURL = previewButton.attr('href');
+                var uuid = oldURL.substr(oldURL.lastIndexOf('&') + 1);
+                if (uuid.length < 5) {
+                    uuid = oldURL.substr(oldURL.indexOf('=') + 1, oldURL.indexOf('&'));
+                }
+                var x = selection.x1;
+                var y = selection.y1;
+                var w = selection.width;
+                var h = selection.height;
+                var newURL = "/order/partofimage?" + uuid + "&x=" + x + "&y=" + y + "&w=" + w + "&h=" + h;
+                previewButton.attr('href', newURL);
             }
         });
     }

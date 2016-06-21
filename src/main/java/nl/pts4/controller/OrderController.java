@@ -224,7 +224,7 @@ public class OrderController {
     private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h) {
         PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
 
-        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePath();
+        String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePathLowRes();
         URL photoURL = null;
         BufferedImage photoImage = null;
 
