@@ -10,15 +10,15 @@
             <form class="form-signin" method="post">
                 <h2 class="form-signin-heading">#springMessageText("signup","Sign up")</h2>
 
-                <label for="inputName" class="sr-only">#springMessageText("name", "Name") </label>
+##                <label for="inputName" class="sr-only">#springMessageText("name", "Name") </label>
                 <input type="text" id="inputName" name="name" class="form-control"
                        required autofocus placeholder=#springMessageText("name", "Name")>
 
-                <label for="inputEmail" class="sr-only">#springMessageText("email", "Email")</label>
+##                <label for="inputEmail" class="sr-only">#springMessageText("email", "Email")</label>
                 <input type="email" id="inputEmail" name="email" class="form-control"
                        required="" placeholder=#springMessageText("email", "Email")>
 
-                <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
+##                <label for="inputPassword" class="sr-only">#springMessageText("password", "Password")</label>
                 <input type="password" id="inputPassword" name="password" class="form-control"
                        required="" placeholder=#springMessageText("password", "Password")>
 
