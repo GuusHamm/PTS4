@@ -27,6 +27,7 @@
 
             itemSelecter.change(function() {
                 var selectedValue = itemSelecter[0].selectedIndex;
+                var text = itemSelecter[0].options[selectedValue].text;
                 var value = itemSelecter.val();
 
                 var previewButton = item.find("#previewHyperlink");
@@ -36,6 +37,12 @@
                 var img = item.find("img");
                 img.attr("src", newURL);
                 previewButton.attr('href', newURL);
+
+                if (text == "Cropped image") {
+                    selectEnable(img);
+                } else {
+                    selectDisable(img);
+                }
             })
         })
     });
@@ -46,14 +53,22 @@
         });
     });
 
-    $(function(){
-        $('#photoSelect').imgAreaSelect({
+    function selectEnable(img) {
+        img.imgAreaSelect({
             handles: true,
             onSelectEnd: function (img, selection) {
                 alert('width: ' + selection.width + '; height: ' + selection.height);
             }
         });
-    });
+    }
+
+    function selectDisable(img) {
+        img.imgAreaSelect({
+            enable: false,
+            hide: true
+        })
+    }
+//
 
 </script>
 
