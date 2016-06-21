@@ -3,8 +3,8 @@
 <body>
 <h3>Hello there ${user.getName()}!</h3><br/>
 <div>
-    You have been carefully selected for a coupon to the photoshop.
-    You get a ${percent}% discount
+    Hello there, just informing you that chrismas is on it's way.
+    You can buy your favorite family pictures <a href="pts4.guushamm.tech">at our store</a>
     <p><p>
     Much wow, such bye!<br/>
     Photoshop
