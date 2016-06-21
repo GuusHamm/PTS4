@@ -40,7 +40,7 @@
                 {
                     "data": "photo.filePath",
                     "mRender": function(data, type, row) {
-                        return '<a class="btn btn-default" href="'+row.photo[0].filePath+'">Show</button>'
+                        return '<a class="btn btn-default" href="/resources/'+row.photo[0].filePath+'">Show</button>'
                     }
                 }
             ]

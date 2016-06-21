@@ -23,7 +23,6 @@ public class OrderRestController {
 			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllAccountOrders(MainController.getCurrentUser(httpServletRequest).getUUID());
 
 		}else if(accountModel.getAccountTypeEnum().equals(AccountModel.AccountTypeEnum.administrator)){
-
 			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
 		}
 		else {
