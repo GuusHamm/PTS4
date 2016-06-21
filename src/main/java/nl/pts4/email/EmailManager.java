@@ -61,10 +61,16 @@ public class EmailManager {
     public void sendAdvertisementTemplate(String template, Map<String, Object> parameters, String subject) {
         VelocityEngine engine = VelocityEngineConfiguration.getConfiguredEngine();
 
-        String text = VelocityEngineUtils.mergeTemplateIntoString(engine, "/templates/advertisements/" + template, "UTF-8", parameters);
         HashMap<UUID, AccountModel> accountModels = DatabaseController.getInstance().getAllAccounts();
-        for (AccountModel am : accountModels.values()) {
+        for (UUID uuid : accountModels.keySet()) {
+            AccountModel am = accountModels.get(uuid);
+
+            parameters.put("user", am);
+
+            String text = VelocityEngineUtils.mergeTemplateIntoString(engine, "/templates/advertisements/" + template, "UTF-8", parameters);
             sendMessage(text, am.getEmail(), subject);
+
+            parameters.remove("user");
         }
     }
 

@@ -1,5 +1,5 @@
 #parse("header.vm")
-
+<script src='http://odyniec.net/projects/imgareaselect/jquery.imgareaselect.pack.js'></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("div[id^='priceItem']").each(function(index) {
@@ -10,6 +10,7 @@
                 var selectedValue = effectSelecter[0].selectedIndex;
                 var text = effectSelecter[0].options[selectedValue].text;
                 var img = item.find("img");
+
                 if (text == "Grayscale") {
                     img.removeClass("invert");
                     img.addClass("grayscale");
@@ -42,6 +43,15 @@
         $("#buyButton").click(function () {
             $("#buyButton").attr("disabled", true);
             $('#paypalForm').submit();
+        });
+    });
+
+    $(function(){
+        $('#photoSelect').imgAreaSelect({
+            handles: true,
+            onSelectEnd: function (img, selection) {
+                alert('width: ' + selection.width + '; height: ' + selection.height);
+            }
         });
     });
 
