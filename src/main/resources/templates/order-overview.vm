@@ -16,6 +16,8 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Price</th>
+                <th>Address</th>
+                <th>Photo link</th>
             </tr>
             </thead>
             <tbody>
@@ -25,6 +27,7 @@
 </div>
 <script>
     $(document).ready(function() {
+        var table = $("#orderTable");
         $("#orderTable").DataTable({
             "ajax": "./order-overview/ajax",
             "columns": [
@@ -33,6 +36,13 @@
                 { "data": "account.name" },
                 { "data": "account.email"},
                 { "data": "totalPrice" },
+                { "data": "account.name" },
+                {
+                    "data": "photo.filePath",
+                    "mRender": function(data, type, row) {
+                        return '<a class="btn btn-default" href="'+row.photo[0].filePath+'">Show</button>'
+                    }
+                }
             ]
         });
     });

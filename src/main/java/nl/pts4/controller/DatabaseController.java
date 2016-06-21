@@ -204,7 +204,9 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
+
                     queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme, address FROM account WHERE id = ? AND active = true",
+
                             new Object[]{uuid}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -220,6 +222,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
+
                     queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme, address FROM account WHERE type = 'customer' AND active = true LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
@@ -313,6 +316,42 @@ public class DatabaseController {
                             new Object[]{email},
                             (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
+                            });
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return am;
+    }
+
+    public List<PhotoModel> getPhotosByOrder(int id) {
+        String query = "SELECT p.*, sum(r.points) AS points \n" +
+                "FROM photo p LEFT JOIN rating r ON p.id = r.photoid \n" +
+                "WHERE p.id IN\n" +
+                "      (SELECT pc.photoid\n" +
+                "       FROM photoconfiguration pc\n" +
+                "       WHERE pc.id IN\n" +
+                "                    (SELECT ol.id\n" +
+                "                     FROM orderline ol, order_ o\n" +
+                "                     WHERE o.id = ol.orderid\n" +
+                "                      AND o.id = ?)) GROUP BY p.id;\n";
+        return getPhotosFromMap(new JdbcTemplate(dataSource).queryForList(query, new Object[]{id}));
+    }
+
+    public List<OrderLineModel> getOrderLineModels() {
+        JdbcTemplate select = new JdbcTemplate(dataSource);
+        List<OrderLineModel> am;
+        try {
+            am = select.query("SELECT * FROM orderline",
+                            new RowMapper<OrderLineModel>() {
+                                @Override
+                                public OrderLineModel mapRow(ResultSet resultSet, int i) throws SQLException {
+                                    return new OrderLineModel(
+                                            resultSet.getInt("id"),
+                                            resultSet.getInt("amount"),
+                                            resultSet.getInt("photoconfigurationid"),
+                                            resultSet.getInt("orderid")
+                                    );
+                                }
                             });
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -534,21 +573,10 @@ public class DatabaseController {
      *
      * @return a list of all the photoModels
      */
-    public List<PhotoModel> getPhotos() {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-
-        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid GROUP BY p.id ORDER BY capturedate"));
-    }
-
-    /**
-     * Get all the photos
-     *
-     * @return a list of all the photoModels
-     */
     public List<PhotoModel> getPhotosByUUID(UUID[] uuids) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id in (?) GROUP BY p.id ORDER BY capturedate", new Object[]{uuids}));
+        return getPhotosFromMap(template.queryForList("SELECT p.*, sum(r.points) AS points FROM photo p LEFT JOIN rating r ON p.id = r.photoid WHERE p.id IN (?) GROUP BY p.id ORDER BY capturedate", new Object[]{uuids}));
     }
 
     public List<PhotoModel> getPhotosofChildAccount(UUID childAccountID) {
@@ -778,7 +806,7 @@ public class DatabaseController {
     public void photoHasBeenRatedByUser(UUID accountid, UUID photoid) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
-        int count = template.queryForObject("SELECT COUNT(*) from rating where photoid = ? and accountid = ?;", new Object[]{photoid, accountid}, Integer.TYPE);
+        int count = template.queryForObject("SELECT COUNT(*) FROM rating WHERE photoid = ? AND accountid = ?;", new Object[]{photoid, accountid}, Integer.TYPE);
         if (count > 0) {
             JdbcTemplate remove = new JdbcTemplate(dataSource);
             remove.update("DELETE FROM rating WHERE accountid = ? AND photoid = ?", accountid, photoid);
@@ -835,7 +863,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            template.update("UPDATE account a SET active = false WHERE a.id = ?", uuid);
+            template.update("UPDATE account a SET active = FALSE WHERE a.id = ?", uuid);
             return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
@@ -1039,7 +1067,7 @@ public class DatabaseController {
 
         List<Map<String, Object>> rows = select.queryForList(
                 "SELECT  DISTINCT  s.id, s.name, s.location,s.country FROM school s, photo p, account a " +
-                        "WHERE a.id = ? and p.photographerid = ? and p.schoolid = s.id",
+                        "WHERE a.id = ? AND p.photographerid = ? AND p.schoolid = s.id",
 
                 photographerID, photographerID);
         List<SchoolModel> schoolModels = new ArrayList<>(rows.size());
@@ -1088,7 +1116,7 @@ public class DatabaseController {
 
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
-        int i = select.queryForObject("Select count(*) from childaccount WHERE uniquecode = ?", new Object[]{childAccountModel.getUniqueCode()}, Integer.TYPE);
+        int i = select.queryForObject("SELECT count(*) FROM childaccount WHERE uniquecode = ?", new Object[]{childAccountModel.getUniqueCode()}, Integer.TYPE);
 
         if (i > 0) {
             return null;
@@ -1139,7 +1167,7 @@ public class DatabaseController {
         JdbcTemplate select = new JdbcTemplate(dataSource);
 
         List<Map<String, Object>> rows = select.queryForList(
-                "SELECT a.* from account a, childaccount_account cha where a.id = cha.account_id and cha = ?", childAccountModel.getUuid()
+                "SELECT a.* FROM account a, childaccount_account cha WHERE a.id = cha.account_id AND cha = ?", childAccountModel.getUuid()
         );
 
         List<AccountModel> parents = new ArrayList<>(rows.size());
