@@ -28,7 +28,7 @@ public class OrderLineDescriptionModel {
 
     public void setDigitalDownloadLink(String UUID,String effect) {
 
-            this.digitalDownloadLink = "http://pts4.guushamm.tech/photo/grayscale?photoUUID="+UUID;
+            this.digitalDownloadLink = "http://pts4.guushamm.tech/photo/"+effect+"?photoUUID="+UUID;
 
     }
     public void setDigitalDownloadLink(String digitalDownloadLink ) {

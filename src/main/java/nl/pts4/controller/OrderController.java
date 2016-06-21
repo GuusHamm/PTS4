@@ -110,8 +110,11 @@ public class OrderController {
                     PhotoModel pm = DatabaseController.getInstance().getPhotoByUUID(photo[counter]);
                     model.setShouldGetDigitalDownload(true);
                     if(effect[counter]==2) {
-                        model.setDigitalDownloadLink(pm.getUuid().toString(),null);
-                    }else {
+                        model.setDigitalDownloadLink(pm.getUuid().toString(),"grayscale");
+                    }else if (effect[counter]==3){
+                        model.setDigitalDownloadLink(pm.getUuid().toString(),"inverted");
+                    }
+                    else {
                         model.setDigitalDownloadLink(pm.getFilePath());
                     }
 

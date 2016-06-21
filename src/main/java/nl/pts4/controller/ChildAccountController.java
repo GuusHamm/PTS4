@@ -47,7 +47,7 @@ public class ChildAccountController {
 		if (!MainController.assertUserIsPrivileged(request, response, true)) {
 			return null;
 		}
-
+		model = MainController.addDefaultAttributesToModel(model, "Add child", request, response);
 		return "add_child";
 	}
 
@@ -59,7 +59,7 @@ public class ChildAccountController {
 		if (!MainController.assertUserIsPrivileged(request, response, true)) {
 			return null;
 		}
-
+		model = MainController.addDefaultAttributesToModel(model, "Create child", request, response);
 		ChildAccountModel childAccountModel = createNewChild();
 
 
@@ -79,6 +79,7 @@ public class ChildAccountController {
 									  Model model) {
 
 		if (!MainController.assertUserIsSignedIn(request, response)) return null;
+		model = MainController.addDefaultAttributesToModel(model, "Add child", request, response);
 		return "addchildtoparent";
 	}
 
@@ -90,7 +91,7 @@ public class ChildAccountController {
 
 		if (!MainController.assertUserIsSignedIn(request, response)) return null;
 		DatabaseController db = DatabaseController.getInstance();
-
+		model = MainController.addDefaultAttributesToModel(model, "Add child", request, response);
 
 		if (db.addChildToUser(MainController.getCurrentUser(request), childCode)) {
 			model.addAttribute("success", messageSource.getMessage("success.addchild", null, RequestContextUtils.getLocale(request)));
