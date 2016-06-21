@@ -149,6 +149,9 @@ public class AccountController {
     public String register(@RequestParam(value = "email") String email,
                            @RequestParam(value = "password") String password,
                            @RequestParam(value = "name") String name,
+                           @RequestParam(value = "street") String street,
+                           @RequestParam(value = "postalcode") String postalCode,
+                           @RequestParam(value = "place") String place,
                            HttpServletResponse response,
                            Model m,
                            HttpServletRequest request) throws IOException {
@@ -160,7 +163,7 @@ public class AccountController {
         if (accountExists)
             response.sendRedirect("/register");
 
-        DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword);
+        DatabaseController.getInstance().createAccount(sanitizedName, sanitizedEmail, sanitizedPassword, street + ", " + postalCode + ", " + place );
 
         response.sendRedirect("/login");
         return null;

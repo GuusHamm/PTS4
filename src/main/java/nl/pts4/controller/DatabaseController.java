@@ -104,11 +104,11 @@ public class DatabaseController {
      * @param password : The password that the users enters
      * @return The account that was created
      */
-    public AccountModel createAccount(String name, String email, String password) {
+    public AccountModel createAccount(String name, String email, String password, String address) {
         UUID accountUUID = UUID.randomUUID();
 
         JdbcTemplate insert = new JdbcTemplate(dataSource);
-        insert.update("INSERT INTO account (id, name, email, hash) VALUES (?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.R, HashConstants.P));
+        insert.update("INSERT INTO account (id, name, email, hash, address) VALUES (?,?,?,?,?)", accountUUID, name, email, SCryptUtil.scrypt(password, HashConstants.N, HashConstants.R, HashConstants.P),address);
 
         return getAccount(accountUUID);
     }
@@ -171,7 +171,7 @@ public class DatabaseController {
     public HashMap<UUID, AccountModel> getAllAccounts() {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         HashMap<UUID, AccountModel> accountModels = new HashMap<>();
-        List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type, theme FROM account");
+        List<Map<String, Object>> rows = template.queryForList("SELECT id, name, email, active, type, theme, address FROM account");
 
         for (Map<String, Object> row : rows) {
             UUID uuid = (UUID) row.get("id");
@@ -182,11 +182,12 @@ public class DatabaseController {
             String type = (String) row.get("type");
             String email = (String) row.get("email");
             String theme = (String) row.get("theme");
+            String address= (String) row.get("address");
             AccountModel.AccountTypeEnum accountTypeEnum = null;
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-            accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum, theme));
+            accountModels.put(uuid, new AccountModel(uuid, null, null, name, email, null, active, accountTypeEnum, theme,address));
 
         }
         return accountModels;
@@ -203,7 +204,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme FROM account WHERE id = ? AND active = true",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type, theme, address FROM account WHERE id = ? AND active = true",
                             new Object[]{uuid}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -219,7 +220,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'customer' AND active = true LIMIT 1",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme, address FROM account WHERE type = 'customer' AND active = true LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -252,7 +253,7 @@ public class DatabaseController {
 
         try {
             AccountModel am = select.
-                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme FROM account WHERE type = 'photographer' LIMIT 1",
+                    queryForObject("SELECT id, oauthkey, oauthprovider, name, email, hash, active, type,theme, address FROM account WHERE type = 'photographer' LIMIT 1",
                             new Object[]{}
                             , (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -308,7 +309,7 @@ public class DatabaseController {
         AccountModel am;
         try {
             am = select.
-                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type,theme FROM account WHERE email = ? AND active = true",
+                    queryForObject("SELECT id, email, oauthkey, oauthprovider, name, hash, active, type,theme,address FROM account WHERE email = ? AND active = true",
                             new Object[]{email},
                             (resultSet, i) -> {
                                 return getAccountFromResultSet(resultSet);
@@ -809,7 +810,7 @@ public class DatabaseController {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         try {
-            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type,theme FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ? AND a.active = true", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
+            AccountModel am = template.queryForObject("SELECT a.id, a.oauthkey, a.oauthprovider, a.name, a.email, a.hash, a.active, a.type,theme, a.address FROM account a, user_cookie uc WHERE a.id = uc.account AND uc.id = ? AND a.active = true", new Object[]{UUID.fromString(cookie)}, new RowMapper<AccountModel>() {
                 @Override
                 public AccountModel mapRow(ResultSet resultSet, int i) throws SQLException {
                     return getAccountFromResultSet(resultSet);
@@ -892,11 +893,12 @@ public class DatabaseController {
             String type = resultSet.getString("type");
             String email = resultSet.getString("email");
             String theme = resultSet.getString("theme");
+            String address = resultSet.getString("address");
             AccountModel.AccountTypeEnum accountTypeEnum = null;
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum, theme);
+            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum, theme,address);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -1159,11 +1161,13 @@ public class DatabaseController {
             String type = (String) row.get("type");
             String email = (String) row.get("email");
             String theme = (String) row.get("theme");
+            String address = (String) row.get("address");
+
             AccountModel.AccountTypeEnum accountTypeEnum = null;
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-            parents.add(new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum));
+            parents.add(new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum, address));//Todo fix address
 
         }
         return parents;

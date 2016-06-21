@@ -22,7 +22,7 @@ public class DatabaseControllerTest {
 	@Test
 	public void testRegisterAccount() throws Exception {
 		// Test short password
-		databaseController.createAccount("Name name", "email@email.com", "sh");
+		databaseController.createAccount("Name name", "email@email.com", "sh", "testaddres");
 
 	}
 }

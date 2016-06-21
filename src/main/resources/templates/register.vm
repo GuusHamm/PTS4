@@ -22,6 +22,13 @@
                 <input type="password" id="inputPassword" name="password" class="form-control"
                        required="" placeholder=#springMessageText("password", "Password")>
 
+                <input type="text" id="inputStreet" name="street" class="form-control"
+                       required="" placeholder=#springMessageText("street", "Street")>
+                <input type="text" id="inputPostalCode" name="postalcode" class="form-control"
+                       required="" placeholder=#springMessageText("postalcode", "PostalCode")>
+                <input type="text" id="inputPlace" name="place" class="form-control"
+                       required="" placeholder=#springMessageText("place", "Place")>
+
                 <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnRegister">#springMessageText(
                     "register", "Register")</button>
             </form>

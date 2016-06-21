@@ -32,7 +32,7 @@ public class OrderModelTest
     {
         orderID = 1;
         orderDate = new Date(0);
-        account = new AccountModel(UUID.randomUUID(), "Tim", "t.daniels@student.fontys.nl", SCryptUtil.scrypt("hallo", HashConstants.N, HashConstants.R, HashConstants.P), true, AccountModel.AccountTypeEnum.customer);
+        account = new AccountModel(UUID.randomUUID(), "Tim", "t.daniels@student.fontys.nl", SCryptUtil.scrypt("hallo", HashConstants.N, HashConstants.R, HashConstants.P), true, AccountModel.AccountTypeEnum.customer, "Rachelsmolen 1 1234AB Eindoven");
         orderLines = new ArrayList<>();
         orderLines1 = new ArrayList<>();
         orderModel = new OrderModel(orderID, orderDate, account);
@@ -52,7 +52,7 @@ public class OrderModelTest
     @Test
     public void testSetAccount() throws Exception
     {
-        AccountModel account2 = new AccountModel(UUID.randomUUID(), "Timmy", "iets@student.fontys.nl", SCryptUtil.scrypt("password1", HashConstants.N, HashConstants.R, HashConstants.P), true, AccountModel.AccountTypeEnum.customer);
+        AccountModel account2 = new AccountModel(UUID.randomUUID(), "Timmy", "iets@student.fontys.nl", SCryptUtil.scrypt("password1", HashConstants.N, HashConstants.R, HashConstants.P), true, AccountModel.AccountTypeEnum.customer,"Rachelsmolen 1 1234AB Eindoven");
         orderModel.setAccount(account2);
         //Check if the ID matches the ID of the new Account
         Assert.assertTrue("OrderModel - Accounts ID do not match after seting a new Account!", (orderModel.getAccount().getUUID()) == account2.getUUID());

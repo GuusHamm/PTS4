@@ -27,8 +27,8 @@
 ##                                });
 ##                            })
 ##                        </script>
-                        <a href=".?lang=en_GB"><img src="http://dickbutt.nl/en.png" width="50px" height="50px"/></a>
-                        <a href=".?lang=nl"><img src="http://dickbutt.nl/nl.png" width="50px" height="50px"/></a>
+                        <a href=".?lang=en_GB"><img src="http://dickbutt.nl/en.png" width="35px" height="35px"/></a>
+                        <a href=".?lang=nl"><img src="http://dickbutt.nl/nl.png" width="35px" height="35px"/></a>
                     </div>
                     #if ($account && $account.theme)
                         <div class="col-lg-6">

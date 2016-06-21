@@ -18,8 +18,9 @@ public class AccountModel {
     private boolean active;
     private AccountTypeEnum accountTypeEnum;
     private String theme;
+    String address;
 
-    public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
+    public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum, String address) {
         this.uuid = uuid;
         this.oAuthKey = oAuthKey;
         this.oAuhtProvider = oAuthProvider;
@@ -29,9 +30,10 @@ public class AccountModel {
         this.active = active;
         this.accountTypeEnum = accountTypeEnum;
         this.theme = DefaultTheme;
+        this.address = address;
     }
 
-    public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum, String theme) {
+    public AccountModel(UUID uuid, String oAuthKey, OAuthProviderEnum oAuthProvider, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum, String theme, String address) {
         this.uuid = uuid;
         this.oAuthKey = oAuthKey;
         this.oAuhtProvider = oAuthProvider;
@@ -41,9 +43,10 @@ public class AccountModel {
         this.active = active;
         this.accountTypeEnum = accountTypeEnum;
         this.theme = theme;
+        this.address = address;
     }
 
-    public AccountModel(UUID uuid, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum) {
+    public AccountModel(UUID uuid, String name, String email, String hash, boolean active, AccountTypeEnum accountTypeEnum, String address) {
         this.uuid = uuid;
         this.oAuthKey = "";
         this.oAuhtProvider = null;
@@ -53,6 +56,8 @@ public class AccountModel {
         this.active = active;
         this.accountTypeEnum = accountTypeEnum;
         this.theme = DefaultTheme;
+        this.address = address;
+
     }
 
     public UUID getUUID() {
@@ -117,6 +122,10 @@ public class AccountModel {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public enum AccountTypeEnum {

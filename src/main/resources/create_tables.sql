@@ -22,6 +22,7 @@ CREATE TABLE account (
   active        BOOLEAN          DEFAULT TRUE,
   type          TEXT             DEFAULT 'customer',
   theme         TEXT
+  address       TEXT,
     CHECK (hash IS NOT NULL OR account.oauthkey IS NOT NULL )
 );
 
@@ -106,9 +107,9 @@ CREATE TABLE public.link
 CREATE UNIQUE INDEX link_key_uindex ON public.link (key);
 
 -- ACCOUNT MOCK DATA
-INSERT INTO account (id, name, email, active, hash)
+INSERT INTO account (id, name, email, active, hash,address)
 VALUES ('602a4264-cf81-4ad3-aa6e-13cf8578320f', 'Norma Jones', 'njones0@amazonaws.com', TRUE,
-        '$s0$e0801$UXWHFDS7gqHNjtlnbXG0fg==$MC6JpBSIMH5phCn6ypeWsFw3/e4jZuy5lqOUmjvx2Yc=');
+        '$s0$e0801$UXWHFDS7gqHNjtlnbXG0fg==$MC6JpBSIMH5phCn6ypeWsFw3/e4jZuy5lqOUmjvx2Yc=','Rachelsmolen 1, 1234AB Eindhoven');
 
 INSERT INTO public.school (id, name, location, country)
 VALUES (1, 'Basisschool Bert', 'Eindhoven', 'Netherlands');
