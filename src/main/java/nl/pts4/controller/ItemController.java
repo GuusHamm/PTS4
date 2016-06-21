@@ -102,7 +102,7 @@ public class ItemController {
 
         int id = (Integer) request.getSession().getAttribute("itemID");
 
-
+        price = price * 100;
         DatabaseController databaseController = DatabaseController.getInstance();
 
         String thumbnailPath = new FileUploadController().uploadItemThumbnail(file);
