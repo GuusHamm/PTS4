@@ -21,7 +21,12 @@ public class OrderRestController {
 		AccountModel accountModel = MainController.getCurrentUser(httpServletRequest);
 		if (accountModel.getAccountTypeEnum().equals(AccountModel.AccountTypeEnum.customer)) {
 			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllAccountOrders(MainController.getCurrentUser(httpServletRequest).getUUID());
-		} else {
+
+		}else if(accountModel.getAccountTypeEnum().equals(AccountModel.AccountTypeEnum.administrator)){
+
+			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllOrders();
+		}
+		else {
 			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllPhotographerOrders(MainController.getCurrentUser(httpServletRequest).getUUID());
 		}
 		List<OrderModelWithPhoto> a = new ArrayList<>(orders.size());
