@@ -896,7 +896,7 @@ public class DatabaseController {
             if (type != null)
                 accountTypeEnum = AccountModel.AccountTypeEnum.valueOf(type);
 
-            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum);
+            return new AccountModel(uuid, oauthkey, oAuthProvider, name, email, hash, active, accountTypeEnum, theme);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

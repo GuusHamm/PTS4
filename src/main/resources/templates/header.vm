@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- Latest compiled and minified CSS -->
-    #if ($account && $account.theme != "" && $account.theme != "null")
+    #if ($account)
         <link rel="stylesheet" href="/css/${account.theme}">
     #else
         <link rel="stylesheet" href="/css/bootstrap.yeti.min.css">
@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="/css/_footer.css"/>
     
     <link rel="stylesheet" type="text/css" href="css/imgareaselect-default.css" />
-    <script type="text/javascript" src="js/imgarea//jquery.min.js"></script>
-    <script type="text/javascript" src="js/imgarea/jquery.imgareaselect.pack.js"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
@@ -26,7 +24,6 @@
     #else
         <title>$title</title>
     #end
-    <script src="/js/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
