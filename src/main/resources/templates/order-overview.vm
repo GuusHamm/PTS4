@@ -36,7 +36,7 @@
                 { "data": "account.name" },
                 { "data": "account.email"},
                 { "data": "totalPrice" },
-                { "data": "account.name" },
+                { "data": "account.address" },
                 {
                     "data": "photo.filePath",
                     "mRender": function(data, type, row) {
