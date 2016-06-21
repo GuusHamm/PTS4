@@ -220,8 +220,8 @@ public class OrderController {
     }
 
 
-    @RequestMapping(value = "/order/partofimage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID", "x", "y", "w", "h"})
-    private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h) {
+    @RequestMapping(value = "/order/partofimage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, params = {"photoUUID", "x", "y", "w", "h", "iw", "ih"})
+    private @ResponseBody byte[] getPartOfImage(@RequestParam(value = "photoUUID") String photoUUID, @RequestParam(value = "x") int x, @RequestParam(value = "y") int y, @RequestParam(value = "w") int w, @RequestParam(value = "h") int h, @RequestParam(value = "iw") int iw, @RequestParam(value = "ih") int ih) {
         PhotoModel photoModel = DatabaseController.getInstance().getPhotoByUUID(UUID.fromString(photoUUID));
 
         String photoImageSource = "http://pts4.guushamm.tech/resources/" + photoModel.getFilePathLowRes();
@@ -236,6 +236,14 @@ public class OrderController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        int pw = photoImage.getWidth();
+        int ph = photoImage.getHeight();
+
+        x = x * (pw / iw);
+        y = y * (ph / ih);
+        w = w * (pw / iw);
+        h = h * (ph / ih);
 
 
         if (photoImage != null) {
