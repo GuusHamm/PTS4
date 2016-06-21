@@ -2,12 +2,14 @@ package nl.pts4.controller;
 
 import nl.pts4.model.AccountModel;
 import nl.pts4.model.OrderModel;
+import nl.pts4.model.OrderModelWithPhoto;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,9 +24,13 @@ public class OrderRestController {
 		} else {
 			orders = (ArrayList<OrderModel>) DatabaseController.getInstance().getAllPhotographerOrders(MainController.getCurrentUser(httpServletRequest).getUUID());
 		}
+		List<OrderModelWithPhoto> a = new ArrayList<>(orders.size());
+		for (OrderModel orderModel : orders) {
+			a.add(new OrderModelWithPhoto(orderModel, DatabaseController.getInstance().getPhotosByOrder(orderModel.getId())));
+		}
 
 		Map<String, Object> mapping = new HashMap<>();
-		mapping.put("data", orders);
+		mapping.put("data", a);
 		return mapping;
 	}
 
