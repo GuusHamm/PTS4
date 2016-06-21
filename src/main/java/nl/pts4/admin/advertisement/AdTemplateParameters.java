@@ -19,6 +19,7 @@ public class AdTemplateParameters {
 
         AccountModel accountModel = MainController.getCurrentUser(request);
         map.put(DefaultUserKey, accountModel);
+        map.put("percent", 5);
 
         return map;
     }
