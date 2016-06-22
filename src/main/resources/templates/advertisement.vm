@@ -3,7 +3,7 @@
 <div class="container" xmlns="http://www.w3.org/1999/html">
 
     <div id="info-panel" class="hidden panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">Oh shit waddup</h3></div>
+        <div class="panel-heading"><h3 class="panel-title">Template sent</h3></div>
         <div class="panel-body">
             Template <span id="info-panel-template"></span> sent!
         </div>
